@@ -143,13 +143,13 @@ pipeline
 
 ### `builtin executor` module 
 
-	- [ ] manage `echo` (option -n)
-	- [ ] manage `cd` (relative (.././) and absolute)
-	- [ ] manage `pwd` ($PWD?)
-	- [ ] manage `export`
-	- [ ] manage `unset`
-	- [ ] manage `env`
-	- [ ] manage `exit`
+- [ ] manage `echo` (option -n)
+- [ ] manage `cd` (relative (.././) and absolute)
+- [ ] manage `pwd` ($PWD?)
+- [ ] manage `export`
+- [ ] manage `unset`
+- [ ] manage `env`
+- [ ] manage `exit`
 
 ## Error management
 
