@@ -86,39 +86,63 @@ EVERY ONE of them.
 
 ## Makefile, main source file and includes
 
-...
+- [x] Write the project's Makefile
 
-## SHELL
+## Software Architecture 
 
-- [ ] interface
-	- [o] prompt management (readline, infinite loop...)
-	- [o] command history (add history / clear_history?)
-	- [ ] interactive mode
-		- [ ] manage ctrl + c (newline or SIGINT?)
-		- [ ] manage ctrl + d (exit or EOF?)
-		- [ ] manage ctrl + \ (SIGQUIT?)
+- [x] Create a module view of the architecture. The goal of this is to have an
+idea of what is composed minishell so that it's possible to divide the project
+into modules that can be built in parallel (by multiple people).
 
-- [ ] parser
-	- [ ] Extract commands
-	- [ ] Should not interpret backlash (\)
-	- [ ] Should not interpret semicolon (;)
-	- [ ] handle single quote (') - they should prevent metacharacters interpretation
-	- [ ] handle double quote (") - they should prevent metacharacters interpretation except dollar sign ($)
+- [x] Explain what the diagram mean...
 
-- [ ] variables expansion management
-	- [ ] manage environment variables ($): they should expand to their values
-	- [ ] handle ($?) the exit status of the recent executed foreground pipeline
+## Development
 
-- [ ] command execution
-	- [o] command searching (access, env, PATH)
-	- [o] pipe management
-	- [o] redirections
-		- [o] manage input redirection (<) in every order
-		- [o] manage output redirection (>) in every order
-		- [o] manage append (>>) in every order
-		- [o] manage heredoc (<<) in every order
+### `main` module 
 
-- [ ] builtins
+- [ ] write main.c and keep improve it throughout the project
+
+### `interface` module 
+
+- [o] prompt management (readline, infinite loop...)
+- [o] command history (add history / clear_history?)
+- [ ] interactive mode
+	- [ ] manage ctrl + c (newline or SIGINT?)
+	- [ ] manage ctrl + d (exit or EOF?)
+	- [ ] manage ctrl + \ (SIGQUIT?)
+
+### `parser` module 
+
+- [ ] extract commands
+- [ ] should not interpret backlash (\)
+- [ ] should not interpret semicolon (;)
+- [ ] handle single quote (') - they should prevent metacharacters 
+interpretation
+- [ ] handle double quote (") - they should prevent metacharacters 
+interpretation except dollar sign ($)
+
+### `expander` module 
+
+- [ ] manage environment variables ($): they should expand to their values
+- [ ] handle ($?) the exit status of the recent executed foreground 
+pipeline
+
+### `cmdenv builder` module 
+
+- [ ]
+
+### `cmd executor` module 
+
+- [o] command searching (access, env, PATH)
+- [o] pipe management
+- [o] redirections
+	- [o] manage input redirection (<) in every order
+	- [o] manage output redirection (>) in every order
+	- [o] manage append (>>) in every order
+	- [o] manage heredoc (<<) in every order
+
+### `builtin executor` module 
+
 	- [ ] manage `echo` (option -n)
 	- [ ] manage `cd` (relative (.././) and absolute)
 	- [ ] manage `pwd` ($PWD?)
@@ -127,7 +151,7 @@ EVERY ONE of them.
 	- [ ] manage `env`
 	- [ ] manage `exit`
 
-## "I AM ERROR."
+## Error management
 
 - Too much file descriptors open at the same time! That's a disaster waiting to
 happen...
