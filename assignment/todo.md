@@ -1,0 +1,133 @@
+# 9 - Minishell
+
+# I AM INEVITABLE (9th time!)
+
+## Bootup (bip bip?)
+ 
+- [x] Read the subject
+- [x] Search everything you don't know, you don't understand. Cram
+early, don't waste time, but try to understand as much as possible.
+The rest will come as you're completing the assignment...
+- [x] Start writing this todo list, relying on the assignment especially.
+
+## Small experiments
+
+- [ ] There is a lot of NEW external functions in this project. Learn to use
+EVERY ONE of them.
+
+	- [x] readline
+	- [x] rl_clear_history
+	- [x] rl_on_new_line,
+	- [x] rl_replace_line
+	- [x] rl_redisplay
+	- [x] add_history,
+
+	- [-] printf
+
+	- [-] malloc
+	- [-] free
+
+	- [x] access
+	- [x] unlink,
+	- [x] open,
+	- [x] close,
+	- [x] read,
+	- [x] write
+	- [x] isatty,
+	- [x] ttyname,
+	- [x] getcwd,
+	- [x] chdir,
+	- [x] dup,
+	- [x] dup2,
+	- [x] pipe,
+
+	- [x] fork,
+	- [x] wait,
+	- [x] waitpid,
+	- [x] exit,
+	- [x] wait3,
+	- [x] wait4,
+	- [x] execve,
+
+	- [x] getenv,
+
+	- [x] strerror,
+	- [x] perror,
+
+	- [ ] kill,
+	- [ ] signal,
+	- [ ] sigaction,
+	- [ ] sigemptyset,
+	- [ ] sigaddset,
+
+	- [x] stat,
+	- [x] fstat,
+	- [x] lstat,
+
+	- [x] opendir,
+	- [x] readdir,
+	- [x] closedir,
+
+	- [x] ttyslot,
+
+	- [x] ioctl,
+	
+	- [o] tcgetattr,
+	- [o] tcsetattr,
+
+	- [o] tgetent,
+	- [o] tgetflag,
+
+	- [o] tgetnum,
+	- [o] tgetstr,
+
+	- [o] tgoto,
+	- [o] tputs
+
+## Makefile, main source file and includes
+
+...
+
+## SHELL
+
+- [ ] interface
+	- [o] prompt management (readline, infinite loop...)
+	- [o] command history (add history / clear_history?)
+	- [ ] interactive mode
+		- [ ] manage ctrl + c (newline or SIGINT?)
+		- [ ] manage ctrl + d (exit or EOF?)
+		- [ ] manage ctrl + \ (SIGQUIT?)
+
+- [ ] parser
+	- [ ] Extract commands
+	- [ ] Should not interpret backlash (\)
+	- [ ] Should not interpret semicolon (;)
+	- [ ] handle single quote (') - they should prevent metacharacters interpretation
+	- [ ] handle double quote (") - they should prevent metacharacters interpretation except dollar sign ($)
+
+- [ ] variables expansion management
+	- [ ] manage environment variables ($): they should expand to their values
+	- [ ] handle ($?) the exit status of the recent executed foreground pipeline
+
+- [ ] command execution
+	- [o] command searching (access, env, PATH)
+	- [o] pipe management
+	- [o] redirections
+		- [o] manage input redirection (<) in every order
+		- [o] manage output redirection (>) in every order
+		- [o] manage append (>>) in every order
+		- [o] manage heredoc (<<) in every order
+
+- [ ] builtins
+	- [ ] manage `echo` (option -n)
+	- [ ] manage `cd` (relative (.././) and absolute)
+	- [ ] manage `pwd` ($PWD?)
+	- [ ] manage `export`
+	- [ ] manage `unset`
+	- [ ] manage `env`
+	- [ ] manage `exit`
+
+## "I AM ERROR."
+
+- Too much file descriptors open at the same time! That's a disaster waiting to
+happen...
