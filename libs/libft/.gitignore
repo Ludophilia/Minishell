@@ -1,0 +1,34 @@
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+*.so
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# VScode
+.vscode
+
+# Apple 
+.DS_Store 
+
+# Testers
+libftTester/
+Libftest/
+# tests/
+
+# Extra files
+README.md
