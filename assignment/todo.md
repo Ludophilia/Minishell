@@ -100,12 +100,16 @@ into modules that can be built in parallel (by multiple people).
 
 ### `main` module 
 
-- [ ] write main.c and keep improve it throughout the project
+- [o] write main.c and keep improve it throughout the project
 
 ### `interface` module 
 
-- [o] prompt management (readline, infinite loop...)
-- [o] command history (add history / clear_history?)
+- [x] Manage prompt (readline, infinite loop...)
+- [o] Add the command history (add history / clear_history?)
+	- [x] Make sure that 1 2 3 (empty line) (empty line) 4 5 returns
+	5 4 3 2 1 as an history.
+	- [ ] Why would someone need `clear history`?
+
 - [ ] interactive mode
 	- [ ] manage ctrl + c (newline or SIGINT?)
 	- [ ] manage ctrl + d (exit or EOF?)
@@ -149,9 +153,20 @@ pipeline
 - [ ] manage `export`
 - [ ] manage `unset`
 - [ ] manage `env`
-- [ ] manage `exit`
+
+- [x] manage `exit`
+	- [x] Make sure nothing else than exit actually register
 
 ## Error management
 
 - Too much file descriptors open at the same time! That's a disaster waiting to
 happen...
+
+## Development bonus
+
+### 
+
+- [ ] Expand the expander: Manage `*` expansion for the current working directory
+- [ ] Expand the parser: manage `&&` operator
+- [ ] Expand the parser: manage `||` operator
+- [ ] Expand the parser: manage `()` operator for priorities
