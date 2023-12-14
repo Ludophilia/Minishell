@@ -47,3 +47,9 @@
 */*/tcgetattr
 */*/tcsetattr
 */*/tgetstr
+
+*/*/kill
+*/*/signal
+*/*/sigaction
+*/*/sigemptyset
+*/*/sigaddset

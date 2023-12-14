@@ -56,9 +56,9 @@ EVERY ONE of them.
 
 	- [ ] kill,
 	- [ ] signal,
-	- [ ] sigaction,
-	- [ ] sigemptyset,
+	- [o] sigaction,
 	- [ ] sigaddset,
+	- [ ] sigemptyset,
 
 	- [x] stat,
 	- [x] fstat,

@@ -6,7 +6,7 @@
 /*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/14 13:48:39 by jgermany          #+#    #+#             */
-/*   Updated: 2023/12/14 15:13:16 by jgermany         ###   ########.fr       */
+/*   Updated: 2023/12/14 17:33:16 by jgermany         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,12 @@ int	interf_loop_prompt(void)
 		}
 		if (*line != 0)
 			add_history(line);
+
+		// What should be done here?
+
 		
-		if (builtin_exit(line))
+
+		if (builtin_exit(line) == 1)
 			break ;
 		free(line);
 	}
