@@ -6,11 +6,16 @@
 /*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:18:13 by jgermany          #+#    #+#             */
-/*   Updated: 2023/12/18 18:32:48 by jgermany         ###   ########.fr       */
+/*   Updated: 2023/12/18 19:17:11 by jgermany         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+// What a nigga should do?
+
+// -
+// -
 
 int	intf_loop_prompt(void)
 {
@@ -27,7 +32,7 @@ int	intf_loop_prompt(void)
 		// What should be done here?
 		// printf("[%i] line = '%s'\n", getpid(), line);
 
-		if ((ft_strlen(line) == 4 && !ft_strncmp("exit", line, 4))
+		if (ft_strlen(line) == 4 && !ft_strncmp("exit", line, 4)
 			&& blt_exit(line) == 0)
 			return (0);
 		free(line);
