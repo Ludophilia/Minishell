@@ -6,7 +6,7 @@
 #    By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/11 14:49:07 by ggay              #+#    #+#              #
-#    Updated: 2023/12/18 16:57:48 by jgermany         ###   ########.fr        #
+#    Updated: 2023/12/18 18:41:39 by jgermany         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,6 +26,11 @@ CFLAGS += -I$(ICL_DR) -I$(LIBFT_DR)/includes
 LIBCFLAGS := -L$(LIBFT_DR) -lft -lreadline
 
 MAN_SRCS := $(SRCS_DR)/main.c
+
+MAN_SRCS += $(SRCS_DR)/builtins.c
+MAN_SRCS += $(SRCS_DR)/interface.c
+MAN_SRCS += $(SRCS_DR)/signals.c
+
 # MAN_SRCS += $(SRCS_DR)/parser_core.c
 # MAN_SRCS += $(SRCS_DR)/parser_utils.c
 # MAN_SRCS += $(SRCS_DR)/ressources.c

@@ -1,21 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/14 13:48:39 by jgermany          #+#    #+#             */
-/*   Updated: 2023/12/18 19:02:34 by jgermany         ###   ########.fr       */
+/*   Created: 2023/12/18 18:05:43 by jgermany          #+#    #+#             */
+/*   Updated: 2023/12/18 18:31:54 by jgermany         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	main(void)
+int	blt_exit(char *line)
 {
-	if (sigmgr_init_handlers() == -1
-		|| intf_loop_prompt() == -1)
-		return (1);
+	printf("exit\n");
+	if (line)
+		free(line);
 	return (0);
 }

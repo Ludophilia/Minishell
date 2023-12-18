@@ -12,7 +12,7 @@ The rest will come as you're completing the assignment...
 
 ## Small experiments
 
-- [ ] There is a lot of NEW external functions in this project. Learn to use
+- [o] There is a lot of NEW external functions in this project. Learn to use
 EVERY ONE of them.
 
 	- [x] readline
@@ -165,8 +165,8 @@ that situation too?
 
 ## Error management
 
-- Too much file descriptors open at the same time! That's a disaster waiting to
-happen...
+- [ ] Too much file descriptors open at the same time! That's a disaster
+waiting to happen...
 
 ## Development bonus
 

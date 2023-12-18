@@ -6,7 +6,7 @@
 /*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 15:09:52 by ggay              #+#    #+#             */
-/*   Updated: 2023/12/18 17:15:46 by jgermany         ###   ########.fr       */
+/*   Updated: 2023/12/18 19:01:16 by jgermany         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,7 @@
 # include <signal.h>
 
 # define DEFAULT_PATH "/bin:/usr/bin"
-
-# define INTERF_PROMPT "minishell > "
+# define INTF_PROMPT "minishell > "
 
 typedef struct sigaction t_sigaction;
 
@@ -45,5 +44,11 @@ typedef struct s_core
 {
 	t_cmd	*cmds;
 }	t_core;
+
+int	sigmgr_init_handlers(void);
+
+int	blt_exit(char *line);
+
+int	intf_loop_prompt(void);
 
 #endif
