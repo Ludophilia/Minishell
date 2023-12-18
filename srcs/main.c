@@ -6,7 +6,7 @@
 /*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/14 13:48:39 by jgermany          #+#    #+#             */
-/*   Updated: 2023/12/14 17:33:16 by jgermany         ###   ########.fr       */
+/*   Updated: 2023/12/18 14:34:44 by jgermany         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,36 +22,53 @@ int	builtin_exit(char *line)
 	return (0);
 }
 
-int	interf_loop_prompt(void)
+int	interf_loop_prompt(t_core *core)
 {
-	char	*line;
-
 	while (1)
 	{
-		line = readline(INTERF_PROMPT);
-		if (line == NULL)
+		core->line = readline(INTERF_PROMPT);
+		if (core->line == NULL)
 		{
 			printf("[DEBUG] Is that really an error?\n");
 			perror("[DEBUG]");
 			return (-1);
 		}
-		if (*line != 0)
-			add_history(line);
+
+		if (*core->line != 0)
+			add_history(core->line);
 
 		// What should be done here?
 
-		
+		printf("[%i] line = '%s'\n", getpid(), core->line);
 
-		if (builtin_exit(line) == 1)
+		if (builtin_exit(core->line) == 1)
 			break ;
-		free(line);
+		free(core->line);
 	}
 	return (0);
 }
 
+void	signal_handler(int signal)
+{
+	if (signal == SIGINT)
+	{
+		write(1, "\n", 2);
+		rl_on_new_line();
+		rl_replace_line ("", 0);
+		rl_redisplay();
+	}
+}
+
 int	main(void)
 {
-	if (interf_loop_prompt() == -1)
+	t_sigaction	sigaction_s;
+	t_core		shellcore;
+
+	sigaction_s.sa_handler = signal_handler;
+	if (sigaction(SIGINT, &sigaction_s, NULL) == -1)
+		return (2);
+
+	if (interf_loop_prompt(&shellcore) == -1)
 		return (1);
 	return (0);
 }

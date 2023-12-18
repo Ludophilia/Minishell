@@ -6,7 +6,7 @@
 /*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 13:17:17 by jgermany          #+#    #+#             */
-/*   Updated: 2023/11/24 15:06:58 by jgermany         ###   ########.fr       */
+/*   Updated: 2023/12/18 14:00:45 by jgermany         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@
 
 int	main(void)
 {
-	char						*user_line;
-	int							i;
+	char	*user_line;
+	int		i;
 
 	i = -1;
 	while (++i < LINES)

@@ -111,7 +111,10 @@ into modules that can be built in parallel (by multiple people).
 	- [ ] Why would someone need `clear history`?
 
 - [ ] interactive mode
-	- [ ] manage ctrl + c (newline or SIGINT?)
+	- [x] manage ctrl + c (newline or SIGINT?)
+		- [x] Make sure that the line buffer is reset every time
+		SIGINT is sent. lol^C lol^C lol^C lel *enter* should be interpreted
+		as sending the lel command.
 	- [ ] manage ctrl + d (exit or EOF?)
 	- [ ] manage ctrl + \ (SIGQUIT?)
 
