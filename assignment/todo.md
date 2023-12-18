@@ -110,13 +110,13 @@ into modules that can be built in parallel (by multiple people).
 	5 4 3 2 1 as an history.
 	- [ ] Why would someone need `clear history`?
 
-- [ ] interactive mode
+- [x] Manage ctrl hotkeys in interactive mode
 	- [x] manage ctrl + c (newline or SIGINT?)
 		- [x] Make sure that the line buffer is reset every time
 		SIGINT is sent. lol^C lol^C lol^C lel *enter* should be interpreted
 		as sending the lel command.
-	- [ ] manage ctrl + d (exit or EOF?)
-	- [ ] manage ctrl + \ (SIGQUIT?)
+	- [x] manage ctrl + d (exit or EOF?)
+	- [x] manage ctrl + \ (should do NOTHING)
 
 ### `parser` module 
 
@@ -128,7 +128,7 @@ interpretation
 - [ ] handle double quote (") - they should prevent metacharacters 
 interpretation except dollar sign ($)
 
-### `expander` module 
+### `expander` module (part of `parser`?)
 
 - [ ] manage environment variables ($): they should expand to their values
 - [ ] handle ($?) the exit status of the recent executed foreground 
@@ -136,7 +136,7 @@ pipeline
 
 ### `cmdenv builder` module 
 
-- [ ]
+- [ ] ???
 
 ### `cmd executor` module 
 
@@ -147,6 +147,9 @@ pipeline
 	- [o] manage output redirection (>) in every order
 	- [o] manage append (>>) in every order
 	- [o] manage heredoc (<<) in every order
+
+- [ ] Should ctrl hotkeys (ctrl + d, ctrl + c, ctrl + \) be managed in 
+that situation too?
 
 ### `builtin executor` module 
 

@@ -6,7 +6,7 @@
 /*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/14 13:48:39 by jgermany          #+#    #+#             */
-/*   Updated: 2023/12/18 14:34:44 by jgermany         ###   ########.fr       */
+/*   Updated: 2023/12/18 17:48:13 by jgermany         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,36 +14,34 @@
 
 int	builtin_exit(char *line)
 {
-	if (ft_strlen(line) == 4 && ft_strncmp("exit", line, 4) == 0)
-	{
-		printf("exit\n");
-		return (1);
-	}
+	printf("exit\n");
+	if (line != NULL)
+		free(line);
 	return (0);
 }
 
-int	interf_loop_prompt(t_core *core)
+int	interf_loop_prompt(void)
 {
+	char	*line;
+
 	while (1)
 	{
-		core->line = readline(INTERF_PROMPT);
-		if (core->line == NULL)
-		{
-			printf("[DEBUG] Is that really an error?\n");
-			perror("[DEBUG]");
-			return (-1);
-		}
+		line = readline(INTERF_PROMPT);
+		if (line == NULL && builtin_exit(line) == 0)
+			return (0);
 
-		if (*core->line != 0)
-			add_history(core->line);
+		if (*line != 0)
+			add_history(line);
 
 		// What should be done here?
 
-		printf("[%i] line = '%s'\n", getpid(), core->line);
+		printf("[%i] line = '%s'\n", getpid(), line);
 
-		if (builtin_exit(core->line) == 1)
-			break ;
-		free(core->line);
+		if ((ft_strlen(line) == 4 && !ft_strncmp("exit", line, 4))
+			&& builtin_exit(line) == 0)
+			return (0);
+
+		free(line);
 	}
 	return (0);
 }
@@ -61,14 +59,20 @@ void	signal_handler(int signal)
 
 int	main(void)
 {
-	t_sigaction	sigaction_s;
-	t_core		shellcore;
+	t_sigaction	sigaction_s1;
+	t_sigaction	sigaction_s2;
 
-	sigaction_s.sa_handler = signal_handler;
-	if (sigaction(SIGINT, &sigaction_s, NULL) == -1)
+	// t_core		shellcore;
+
+	ft_bzero(&sigaction_s1, sizeof(t_sigaction));
+	ft_bzero(&sigaction_s2, sizeof(t_sigaction));
+	sigaction_s1.sa_handler = signal_handler;
+	sigaction_s2.sa_handler = SIG_IGN;
+	if (sigaction(SIGINT, &sigaction_s1, NULL) == -1
+		|| sigaction(SIGQUIT, &sigaction_s2, NULL) == -1)
 		return (2);
 
-	if (interf_loop_prompt(&shellcore) == -1)
+	if (interf_loop_prompt() == -1)
 		return (1);
 	return (0);
 }

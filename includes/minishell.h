@@ -6,7 +6,7 @@
 /*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 15:09:52 by ggay              #+#    #+#             */
-/*   Updated: 2023/12/18 13:06:00 by jgermany         ###   ########.fr       */
+/*   Updated: 2023/12/18 17:15:46 by jgermany         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,6 @@ typedef struct s_cmd
 
 typedef struct s_core
 {
-	char	*line;
 	t_cmd	*cmds;
 }	t_core;
 

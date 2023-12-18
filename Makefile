@@ -6,14 +6,14 @@
 #    By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/11 14:49:07 by ggay              #+#    #+#              #
-#    Updated: 2023/12/13 20:25:53 by jgermany         ###   ########.fr        #
+#    Updated: 2023/12/18 16:57:48 by jgermany         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME := minishell
 
 CC := cc
-CFLAGS := -Wall -Wextra -Werror
+CFLAGS := -Wall -Wextra -Werror -g3
 
 LIBS_DR := libs
 LIBFT_DR := $(LIBS_DR)/libft
