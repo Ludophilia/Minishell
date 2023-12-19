@@ -104,6 +104,8 @@ into modules that can be built in parallel (by multiple people).
 
 ### `interface` module 
 
+- [ ] Manage error code at startup: 0 (zero)
+
 - [x] Manage prompt (readline, infinite loop...)
 - [o] Add the command history (add history / clear_history?)
 	- [x] Make sure that 1 2 3 (empty line) (empty line) 4 5 returns
@@ -114,13 +116,22 @@ into modules that can be built in parallel (by multiple people).
 	- [x] manage ctrl + c (newline or SIGINT?)
 		- [x] Make sure that the line buffer is reset every time
 		SIGINT is sent. lol^C lol^C lol^C lel *enter* should be interpreted
-		as sending the lel command.
+		as sending the lel command..
+		- [ ] MANAGE THE ERROR CODE! Error code: 130.
 	- [x] manage ctrl + d (exit or EOF?)
 	- [x] manage ctrl + \ (should do NOTHING)
 
 ### `parser` module 
 
+- [ ] Manage
+	- [ ] 
+
+
 - [ ] extract commands
+
+
+
+- [ ] should not interpret unclosed quotes
 - [ ] should not interpret backlash (\)
 - [ ] should not interpret semicolon (;)
 - [ ] handle single quote (') - they should prevent metacharacters 
