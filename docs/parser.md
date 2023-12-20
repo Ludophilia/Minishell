@@ -7,9 +7,9 @@ A sub program that take a line from the `interface` module and
 
 ## Which lines?
 
-## LINE WITH ONLY ONE COMMAND
+## **Line with only one command**
 
-### Single command execution
+### Command execution (cmd)
 
 #### Standard command execution (cmd)
 
@@ -28,6 +28,10 @@ A sub program that take a line from the `interface` module and
 	- bash: : command not found
 	- error code: 127
 
+- `< /dev/random uwu`
+	- bash: uwu: command not found
+	- error code: 127
+
 - `/path/to/hell`
 	- bash: /path/to/hell: No such file or directory
 	- error code: 126
@@ -36,8 +40,8 @@ A sub program that take a line from the `interface` module and
 	- bash: /path/to/heaven: Permission denied
 	- error code: 126
 
-- `< /dev/random uwu`
-	- bash: uwu: command not found
+- `"echo lol"`
+	- bash: echo lol: command not found
 	- error code: 127
 
 ##### Weird cases to consider
@@ -84,9 +88,9 @@ A sub program that take a line from the `interface` module and
 	- outfile2 is created (if didn't exist) but nothing is written to it.
 	- error code: 0
 
-### Redirection
+### Input Redirection (< <<)
 
-#### Stdin redirection (< infile)
+#### Stdin redirection (<)
 
 - `< infile cmd` `<infile cmd` `cmd < infile` `cmd <infile`
 	- should execute the command or program at `/path/to/cmd` in a child
@@ -109,14 +113,14 @@ A sub program that take a line from the `interface` module and
 
 - `<lol`
 	- bash: lol: No such file or directory
-	- lol is not created
 	- error code: 1
+	- lol is not created
 
 - `<lol<lel<lawl`
 	- bash: lol: No such file or directory
+	- error code: 1
 	- lol is not created
 	- lel or lawl neither
-	- error code: 1
 
 - `< oof tee`
 	- bash: oof: No such file or directory
@@ -124,12 +128,12 @@ A sub program that take a line from the `interface` module and
 
 - `<lol<lel<lawl</dev/random head`
 	- bash: lol: No such file or directory
+	- error code: 1
 	- lol is not created
 	- lel or lawl neither 
 	- /dev/random not open
-	- error code: 1
 
-#### Stdin redirection via heredoc (<< DELIMITER)
+#### Stdin redirection via heredoc (<<)
 
 - `<< DELIMITER cmd` `<<DELIMITER cmd` `cmd << DELIMITER` `cmd <<DELIMITER`
 	- should execute the command or program at `/path/to/cmd` in a child
@@ -147,11 +151,35 @@ A sub program that take a line from the `interface` module and
 - `<< ""` `<< ''`
 	- That's not an error. This will just make an empty chain the DELIMITER.
 
-#### Stdout redirection (> outfile)
+### Output Redirection (> >>)
+
+#### Stdout redirection (>)
 
 - `> outfile cmd` `>outfile cmd` `cmd > outfile` `cmd >outfile`
 	- should execute the command or program at `/path/to/cmd` in a child
 	process and redirect its stdout to outfile.
+
+##### Weird Cases (> outfile)
+
+- `>bruh.c`
+	- bruh.c IS created / truncated
+	- error code: 0
+
+- `>lol>lel>lawl`
+	- lol lel and lawl ARE created / truncated
+	- error code: 0
+
+- `</dev/random head -c 40 >lul>lol>lel`
+	- lul lol and lel ARE created / truncated
+	- error code: 0
+	- the result of `head` is written to lel (the last redirected
+	(>'d) file of the line)
+
+- `</dev/random head -c 40 >1>2>3`
+	- bash: syntax error near unexpected token `1' (interpreted roughly as
+	 `</dev/random head -c 40 > > >`) (1> 2> Should not be managed so it's 
+	not really an error in my case...)
+	- error code: 2
 
 ##### Errors (> outfile)
 
@@ -159,78 +187,157 @@ A sub program that take a line from the `interface` module and
 	- bash: syntax error near unexpected token `newline'
 	- error code: 2
 
-- `> >outfile echo rofl`
+- `> > >`
 	- bash: syntax error near unexpected token `>' (the second one)
-	- outfile is not created
 	- error code: 2
 
+- `> > > >four`
+	- bash: syntax error near unexpected token `>' (the second one)
+	- four is NOT created / truncated
+	- error code: 2
 
+- `> >outfile echo rofl`
+	- bash: syntax error near unexpected token `>' (the second one)
+	- error code: 2
+	- outfile is NOT created / truncated
 
-- `<""`
+- `>""`
 	- bash: : No such file or directory
+	- error code: 1
 
-- `<lol`
-	- bash: lol: No such file or directory
-	- lol is not created
+- `>''`
+	- bash: : No such file or directory
+	- error code: 1
 
-- `<lol<lel<lawl`
-	- bash: lol: No such file or directory
-	- lol is not created
-	- lel or lawl neither
+- `> forbidden` (a file with no permission)
+	- bash: forbidden: Permission denied
+	- error code: 1
 
-- `< oof tee`
-	- bash: oof: No such file or directory
+- `>lol > ''`
+	- bash: : No such file or directory
+	- error code: 1
+	- lol has been created / truncated
 
-- `< /dev/random uwu`
-	- bash: uwu: command not found
+- `echo salut > '' >two`
+	- bash: : No such file or directory
+	- error code: 1
+	- two is NOT created / truncated, seems the logic stopped after the
+	parsing error.
+	- NOTHING is written to two, seems the logic stopped after the
+	parsing error.
 
-- `<lol<lel<lawl</dev/random head`
-	- bash: lol: No such file or directory
-	- lol is not created
-	- lel or lawl neither 
-	- /dev/random not open
+- `echo salut > forbidden >two`
+	- bash: forbidden: Permission denied
+	- error code: 1
+	- two is NOT created / truncated, seems the logic stopped after the
+	parsing error.
 
+- `echo salut >one >two > '' >four`
+	- bash: : No such file or directory
+	- error code: 1
+	- one and two ARE created / truncated
+	- four is NOT created / truncated, seems the logic stopped after the
+	parsing error.
+	- NOTHING is written to one or two, seems the logic stopped
+	after the parsing error.
 
-`> lol "echo lol"`
-	- echo lol: command not found
-	- creates lol
-#### Stdout appending (>> outfile)
+#### Stdout appending (>>)
 
 - `>> outfile cmd` `>>outfile cmd` `cmd >> outfile` `cmd >>outfile`
 	- should execute the command or program at `/path/to/cmd` in a child
 	process and redirect its stdout to outfile.
 
+##### Weird Cases (>> outfile)
+
+- `>> bruh.c`
+	- bruh.c IS created or not truncated if already exists
+	- error code: 0
+
+- `>>one>>two>>three`
+	- one two and three ARE created or not truncated if already exists
+	- error code: 0
+
+- `</dev/random head -c 40 >>one>>two>>three`
+	- one two and three ARE created or not truncated if already exists
+	- error code: 0
+	- the result of `head` is appended to three (the last redirected
+	(>'d) file of the line)
+
+- `</dev/random head -c 40 >>1>>2>>3`
+	- bash: syntax error near unexpected token `1' (interpreted roughly as
+	 `</dev/random head -c 40 >> >> >>`) (1> 2> Should not be managed so it's 
+	not really an error in my case...)
+	- error code: 2
+
 ##### Errors (>> outfile)
 
+- `>>`
+	- bash: syntax error near unexpected token `newline'
+	- error code: 2
 
+- `>> >> >>`
+	- bash: syntax error near unexpected token `>' (the second one)
+	- error code: 2
 
+- `>> >> >> >>four`
+	- bash: syntax error near unexpected token `>' (the second one)
+	- four is NOT created / appended
+	- error code: 2
 
+- `>> >>outfile echo rofl`
+	- bash: syntax error near unexpected token `>>' (the second one)
+	- error code: 2
+	- outfile is NOT created / appended
 
+- `>>""`
+	- bash: : No such file or directory
+	- error code: 1
 
-### LINES WITH MULTIPLES COMMANDS
+- `>>''`
+	- bash: : No such file or directory
+	- error code: 1
+
+- `>> forbidden` (a file with no permission)
+	- bash: : Permission denied
+	- error code: 1
+
+- `>>lol >> ''`
+	- bash: : No such file or directory
+	- error code: 1
+	- lol IS created or not truncated if already exists
+
+- `echo salut >> forbidden >>two` (a file with no permission)
+	- bash: : Permission denied
+	- error code: 1
+	- two is NOT created or not truncated if already exists, seems the logic
+	stopped after the parsing error.
+
+- `echo salut >> '' >>two`
+	- bash: : No such file or directory
+	- error code: 1
+	- two is NOT created or not truncated if already exists, seems the logic
+	stopped after the parsing error.
+
+- `echo salut >>one >>two >> '' >>four`
+	- bash: : No such file or directory
+	- error code: 1
+	- one and two ARE created or not truncated if already exists.
+	- four is NOT created / truncated, seems the logic stopped after the
+	parsing error.
+	- NOTHING is written to one or two, seems the logic stopped
+	after the parsing error.
+
+### **Line with only two or more commands**
 
 ### PIPES
 
 - ``
 - ``
 
-## Constraints
-
-``
-
-# Errors
-
-### Redirections
-
-
-
-`< oof tee | echo lol`
+- `< oof tee | echo lol`
 	- lol
 	- bash: oof: No such file or directory
 
+## Constraints
 
-# Weird cases to consider
-
-
-
-##
+``
