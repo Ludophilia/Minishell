@@ -9,14 +9,14 @@ A sub program that take a line from the `interface` module and
 
 ## **Line with only one command**
 
-### Command execution (cmd)
+### Simple command (cmd)
 
-#### Standard command execution (cmd)
+#### Simple command execution (cmd)
 
 - `cmd` `/path/to/cmd`
 	- should execute the command or program at `/path/to/cmd`
 	in a child process.
-	- error code 0 (usually)
+	- error code 0
 
 ##### Errors (Standard command execution)
 
@@ -51,18 +51,6 @@ A sub program that take a line from the `interface` module and
 	what is being executed.
 	- error code: 0
 
-- `printf "GODDAMN!" >outfile1 >outfile2 >outfile3`
-	- GODDAMN! is written to outfile3
-	- outfile1 is created (is needed) but nothing is written to it.
-	- outfile2 is created (is needed) but nothing is written to it.	
-	- error code: 0
-
-- `printf "GODDAMN!" >outfile1>outfile2>outfile3`
-	- GODDAMN! is written to outfile3
-	- outfile1 is created (is needed) but nothing is written to it.
-	- outfile2 is created (is needed) but nothing is written to it.	
-	- error code: 0
-
 - `printf >outfile1>outfile2>outfile3 "GODDAMN!"`
 	- GODDAMN! is written to outfile3
 	- outfile1 is created (is needed) but nothing is written to it.
@@ -86,6 +74,12 @@ A sub program that take a line from the `interface` module and
 	- 1 2 3 is appended to outfile likely from `echo 10  11  12  `
 	- outfile1 is created (if didn't exist) but nothing is written to it.
 	- outfile2 is created (if didn't exist) but nothing is written to it.
+	- error code: 0
+
+- `</dev/random head >one>two>three -c 40`
+	- 40 bytes from /dev/random are written to three that is previously
+	created if needed.
+	- one, two are created or truncated but nothing is written to it.
 	- error code: 0
 
 ### Input Redirection (< <<)
@@ -180,6 +174,18 @@ A sub program that take a line from the `interface` module and
 	 `</dev/random head -c 40 > > >`) (1> 2> Should not be managed so it's 
 	not really an error in my case...)
 	- error code: 2
+
+- `printf "GODDAMN!" >outfile1 >outfile2 >outfile3`
+	- GODDAMN! is written to outfile3
+	- outfile1 is created (is needed) but nothing is written to it.
+	- outfile2 is created (is needed) but nothing is written to it.	
+	- error code: 0
+
+- `printf "GODDAMN!" >outfile1>outfile2>outfile3`
+	- GODDAMN! is written to outfile3
+	- outfile1 is created (is needed) but nothing is written to it.
+	- outfile2 is created (is needed) but nothing is written to it.	
+	- error code: 0
 
 ##### Errors (> outfile)
 
@@ -327,17 +333,59 @@ A sub program that take a line from the `interface` module and
 	- NOTHING is written to one or two, seems the logic stopped
 	after the parsing error.
 
-### **Line with only two or more commands**
 
-### PIPES
+## **Line with only one command and some special characters**
 
-- ``
+### Double quotes ("")
+
+#### Effect: blocking word splitting
+
+`""`
+TOMORROWLAND IS NOT REAL
+
+#### Effect: blocking most metacharacters
+
+Enclosing characters in double quotes (‘"’) preserves the literal value
+of all characters within the quotes, with the exception of ‘$’, ‘`’, ‘\’,
+and, when history expansion is enabled, ‘!’. (Last one is not POSIX compliant)
+
+NOTE: Only `$` should be managed in Minishell.
+
+- `ls "srcs/*.c"`
+	- ls: cannot access 'srcs/*.c': No such file or directory
+	- The `*` character is not expanded to its value
+	- error code: 2
+
+- `stat "$HOME"`
+	- execute stat <path_to_home>
+	- $HOME is expanded to its value
+	- error code: 0
+
+#### Strange cases
+
+- `ls "srcs/*.c`
+	- if the quote is not closed on the same line, a prompt `>` will appear
+	on the next line for completing the line. More line can be added until
+	the delimiter `"` is entered alone on a line.
+	- NOTE: Should NOT be managed by minishell.
+
+### Double quotes ('')
+
+
+## **Line with only two or more commands**
+
+### Pipes (|)
+
 - ``
 
 - `< oof tee | echo lol`
 	- lol
 	- bash: oof: No such file or directory
 
-## Constraints
+## Making sense?
+
+Some 
+
+
 
 ``
