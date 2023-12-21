@@ -82,6 +82,10 @@ A sub program that take a line from the `interface` module and
 	- one, two are created or truncated but nothing is written to it.
 	- error code: 0
 
+- `echo echo echo`
+	- print `echo echo` on stdout
+	-  error code: 0
+
 ### Input Redirection (< <<)
 
 #### Stdin redirection (<)
@@ -338,10 +342,51 @@ A sub program that take a line from the `interface` module and
 
 ### Double quotes ("")
 
-#### Effect: blocking word splitting
+#### Effect: everything within quote is treated as an SINGLE unit
 
-`""`
-TOMORROWLAND IS NOT REAL
+- `"pwd"`
+	- executes the command `pwd`
+	- prints the working directory
+	- error code: 0
+
+- `"last"`
+	- executes the command `last`
+	- prints the last sessions
+	- error code: 0
+
+- `"echo echo echo"`
+	- executes the command `echo echo echo`
+	- echo echo echo: command not found
+	- error code: 127
+
+- `"last | head -5"`
+	- executes the command `last | head -5`
+	- last | head -5: command not found
+	- error code: 127
+
+- `"du -hd0 $HOME"`
+	- executes the file at `du -hd0 /home/#@f`. (Mind the /)
+	- bash: du -hd0 /home/#@f: No such file or directory
+	- error code: 127
+
+- `"du -hd0 home #@f"`
+	- executes the command `du -hd0 home #@f` (Mind the absence of /)
+	- du -hd0 home #@f: command not found
+	- error code: 127
+
+- `"./deez/nuts"`
+	- executes the file at `./deez/nuts`. (Mind the /)
+	- bash: ./deez/nuts: No such file or directory
+	- error code: 127
+
+#### Effect: Everything is treated as a unit, spaces are preserved
+
+- `echo "hello       world"`
+	- prints `hello       world"` and not `hello world`,
+	which is the result of `echo hello       world`
+	- "hello       world" is ONE ARG to `echo`
+	- Double quotes preserve the amount of spaces within a string.
+	- error code: 0
 
 #### Effect: blocking most metacharacters
 
@@ -369,7 +414,89 @@ NOTE: Only `$` should be managed in Minishell.
 	the delimiter `"` is entered alone on a line.
 	- NOTE: Should NOT be managed by minishell.
 
-### Double quotes ('')
+### Single quotes ('')
+
+#### Effect: everything within quote is treated as an SINGLE unit
+
+- `'pwd'`
+	- executes the command `pwd`
+	- prints the working directory
+	- error code: 0
+
+- `'last'`
+	- executes the command `last`
+	- prints the last sessions
+	- error code: 0
+
+- `'echo echo echo'`
+	- executes the command `echo echo echo`
+	- echo echo echo: command not found
+	- error code: 127
+
+- `'last | head -5'`
+	- executes the command `last | head -5`
+	- last | head -5: command not found
+	- error code: 127
+
+- `'du -hd0 $HOME'`
+	- executes the COMMAND `du -hd0 $HOME`.
+	- du -hd0 $HOME: command not found
+	- error code: 127
+
+- `'du -hd0 home #@f'`
+	- executes the command `du -hd0 home #@f` (Mind the absence of /)
+	- du -hd0 home #@f: command not found
+	- error code: 127
+
+- `'./deez/nuts'`
+	- executes the file at `./deez/nuts`. (Mind the /)
+	- bash: ./deez/nuts: No such file or directory
+	- error code: 127
+
+#### Effect: Everything is treated as a unit, spaces are preserved
+
+- `echo 'hello       world'`
+	- prints `hello       world"` and not `hello world`,
+	which is the result of `echo hello       world`
+	- "hello       world" is ONE ARG to `echo`
+	- Double quotes preserve the amount of spaces within a string.
+	- error code: 0
+
+#### Effect: blocking most metacharacters
+
+Enclosing characters in single quotes (') preserves the literal value
+of all characters within the quotes.
+
+- `ls 'srcs/*.c'`
+	- ls: cannot access 'srcs/*.c': No such file or directory
+	- The `*` character is not expanded to its value
+	- error code: 2
+
+- `stat '$HOME'`
+	- stat: cannot statx '$HOME': No such file or directory
+	- error code: 1
+
+#### Strange cases
+
+- `'pw`
+	- if the quote is not closed on the same line, a prompt `>` will appear
+	on the next line for completing the line. More line can be added until
+	the delimiter `'` is entered on a line.
+	- Newlines will be added between every lines
+	- NOTE: Should NOT be managed by minishell.
+
+### Backlash (\)
+
+- NOTE: Should NOT be managed by your minishell.
+
+### Semi colon (;)
+
+- NOTE: Should NOT be managed by your minishell.
+
+
+
+
+
 
 
 ## **Line with only two or more commands**
