@@ -16,75 +16,75 @@ A sub program that take a line from the `interface` module and
 - `cmd` `/path/to/cmd`
 	- should execute the command or program at `/path/to/cmd`
 	in a child process.
-	- error code 0
+	- exit status: 0
 
 ##### Errors (Standard command execution)
 
 - `oof`
 	- bash: oof: command not found
-	- error code: 127
+	- exit status: 127
 
 - `""`
 	- bash: : command not found
-	- error code: 127
+	- exit status: 127
 
 - `< /dev/random uwu`
 	- bash: uwu: command not found
-	- error code: 127
+	- exit status: 127
 
 - `/path/to/hell`
 	- bash: /path/to/hell: No such file or directory
-	- error code: 126
+	- exit status: 126
 
 - `/path/to/heaven`
 	- bash: /path/to/heaven: Permission denied
-	- error code: 126
+	- exit status: 126
 
 - `"echo lol"`
 	- bash: echo lol: command not found
-	- error code: 127
+	- exit status: 127
 
 ##### Weird cases to consider
 
 - `echo 10 >>outfile3 11 12`
 	- "10 11 12" is written in `outfile3`. It's like `echo 10  11 12` is
 	what is being executed.
-	- error code: 0
+	- exit status: 0
 
 - `printf >outfile1>outfile2>outfile3 "GODDAMN!"`
 	- GODDAMN! is written to outfile3
 	- outfile1 is created (is needed) but nothing is written to it.
 	- outfile2 is created (is needed) but nothing is written to it.	
-	- error code: 0
+	- exit status: 0
 
 - `printf >outfile1>outfile2>outfile3 "GOOD" "TO" "SEE" "YOU"`
 	- GOOD is written to outfile3, likely following the execution of
 	`printf "GOOD" "TO" "SEE" "YOU"`
 	- outfile1 is created (is needed) but nothing is written to it.
 	- outfile2 is created (is needed) but nothing is written to it.
-	- error code: 0
+	- exit status: 0
 
 - `echo 1 >outfile1 2 >outfile2 3 >outfile3`
 	- 1 2 3 is written to outfile3.
 	- outfile1 is created but nothing is written to it.
 	- outfile2 is created but nothing is written to it.
-	- error code: 0
+	- exit status: 0
 
 - `echo 1 >>outfile1 2 >>outfile2 3 >>outfile3`
 	- 1 2 3 is appended to outfile likely from `echo 10  11  12  `
 	- outfile1 is created (if didn't exist) but nothing is written to it.
 	- outfile2 is created (if didn't exist) but nothing is written to it.
-	- error code: 0
+	- exit status: 0
 
 - `</dev/random head >one>two>three -c 40`
 	- 40 bytes from /dev/random are written to three that is previously
 	created if needed.
 	- one, two are created or truncated but nothing is written to it.
-	- error code: 0
+	- exit status: 0
 
 - `echo echo echo`
 	- print `echo echo` on stdout
-	-  error code: 0
+	- exit status: 0
 
 ### Input Redirection (< <<)
 
@@ -93,40 +93,40 @@ A sub program that take a line from the `interface` module and
 - `< infile cmd` `<infile cmd` `cmd < infile` `cmd <infile`
 	- should execute the command or program at `/path/to/cmd` in a child
 	process and redirect its stdin to infile.
-	- error code: 0 (expected)
+	- exit status: 0 (expected)
 
 ##### Errors (Stdin redirection)
 
 - `<`
 	- bash: syntax error near unexpected token `newline'
-	- error code: 2
+	- exit status: 2
 
 - `< </dev/random head`
 	- bash: syntax error near unexpected token `newline'
-	- error code: 2
+	- exit status: 2
 
 - `<""`
 	- bash: : No such file or directory
-	- error code: 1
+	- exit status: 1
 
 - `<lol`
 	- bash: lol: No such file or directory
-	- error code: 1
+	- exit status: 1
 	- lol is not created
 
 - `<lol<lel<lawl`
 	- bash: lol: No such file or directory
-	- error code: 1
+	- exit status: 1
 	- lol is not created
 	- lel or lawl neither
 
 - `< oof tee`
 	- bash: oof: No such file or directory
-	- error code: 1
+	- exit status: 1
 
 - `<lol<lel<lawl</dev/random head`
 	- bash: lol: No such file or directory
-	- error code: 1
+	- exit status: 1
 	- lol is not created
 	- lel or lawl neither 
 	- /dev/random not open
@@ -137,14 +137,15 @@ A sub program that take a line from the `interface` module and
 	- should execute the command or program at `/path/to/cmd` in a child
 	process and redirect its stdin to a temporary file that should end with
 	DELIMITER.
-	- Beware: The content of the heredoc shouldn't appear in the cmd history! (really, I see it in my bash...)
-	- error code: 0
+	- Beware: The content of the heredoc shouldn't appear in the cmd history!
+	(really, I see it in my bash...)
+	- exit status: 0
 
 ##### Errors (heredoc)
 
 - `<<`
 	- bash: syntax error near unexpected token `newline'
-	- error code: 2
+	- exit status: 2
 
 - `<< ""` `<< ''`
 	- That's not an error. This will just make an empty chain the DELIMITER.
@@ -161,15 +162,15 @@ A sub program that take a line from the `interface` module and
 
 - `>bruh.c`
 	- bruh.c IS created / truncated
-	- error code: 0
+	- exit status: 0
 
 - `>lol>lel>lawl`
 	- lol lel and lawl ARE created / truncated
-	- error code: 0
+	- exit status: 0
 
 - `</dev/random head -c 40 >lul>lol>lel`
 	- lul lol and lel ARE created / truncated
-	- error code: 0
+	- exit status: 0
 	- the result of `head` is written to lel (the last redirected
 	(>'d) file of the line)
 
@@ -177,60 +178,60 @@ A sub program that take a line from the `interface` module and
 	- bash: syntax error near unexpected token `1' (interpreted roughly as
 	 `</dev/random head -c 40 > > >`) (1> 2> Should not be managed so it's 
 	not really an error in my case...)
-	- error code: 2
+	- exit status: 2
 
 - `printf "GODDAMN!" >outfile1 >outfile2 >outfile3`
 	- GODDAMN! is written to outfile3
 	- outfile1 is created (is needed) but nothing is written to it.
 	- outfile2 is created (is needed) but nothing is written to it.	
-	- error code: 0
+	- exit status: 0
 
 - `printf "GODDAMN!" >outfile1>outfile2>outfile3`
 	- GODDAMN! is written to outfile3
 	- outfile1 is created (is needed) but nothing is written to it.
 	- outfile2 is created (is needed) but nothing is written to it.	
-	- error code: 0
+	- exit status: 0
 
 ##### Errors (> outfile)
 
 - `>`
 	- bash: syntax error near unexpected token `newline'
-	- error code: 2
+	- exit status: 2
 
 - `> > >`
 	- bash: syntax error near unexpected token `>' (the second one)
-	- error code: 2
+	- exit status: 2
 
 - `> > > >four`
 	- bash: syntax error near unexpected token `>' (the second one)
 	- four is NOT created / truncated
-	- error code: 2
+	- exit status: 2
 
 - `> >outfile echo rofl`
 	- bash: syntax error near unexpected token `>' (the second one)
-	- error code: 2
+	- exit status: 2
 	- outfile is NOT created / truncated
 
 - `>""`
 	- bash: : No such file or directory
-	- error code: 1
+	- exit status: 1
 
 - `>''`
 	- bash: : No such file or directory
-	- error code: 1
+	- exit status: 1
 
 - `> forbidden` (a file with no permission)
 	- bash: forbidden: Permission denied
-	- error code: 1
+	- exit status: 1
 
 - `>lol > ''`
 	- bash: : No such file or directory
-	- error code: 1
+	- exit status: 1
 	- lol has been created / truncated
 
 - `echo salut > '' >two`
 	- bash: : No such file or directory
-	- error code: 1
+	- exit status: 1
 	- two is NOT created / truncated, seems the logic stopped after the
 	parsing error.
 	- NOTHING is written to two, seems the logic stopped after the
@@ -238,13 +239,13 @@ A sub program that take a line from the `interface` module and
 
 - `echo salut > forbidden >two`
 	- bash: forbidden: Permission denied
-	- error code: 1
+	- exit status: 1
 	- two is NOT created / truncated, seems the logic stopped after the
 	parsing error.
 
 - `echo salut >one >two > '' >four`
 	- bash: : No such file or directory
-	- error code: 1
+	- exit status: 1
 	- one and two ARE created / truncated
 	- four is NOT created / truncated, seems the logic stopped after the
 	parsing error.
@@ -261,15 +262,15 @@ A sub program that take a line from the `interface` module and
 
 - `>> bruh.c`
 	- bruh.c IS created or not truncated if already exists
-	- error code: 0
+	- exit status: 0
 
 - `>>one>>two>>three`
 	- one two and three ARE created or not truncated if already exists
-	- error code: 0
+	- exit status: 0
 
 - `</dev/random head -c 40 >>one>>two>>three`
 	- one two and three ARE created or not truncated if already exists
-	- error code: 0
+	- exit status: 0
 	- the result of `head` is appended to three (the last redirected
 	(>'d) file of the line)
 
@@ -277,60 +278,60 @@ A sub program that take a line from the `interface` module and
 	- bash: syntax error near unexpected token `1' (interpreted roughly as
 	 `</dev/random head -c 40 >> >> >>`) (1> 2> Should not be managed so it's 
 	not really an error in my case...)
-	- error code: 2
+	- exit status: 2
 
 ##### Errors (>> outfile)
 
 - `>>`
 	- bash: syntax error near unexpected token `newline'
-	- error code: 2
+	- exit status: 2
 
 - `>> >> >>`
 	- bash: syntax error near unexpected token `>' (the second one)
-	- error code: 2
+	- exit status: 2
 
 - `>> >> >> >>four`
 	- bash: syntax error near unexpected token `>' (the second one)
 	- four is NOT created / appended
-	- error code: 2
+	- exit status: 2
 
 - `>> >>outfile echo rofl`
 	- bash: syntax error near unexpected token `>>' (the second one)
-	- error code: 2
+	- exit status: 2
 	- outfile is NOT created / appended
 
 - `>>""`
 	- bash: : No such file or directory
-	- error code: 1
+	- exit status: 1
 
 - `>>''`
 	- bash: : No such file or directory
-	- error code: 1
+	- exit status: 1
 
 - `>> forbidden` (a file with no permission)
 	- bash: : Permission denied
-	- error code: 1
+	- exit status: 1
 
 - `>>lol >> ''`
 	- bash: : No such file or directory
-	- error code: 1
+	- exit status: 1
 	- lol IS created or not truncated if already exists
 
 - `echo salut >> forbidden >>two` (a file with no permission)
 	- bash: : Permission denied
-	- error code: 1
+	- exit status: 1
 	- two is NOT created or not truncated if already exists, seems the logic
 	stopped after the parsing error.
 
 - `echo salut >> '' >>two`
 	- bash: : No such file or directory
-	- error code: 1
+	- exit status: 1
 	- two is NOT created or not truncated if already exists, seems the logic
 	stopped after the parsing error.
 
 - `echo salut >>one >>two >> '' >>four`
 	- bash: : No such file or directory
-	- error code: 1
+	- exit status: 1
 	- one and two ARE created or not truncated if already exists.
 	- four is NOT created / truncated, seems the logic stopped after the
 	parsing error.
@@ -338,7 +339,7 @@ A sub program that take a line from the `interface` module and
 	after the parsing error.
 
 
-## **Line with only one command and some special characters**
+## **Line with some special characters**
 
 ### Double quotes ("")
 
@@ -347,37 +348,37 @@ A sub program that take a line from the `interface` module and
 - `"pwd"`
 	- executes the command `pwd`
 	- prints the working directory
-	- error code: 0
+	- exit status: 0
 
 - `"last"`
 	- executes the command `last`
 	- prints the last sessions
-	- error code: 0
+	- exit status: 0
 
 - `"echo echo echo"`
 	- executes the command `echo echo echo`
 	- echo echo echo: command not found
-	- error code: 127
+	- exit status: 127
 
 - `"last | head -5"`
 	- executes the command `last | head -5`
 	- last | head -5: command not found
-	- error code: 127
+	- exit status: 127
 
 - `"du -hd0 $HOME"`
 	- executes the file at `du -hd0 /home/#@f`. (Mind the /)
 	- bash: du -hd0 /home/#@f: No such file or directory
-	- error code: 127
+	- exit status: 127
 
 - `"du -hd0 home #@f"`
 	- executes the command `du -hd0 home #@f` (Mind the absence of /)
 	- du -hd0 home #@f: command not found
-	- error code: 127
+	- exit status: 127
 
 - `"./deez/nuts"`
 	- executes the file at `./deez/nuts`. (Mind the /)
 	- bash: ./deez/nuts: No such file or directory
-	- error code: 127
+	- exit status: 127
 
 #### Effect: Everything is treated as a unit, spaces are preserved
 
@@ -386,7 +387,7 @@ A sub program that take a line from the `interface` module and
 	which is the result of `echo hello       world`
 	- "hello       world" is ONE ARG to `echo`
 	- Double quotes preserve the amount of spaces within a string.
-	- error code: 0
+	- exit status: 0
 
 #### Effect: blocking most metacharacters
 
@@ -399,12 +400,12 @@ NOTE: Only `$` should be managed in Minishell.
 - `ls "srcs/*.c"`
 	- ls: cannot access 'srcs/*.c': No such file or directory
 	- The `*` character is not expanded to its value
-	- error code: 2
+	- exit status: 2
 
 - `stat "$HOME"`
 	- execute stat <path_to_home>
 	- $HOME is expanded to its value
-	- error code: 0
+	- exit status: 0
 
 #### Strange cases
 
@@ -421,37 +422,37 @@ NOTE: Only `$` should be managed in Minishell.
 - `'pwd'`
 	- executes the command `pwd`
 	- prints the working directory
-	- error code: 0
+	- exit status: 0
 
 - `'last'`
 	- executes the command `last`
 	- prints the last sessions
-	- error code: 0
+	- exit status: 0
 
 - `'echo echo echo'`
 	- executes the command `echo echo echo`
 	- echo echo echo: command not found
-	- error code: 127
+	- exit status: 127
 
 - `'last | head -5'`
 	- executes the command `last | head -5`
 	- last | head -5: command not found
-	- error code: 127
+	- exit status: 127
 
 - `'du -hd0 $HOME'`
 	- executes the COMMAND `du -hd0 $HOME`.
 	- du -hd0 $HOME: command not found
-	- error code: 127
+	- exit status: 127
 
 - `'du -hd0 home #@f'`
 	- executes the command `du -hd0 home #@f` (Mind the absence of /)
 	- du -hd0 home #@f: command not found
-	- error code: 127
+	- exit status: 127
 
 - `'./deez/nuts'`
 	- executes the file at `./deez/nuts`. (Mind the /)
 	- bash: ./deez/nuts: No such file or directory
-	- error code: 127
+	- exit status: 127
 
 #### Effect: Everything is treated as a unit, spaces are preserved
 
@@ -460,7 +461,7 @@ NOTE: Only `$` should be managed in Minishell.
 	which is the result of `echo hello       world`
 	- "hello       world" is ONE ARG to `echo`
 	- Double quotes preserve the amount of spaces within a string.
-	- error code: 0
+	- exit status: 0
 
 #### Effect: blocking most metacharacters
 
@@ -470,11 +471,11 @@ of all characters within the quotes.
 - `ls 'srcs/*.c'`
 	- ls: cannot access 'srcs/*.c': No such file or directory
 	- The `*` character is not expanded to its value
-	- error code: 2
+	- exit status: 2
 
 - `stat '$HOME'`
 	- stat: cannot statx '$HOME': No such file or directory
-	- error code: 1
+	- exit status: 1
 
 #### Strange cases
 
@@ -485,7 +486,7 @@ of all characters within the quotes.
 	- Newlines will be added between every lines
 	- NOTE: Should NOT be managed by minishell.
 
-### Backlash (\)
+### Backlash (\\)
 
 - NOTE: Should NOT be managed by your minishell.
 
@@ -493,26 +494,172 @@ of all characters within the quotes.
 
 - NOTE: Should NOT be managed by your minishell.
 
+### BONUS: Wildcards (*)
 
+`*` matches any string, including the null string. NOTE: ONLY the current
+working directory should be managed by your minishell.
 
+- `echo *`
+	- prints the files and folders in the current working directory as `*`
+	matches everything into it. (not the hidden files)
+	- exit status: 0
 
+- `echo *e`
+	- prints the files and folders in the current working directory that
+	end with an `e`, including a file name `e`
+	- Case sensitive
+	- exit status: 0
 
+- `echo a*`
+	- prints the files and folders in the current working directory that
+	starts with an `a`, including a file name `a`
+	- Case sensitive
+	- exit status: 0
 
+- `echo * , * , *`
+	- prints 3 times the list of files and folders in the current working
+	directory, separating with `,`.
+	- exit status: 0
+
+# Weird cases
+
+- `echo ./*`
+	- print the content of the current working directory (or that matches
+	the pathname `$PWD/*`). Every file is formatted as: `./filename`.
+	- exit status: 0
+
+- `echo /*`
+	- print the content of top level directory (or that matches
+	the pathname `/*`). Every file is formatted as: `/filename`.
+	- exit status: 0
+
+# Errors (Wildcards)
+
+- `echo A*`
+	- prints `A*` if there is no match
+	- exit status: 0
 
 ## **Line with only two or more commands**
 
 ### Pipes (|)
 
-- ``
+A pipeline is a sequence of one or more commands separated by one
+of the control operators `|`.
 
-- `< oof tee | echo lol`
-	- lol
-	- bash: oof: No such file or directory
+The output of each command in the pipeline is connected via a pipe to the 
+input of the next command. That is, each command reads the previous command’s
+output. 
 
-## Making sense?
+This connection is performed before any redirections specified by `command1`.
 
-Some 
+- `echo salut | fold -w 1`
+	- `salut` is written vertically on stdout
+	- exit status: 0
 
+#### Errors (|)
 
+- `|`
+	- bash: syntax error near unexpected token `|'
+	- exit status: 2
 
-``
+#### Weird Cases (|)
+
+- `echo salut a tous |`
+	-  a prompt `>` will appear on the next line for completing the command.
+	Inputing an empty line will just generate a new one. The processing will 
+	occur only if a line is not empty.
+
+- `printf | echo salut`
+	- `salut` on stdout
+	- `printf: usage: printf [-v var] format [arguments]` on the 2nd line and
+	on stderr instead on the pipe
+	- exit status: 0 (the last command)
+
+- `echo salut | printf`
+	- `salut` on the read end of the pipe
+	- `printf: usage: printf [-v var] format [arguments]` on stderr
+	- exit status: 2 (the last command)
+
+- `echo salut >one | head -c 80`
+	- Nothing is printed on stdout 
+	- The output of `echo salut` has been redirected to the file `one` instead
+	of to the pipe.
+	- exit status: 0
+
+- `echo salut | < /dev/random head -c 40`
+	- Print 40 bytes coming from `/dev/random` 
+	- exit status: 0
+
+### BONUS: AND List (&&) 
+
+AND and OR lists are sequences of one or more pipelines separated by 
+the control operators ‘&&’ and ‘||’, respectively.
+
+An AND list has the form:
+
+- `command1 && command2`
+	- `command2` is executed if, and only if, `command1` returns an exit
+	status of zero (success). 
+	- The return status of AND and OR lists is the exit status of the 
+	last command executed in the list.
+
+- `sleep 5 && echo hello again`
+	- `sleep 5` is executed and THEN 5s later, `hello again`
+	- exit status: 0
+
+#### Errors
+
+- `&&`
+	- `bash: syntax error near unexpected token `&&'`
+	-  exit status: 2
+
+- `sleep && echo hello again`
+	- `sleep` is executed and nothing else as its exit status is not 0.
+	- exit status: 1 (`sleep` exit status)
+
+#### Weird Cases 
+
+- `pwd &&`
+	-  a prompt `>` will appear on the next line for completing the command.
+	Inputing an empty line will just generate a new one. The processing will 
+	occur only if a line is not empty.
+
+## BONUS: OR List (||) 
+
+AND and OR lists are sequences of one or more pipelines separated by 
+the control operators ‘&&’ and ‘||’, respectively.
+
+An OR list has the form:
+
+- `command1 || command2`
+	- `command2` is executed if, and only if, `command1` returns
+	 a non-zero exit status.  
+	- The return status of AND and OR lists is the exit status of the 
+	last command executed in the list.
+
+- `uwu 2> /dev/null || echo hello again`
+	- `hello again` is printed on stdout as `uwu` is not a valid command.
+	- exit status: 0
+
+#### Errors
+
+- `||`
+	- `bash: syntax error near unexpected token `||'`
+	-  exit status: 2
+
+- `sleep 1 || echo hello again`
+	- `sleep` is executed
+	- and nothing else as its exit status is 0.
+	- exit status: 0 (`sleep 1` exit status)
+
+### BONUS: () List (())
+
+`(sleep 14)`
+` (sleep 10 | echo FIN) && echo OK`
+`  (sleep 5 | echo FIN) || echo OK`
+`(sleep 3 | printf | echo FIN) && echo OK`
+`sleep 3 | printf | echo FIN && echo OK`
+`sleep 3 | echo FIN | printf && echo OK`
+`sleep 3 | echo FIN | printf || echo OK`
+
+`sleep 3 | printf | (echo FIN && echo OK)`

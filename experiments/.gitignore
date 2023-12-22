@@ -34,7 +34,8 @@
 */*/dup2_old
 */*/pipe
 
-*/*/execv*
+*/*/execve
+*/*/execvp
 
 */*stat/*stat
 
