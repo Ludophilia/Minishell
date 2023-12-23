@@ -652,14 +652,84 @@ An OR list has the form:
 	- and nothing else as its exit status is 0.
 	- exit status: 0 (`sleep 1` exit status)
 
-### BONUS: () List (())
+### BONUS: Grouping Commands (())
 
-`(sleep 14)`
-` (sleep 10 | echo FIN) && echo OK`
-`  (sleep 5 | echo FIN) || echo OK`
-`(sleep 3 | printf | echo FIN) && echo OK`
-`sleep 3 | printf | echo FIN && echo OK`
-`sleep 3 | echo FIN | printf && echo OK`
-`sleep 3 | echo FIN | printf || echo OK`
+#### Effect: Modify priorities on `&&` `||`
 
-`sleep 3 | printf | (echo FIN && echo OK)`
+- `sleep 5 && printf || echo FALLBACK`
+	- `&&` has a 
+	- exit code: 0
+
+- `sleep 5 && (printf || echo FALLBACK)`
+	- 
+
+#### Effect: Create subshells when 2 or more commands are grouped
+
+- NOTE: Should not be implemented by your minishell?
+
+- `(sleep 5)`
+	- No subshell is created
+	- exit status: 0
+
+- `(printf)`
+	- No subshell is created
+	- exit status: 2
+
+- `(sleep 5 | sleep 5)`
+	- A subshell is created (PPID: your minishell PID)
+	- The `sleep` processes are the child of the subshell
+	- exit status: 0
+
+- `sleep 5 | sleep 5`
+	- No subshell is created
+	- The `sleep` processes are the child of main shell
+	- exit status: 0
+
+#### Effect: A group has an exit status which matches the last command executed
+
+- NOTE: Should not be implemented by your minishell
+
+- `sleep 7 | sleep 1 && echo END`
+	- No subshell is created
+	- `echo` will be executed 7 seconds later as its execution depends on
+	the return value of the pipe
+	- exit status: 0
+
+- `(sleep 7 | sleep 3) && echo END`
+	- A subshell is created (PPID: your minishell PID)
+	- `sleep` and `sleep` are executed within that subshell.
+	- `echo` will be executed 7 seconds later as its execution depends on
+	the return value of the group
+	- exit status: 0
+
+- `(printf || echo FALLBACK)`	
+	- A subshell is created (PPID: your minishell PID)
+	- `printf` and `echo` are executed within that subshell.
+	- `printf` status code != 0, that's why `echo` is executed 
+	- exit status: 0
+
+- `(echo START && printf)`	
+	- A subshell is created (PPID: your minishell PID)
+	- `printf` and `echo` are executed within that subshell.
+	- `printf` status code != 0, that's why `echo` is executed 
+	- exit status: 2
+
+#### Effect: Affect the scope of variables
+
+- NOTE: Should not be implemented by your minishell
+
+#### Effects On Redirections
+
+- `echo START | (rev | tr '[:upper:]' '[:lower:]') | cat -e`
+	- Reverses the letters in START and make then lowercase. Add a $ as echo
+	ends its output with a newline.
+	- `rev` and `tr` are executed in a subshell
+	- this subshell still shares the fds opened on the shell original,
+	so communation still possible
+	- exit status: 0
+
+- `echo STARTED | (rev | tee) && echo MID | cat -e && echo END`
+	- DETRATS is printed on stdout (`tee` is not connected to the pipe)
+	- MID is sent through the pipe and outputted by `cat`
+	- END is printed on stdout
+	- exit status: 0
