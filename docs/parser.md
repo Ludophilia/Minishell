@@ -521,7 +521,7 @@ working directory should be managed by your minishell.
 	directory, separating with `,`.
 	- exit status: 0
 
-# Weird cases
+#### Weird cases
 
 - `echo ./*`
 	- print the content of the current working directory (or that matches
@@ -533,7 +533,7 @@ working directory should be managed by your minishell.
 	the pathname `/*`). Every file is formatted as: `/filename`.
 	- exit status: 0
 
-# Errors (Wildcards)
+#### Errors (Wildcards)
 
 - `echo A*`
 	- prints `A*` if there is no match
@@ -624,7 +624,7 @@ An AND list has the form:
 	Inputing an empty line will just generate a new one. The processing will 
 	occur only if a line is not empty.
 
-## BONUS: OR List (||) 
+### BONUS: OR List (||) 
 
 AND and OR lists are sequences of one or more pipelines separated by 
 the control operators ‘&&’ and ‘||’, respectively.
@@ -652,28 +652,27 @@ An OR list has the form:
 	- and nothing else as its exit status is 0.
 	- exit status: 0 (`sleep 1` exit status)
 
+- `uwu || echo hello again` 🟥
+	- `bash: uwu: command not found`
+	- hello again is still printed, as uwu failure generated exit code 127.
+
 ### BONUS: Grouping Commands (())
 
-#### Effect: Modify priorities on `&&` `||`
-
-- `sleep 5 && printf || echo FALLBACK`
-	- `&&` has a 
-	- exit code: 0
-
-- `sleep 5 && (printf || echo FALLBACK)`
-	- 
-
-#### Effect: Create subshells when 2 or more commands are grouped
+#### Effect: Create subshells
 
 - NOTE: Should not be implemented by your minishell?
 
 - `(sleep 5)`
-	- No subshell is created
+	- No subshell is created? (non visible in `ps`)
 	- exit status: 0
 
 - `(printf)`
-	- No subshell is created
+	- No subshell is created?
 	- exit status: 2
+
+- `(exit 42)`
+	- No subshell is created? (and yet the shell is not exited!)
+	- exit status: 42
 
 - `(sleep 5 | sleep 5)`
 	- A subshell is created (PPID: your minishell PID)
@@ -714,11 +713,90 @@ An OR list has the form:
 	- `printf` status code != 0, that's why `echo` is executed 
 	- exit status: 2
 
-#### Effect: Affect the scope of variables
+#### Effect: Modify priorities on `&&` `||`
 
-- NOTE: Should not be implemented by your minishell
+##### With AND operator first (NO Impact if success)
 
-#### Effects On Redirections
+- `sleep 5 && (exit 42) || echo FALLBACK`
+	- `sleep` is executed for 5s
+	- `exit` is executed then, as `sleep` returned 0
+	- `echo FALLBACK` is executed then as `exit` returned 42.
+	- exit code: 0
+
+- `(sleep 5 && (exit 42)) || echo FALLBACK`
+	- `sleep` is executed for 5s.
+	- `exit` is executed then, as `sleep` returned 0.
+	- `echo FALLBACK` is executed then as (`sleep` && `exit`) returned 42.
+	- exit code: 0
+
+- `sleep 5 && ((exit 42) || echo FALLBACK)`
+	- `sleep` is executed for 5s
+	- `exit` is executed then, as `sleep` returned 0
+	- `echo FALLBACK` is executed then as `exit` returned 42.
+	- exit code: 0
+
+##### With AND operator first (Impact if failure)
+
+- `(exit 42) && sleep 5 || echo FALLBACK`
+	- `exit` is executed and returns 42.
+	- `sleep` is NOT executed
+	- FALLBACK is printed on stdout
+	- exit code: 0
+
+- `((exit 42) && sleep 5) || echo FALLBACK`
+	- `exit` and `sleep` are executed in a subshell.
+	- `exit` is executed and returns 42.
+	- `sleep` is NOT executed
+	- FALLBACK is printed on stdout
+	- exit code: 0
+
+- `(exit 42) && (sleep 5 || echo FALLBACK)` 🟥
+	- `exit` is executed and returns 42
+	- NOTHING ELSE is executed because `exit` returned 42.
+	- exit code: 42
+
+##### With OR operator first (Impact if success)
+
+- `sleep 5 || echo FALLBACK && echo DONE`
+	- `sleep` is executed for 5s seconds...
+	- `echo FALLBACK` WILL NOT be executed as `sleep` returned 0.
+	- `echo DONE` is executed
+	- exit code: 0
+
+- `(sleep 5 || echo FALLBACK) && echo DONE`
+	- `sleep` is executed for 5s seconds...
+	- `echo FALLBACK` WILL NOT be executed as `sleep` returned 0.
+	- `echo DONE` is executed
+	- exit code: 0
+
+-  `sleep 5 || (echo FALLBACK && echo DONE)` 🟥
+	- `sleep` is executed for 5s seconds...
+	- `echo FALLBACK` and `echo DONE` WON'T be executed, as `sleep` returned 0.
+	- exit code: 0
+
+#### Effects On Output Redirections
+
+- `echo LOL && echo LEL && echo LUL > lul`
+	- LOL is printed on stdout
+	- LEL is printed on stdout
+	- LUL is redirected to lul
+	- exit value: 0
+
+- `(echo LOL && echo LEL && echo LUL) > lul`
+	- LOL is redirected to lul
+	- LEL is redirected to lul
+	- LUL is redirected to lul
+	- exit value: 0
+
+#### Effects On Input Redirections
+
+- `(head -2 && head -2 && head -2) < Makefile`
+	- The first `head` displays the first 2 lines of Makefile
+	- The second `head` displays the next 2 lines of Makefile
+	- The second `head` displays the next 2 lines of Makefile
+	- exit value: 0
+
+#### Effects On Pipes
 
 - `echo START | (rev | tr '[:upper:]' '[:lower:]') | cat -e`
 	- Reverses the letters in START and make then lowercase. Add a $ as echo
@@ -733,3 +811,20 @@ An OR list has the form:
 	- MID is sent through the pipe and outputted by `cat`
 	- END is printed on stdout
 	- exit status: 0
+
+#### Effect: Affect the scope of variables
+
+- NOTE: Should not be implemented by your minishell
+
+#### Errors ()
+
+- `()`
+	- bash: syntax error near unexpected token `)'
+	- exit status: 2
+
+#### Weird Cases ()
+
+- `echo LOL &&`
+	-  a prompt `>` will appear on the next line for completing the command.
+	Inputing an empty line will just generate a new one. The processing will 
+	occur only if a line is not empty.
