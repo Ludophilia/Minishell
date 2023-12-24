@@ -13,9 +13,32 @@ A sub program that take a line from the `interface` module and
 
 #### Simple command execution (cmd)
 
-- `cmd` `/path/to/cmd`
-	- should execute the command or program at `/path/to/cmd`
-	in a child process.
+- `tty`
+	- prints the user's tty
+	- exit status: 0
+
+- `/usr/bin/whoami`
+	- prints the current user
+	- exit status: 0
+
+- `ls -la`
+	- execute `ls` with the option `-la`
+	- exit status: 0
+
+- `which which`
+	- prints the path of the `which` command
+	- exit status: 0
+
+- `/usr/bin/stat Makefile`
+	- prints stats about Makefile file.
+	- exit status: 0
+
+- `git log -3 --oneline`
+	- prints the last 3 commits, one line each
+	- exit status: 0
+
+- `bash -c "last -3"`
+	- execute the `last` command in a subshekk 
 	- exit status: 0
 
 ##### Errors (Standard command execution)
@@ -607,15 +630,19 @@ An AND list has the form:
 	- `sleep 5` is executed and THEN 5s later, `hello again`
 	- exit status: 0
 
+- `sleep && echo hello again`
+	- `sleep` is executed and nothing else as its exit status is not 0.
+	- exit status: 1 (`sleep` exit status)
+
 #### Errors
 
 - `&&`
 	- `bash: syntax error near unexpected token `&&'`
 	-  exit status: 2
 
-- `sleep && echo hello again`
-	- `sleep` is executed and nothing else as its exit status is not 0.
-	- exit status: 1 (`sleep` exit status)
+- `&`
+	- `bash: syntax error near unexpected token `&'`
+	-  exit status: 2
 
 #### Weird Cases 
 
@@ -667,7 +694,7 @@ An OR list has the form:
 	- exit status: 0
 
 - `(printf)`
-	- No subshell is created?
+	- No subshell is created? (non visible in `ps`)
 	- exit status: 2
 
 - `(exit 42)`
@@ -683,6 +710,12 @@ An OR list has the form:
 	- No subshell is created
 	- The `sleep` processes are the child of main shell
 	- exit status: 0
+
+- `(exec sleep 3)`
+	- A subshell has to have been created (non visible in `ps`),
+	otherwise the shell would have been killed once `sleep` returned.
+	- exit status: 0
+
 
 #### Effect: A group has an exit status which matches the last command executed
 
