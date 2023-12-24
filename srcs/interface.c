@@ -6,7 +6,7 @@
 /*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:18:13 by jgermany          #+#    #+#             */
-/*   Updated: 2023/12/24 18:50:33 by jgermany         ###   ########.fr       */
+/*   Updated: 2023/12/24 19:05:51 by jgermany         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 //		- (start simple)
 
 // 		- Extract the redirections
+
 
 void	extract_command(char *line)
 {
