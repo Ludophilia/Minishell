@@ -54,3 +54,6 @@
 */*/sigaction
 */*/sigemptyset
 */*/sigaddset
+
+*/*/ft_strtrim
+*/*/ft_substr
