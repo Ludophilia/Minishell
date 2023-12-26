@@ -116,7 +116,15 @@ A sub program that take a line from the `interface` module and
 - `< infile cmd` `<infile cmd` `cmd < infile` `cmd <infile`
 	- should execute the command or program at `/path/to/cmd` in a child
 	process and redirect its stdin to infile.
-	- exit status: 0 (expected)
+	- exit status: 0
+
+- `<   /dev/random head -c 25`
+	- executes `head` after redirected its `stdin` to `/dev/random`
+	- exit status: 0
+
+- `</etc/group head -1`
+	- reads the first entry of `/etc/group`
+	- exit status: 0
 
 ##### Errors (Stdin redirection)
 
