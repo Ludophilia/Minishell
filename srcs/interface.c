@@ -6,7 +6,7 @@
 /*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:18:13 by jgermany          #+#    #+#             */
-/*   Updated: 2023/12/26 17:38:52 by jgermany         ###   ########.fr       */
+/*   Updated: 2023/12/26 19:19:54 by jgermany         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,16 +28,16 @@
 // 		- Extract the redirections
 
 
-enum e_cty
+enum e_typ
 {
-	TY_SPA,
+	TY_SPAC,
 	TY_RDIN,
 	TY_SPEC,
 	TY_RDOUT
 };
 
 
-int	psr_is_type(enum e_cty type, char *c)
+int	psr_is_type(enum e_typ type, char *c)
 {
 	int	i;
 
@@ -50,7 +50,7 @@ int	psr_is_type(enum e_cty type, char *c)
 		if (SPECIAL_CHARS[i++] == *c)
 			return (1);
 	}
-	if (type == TY_SPA && (*c == ' ' || (*c >= '\t' && *c <= '\r')))
+	if (type == TY_SPAC && (*c == ' ' || (*c >= '\t' && *c <= '\r')))
 		return (1);
 	else if (type == TY_RDIN && (*c == '<' && *(c + 1) != '<'))
 		return (1);
@@ -78,22 +78,29 @@ int	psr_extract_cmd(int *i, char *line)
 	return (0);
 }
 
-// int	psr_extract_path(int *i, char *line)
-// {
-// 	// extract
-// 	char	*path;
-// 	int		j;
-// 	int		k;
+int	psr_extract_path(int *i, char *line)
+{
+	char	*path;
+	int		j;
+	int		k;
 
-// 	if (i == NULL)
-// 		return (-1);
-// 	//
-// 	j = 0;
-// 	while (line[j])
-	
-// 	return (0);
-// }
-
+	if (i == NULL)
+		return (-1);
+	j = 0;
+	while (line[j] && psr_is_type(TY_SPAC, line + j))
+		j++;
+	k = j;
+	while (line[k] && !psr_is_type(TY_SPEC, line + k)
+		&& !psr_is_type(TY_SPAC, line + k))
+		k++;
+	path = ft_substr(line, j, k - 1);
+	if (path == NULL)
+		return (-1);
+	*i += k + 1;
+	printf("path = '%s'\n", path);
+	free(path);
+	return (0);
+}
 
 // #define SPECIAL_CHARS "<>()|\"'&"
 
@@ -106,16 +113,28 @@ int	psr_parse_line(char *line)
 	i = 0;
 	while (line[i])
 	{
-		if (psr_is_type(TY_SPA, line + i))
+
+		if (psr_is_type(TY_SPAC, line + i))
+		{
+			// printf("A space\n");
 			i++;
-		else if (!psr_is_type(TY_SPEC, line + i)
-			&& psr_extract_cmd(&i, line) == -1)
-			return (-1);
-		// else if (psr_is_type(TY_RDIN, line + i)
-		// 	&& psr_extract_cmd(&i, line + 1) == -1)
-		// 	return (-1);
+		}
+		else if (!psr_is_type(TY_SPEC, line + i))
+		{
+			if (psr_extract_cmd(&i, line + i) == -1)
+				return (-1);
+		}
+		else if (psr_is_type(TY_RDIN, line + i))
+		{
+			if (psr_extract_path(&i, line + i + 1) == -1)
+				return (-1);
+		}
 		else
 			break ;
+
+		// printf("line[%i] = %c\n", i, line[i]);
+
+
 		// if line[i] == <, and line[i + 1] != <, extract file name, maybe open it?
 		// if line[i] == < and line[i + 1] == <, extract file name, maybe open it?
 

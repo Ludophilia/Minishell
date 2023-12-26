@@ -126,6 +126,10 @@ A sub program that take a line from the `interface` module and
 	- reads the first entry of `/etc/group`
 	- exit status: 0
 
+- `</etc/passwd                          tail -1`
+	- reads the last entry of `/etc/passwd`
+	- exit status: 0
+
 ##### Errors (Stdin redirection)
 
 - `<`
@@ -161,6 +165,8 @@ A sub program that take a line from the `interface` module and
 	- lol is not created
 	- lel or lawl neither 
 	- /dev/random not open
+
+- `</etc/passwd   <   /dev/random       < lol    <     bleh            tail -1`	
 
 #### Stdin redirection via heredoc (<<)
 
