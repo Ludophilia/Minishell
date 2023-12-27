@@ -6,7 +6,7 @@
 /*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:18:13 by jgermany          #+#    #+#             */
-/*   Updated: 2023/12/27 14:52:22 by jgermany         ###   ########.fr       */
+/*   Updated: 2023/12/27 15:42:35 by jgermany         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,35 +20,28 @@ int	psr_parse_line(char *line)
 	while (line[i])
 	{
 		if (psr_is_type(TY_SPAC, line + i) == 1)
-			i++;
+			i += 1;
 		else if (psr_is_type(TY_SPEC, line + i) == 0
 			&& psr_extract_cmd(&i, line + i) >= 0)
-			;
+			i += 0;
 		else if (psr_is_type(TY_RDIN, line + i) == 1
 			&& psr_extract_path("inpath", &i, line + i + 1) >= 0)
-			;
+			i += 1;
+		else if (psr_is_type(TY_RDOUT, line + i) == 1
+			&& psr_extract_path("outpath", &i, line + i + 1) >= 0)
+			i += 1;
+		else if (psr_is_type(TY_RDHRD, line + i) == 1
+			&& psr_extract_path("here", &i, line + i + 2) >= 0)
+			i += 2;
+		else if (psr_is_type(TY_RDAPN, line + i) == 1
+			&& psr_extract_path("apnpath", &i, line + i + 2) >= 0)
+			i += 2;
 		else
 		{
 			printf("That will be the error case\n");
 			// return (-1);
 			break ;
 		}
-
-
-		// printf("line[%i] = %c\n", i, line[i]);
-
-
-		// if line[i] == <, and line[i + 1] != <, extract file name, maybe open it?
-		// if line[i] == < and line[i + 1] == <, extract file name, maybe open it?
-
-		// if line[i] == > and line[i + 1] == >, extract file name, maybe open it?
-		// if line[i] == > and line[i + 1] != >, extract file name, maybe open it?
-
-		// if line[i] == \", do something else
-		// if line[i] is not a special_char, extract the command
-
-		// 
-
 	}
 	return (0);
 }

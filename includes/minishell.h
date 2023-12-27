@@ -6,7 +6,7 @@
 /*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 15:09:52 by ggay              #+#    #+#             */
-/*   Updated: 2023/12/27 14:45:47 by jgermany         ###   ########.fr       */
+/*   Updated: 2023/12/27 15:19:36 by jgermany         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,10 @@ typedef struct s_core
 enum e_typ
 {
 	TY_SPAC,
-	TY_RDIN,
 	TY_SPEC,
+	TY_RDIN,
+	TY_RDHRD,
+	TY_RDAPN,
 	TY_RDOUT,
 	TY_CMDEND
 };

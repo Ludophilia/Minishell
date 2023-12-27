@@ -6,7 +6,7 @@
 /*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/27 14:36:28 by jgermany          #+#    #+#             */
-/*   Updated: 2023/12/27 14:46:54 by jgermany         ###   ########.fr       */
+/*   Updated: 2023/12/27 15:29:39 by jgermany         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,12 @@ int	psr_is_type(enum e_typ type, char *line)
 	if (type == TY_SPAC && (*line == ' ' || (*line >= '\t' && *line <= '\r')))
 		return (1);
 	else if (type == TY_RDIN && (*line == '<' && *(line + 1) != '<'))
+		return (1);
+	else if (type == TY_RDOUT && (*line == '>' && *(line + 1) != '>'))
+		return (1);
+	else if (type == TY_RDHRD && (*line == '<' && *(line + 1) == '<'))
+		return (1);
+	else if (type == TY_RDAPN && (*line == '>' && *(line + 1) == '>'))
 		return (1);
 	return (0);
 }
@@ -72,12 +78,13 @@ int	psr_extract_path(char *name, int *i, char *line)
 	while (line[j] && psr_is_type(TY_SPAC, line + j) == 1)
 		j++;
 	k = j;
-	while (line[k] && psr_is_type(TY_SPAC, line + k) == 0)
+	while (line[k] && psr_is_type(TY_SPAC, line + k) == 0
+		&& psr_is_type(TY_SPEC, line + k) == 0)
 		k++;
 	path = ft_substr(line, j, (k - j));
 	if (path == NULL)
 		return (-1);
-	*i += k + 1;
+	*i += k;
 	printf("%s = '%s'\n", name, path); // REMOVE
 	free(path);
 	return (0);
