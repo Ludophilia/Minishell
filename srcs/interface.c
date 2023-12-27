@@ -6,7 +6,7 @@
 /*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:18:13 by jgermany          #+#    #+#             */
-/*   Updated: 2023/12/26 19:19:54 by jgermany         ###   ########.fr       */
+/*   Updated: 2023/12/27 14:28:10 by jgermany         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,29 +33,50 @@ enum e_typ
 	TY_SPAC,
 	TY_RDIN,
 	TY_SPEC,
-	TY_RDOUT
+	TY_RDOUT,
+	TY_CMDEND
 };
 
 
-int	psr_is_type(enum e_typ type, char *c)
+int	psr_is_type(enum e_typ type, char *line)
 {
 	int	i;
 
-	if (c == NULL)
+	if (line == NULL)
 		return (-1);
 	i = 0;
 	while (type == TY_SPEC && SPECIAL_CHARS[i])
 	{
-		// printf("SPECIAL_CHARS[i] = '%c'\n", SPECIAL_CHARS[i]);		
-		if (SPECIAL_CHARS[i++] == *c)
+		if (SPECIAL_CHARS[i++] == *line)
 			return (1);
 	}
-	if (type == TY_SPAC && (*c == ' ' || (*c >= '\t' && *c <= '\r')))
+	while (type == TY_CMDEND && psr_is_type(TY_SPAC, line + i))
+	{
+		if (line[i + 1] == '\0' || psr_is_type(TY_SPEC, line + i + 1) == 1)
+			return (1);
+		i++;
+	}
+	if (type == TY_SPAC && (*line == ' ' || (*line >= '\t' && *line <= '\r')))
 		return (1);
-	else if (type == TY_RDIN && (*c == '<' && *(c + 1) != '<'))
+	else if (type == TY_RDIN && (*line == '<' && *(line + 1) != '<'))
 		return (1);
 	return (0);
 }
+
+// int	psr_is_end(char *line)
+// {
+// 	int	i;
+
+// 	i = 0;
+// 	while (line[i] && psr_is_type(TY_SPAC, line + i))
+// 	{
+// 		if (line[i + 1] == '\0'
+// 			|| psr_is_type(TY_SPEC, line + i + 1) == 1)
+// 			return (1);
+// 		i++;
+// 	}
+// 	return (0);
+// }
 
 // Command can start virtually with everything...
 
@@ -68,8 +89,14 @@ int	psr_extract_cmd(int *i, char *line)
 		return (-1);
 	j = 0;
 	while (line[j] && psr_is_type(TY_SPEC, line + j) == 0)
+	{
+		// if the following chars are spaces that ultimately 
+		// end up with a null or a special character...
+		if (psr_is_type(TY_CMDEND, line + j) == 1)
+			break ;
 		j++;
-	cmd = ft_substr(line, 0, j);
+	}
+	cmd = ft_substr(line, 0, j - 0);
 	if (cmd == NULL)
 		return (-1);
 	*i += j;
@@ -87,13 +114,12 @@ int	psr_extract_path(int *i, char *line)
 	if (i == NULL)
 		return (-1);
 	j = 0;
-	while (line[j] && psr_is_type(TY_SPAC, line + j))
+	while (line[j] && psr_is_type(TY_SPAC, line + j) == 1)
 		j++;
 	k = j;
-	while (line[k] && !psr_is_type(TY_SPEC, line + k)
-		&& !psr_is_type(TY_SPAC, line + k))
+	while (line[k] && psr_is_type(TY_SPAC, line + k) == 0)
 		k++;
-	path = ft_substr(line, j, k - 1);
+	path = ft_substr(line, j, (k - j));
 	if (path == NULL)
 		return (-1);
 	*i += k + 1;
@@ -113,24 +139,20 @@ int	psr_parse_line(char *line)
 	i = 0;
 	while (line[i])
 	{
-
-		if (psr_is_type(TY_SPAC, line + i))
-		{
-			// printf("A space\n");
+		if (psr_is_type(TY_SPAC, line + i) == 1)
 			i++;
-		}
-		else if (!psr_is_type(TY_SPEC, line + i))
-		{
-			if (psr_extract_cmd(&i, line + i) == -1)
-				return (-1);
-		}
-		else if (psr_is_type(TY_RDIN, line + i))
-		{
-			if (psr_extract_path(&i, line + i + 1) == -1)
-				return (-1);
-		}
+		else if (psr_is_type(TY_SPEC, line + i) == 0
+			&& psr_extract_cmd(&i, line + i) >= 0)
+			;
+		else if (psr_is_type(TY_RDIN, line + i) == 1
+			&& psr_extract_path(&i, line + i + 1) >= 0)
+			;
 		else
+		{
+			printf("That will be the error case\n");
+			// return (-1);
 			break ;
+		}
 
 		// printf("line[%i] = %c\n", i, line[i]);
 

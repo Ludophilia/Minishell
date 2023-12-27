@@ -126,10 +126,7 @@ into modules that can be built in parallel (by multiple people).
 - [ ] Manage
 	- [ ] 
 
-
 - [ ] extract commands
-
-
 
 - [ ] should not interpret unclosed quotes
 - [ ] should not interpret backlash (\)
