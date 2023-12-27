@@ -6,7 +6,7 @@
 #    By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/11 14:49:07 by ggay              #+#    #+#              #
-#    Updated: 2023/12/18 18:41:39 by jgermany         ###   ########.fr        #
+#    Updated: 2023/12/27 14:41:30 by jgermany         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,6 +30,7 @@ MAN_SRCS := $(SRCS_DR)/main.c
 MAN_SRCS += $(SRCS_DR)/builtins.c
 MAN_SRCS += $(SRCS_DR)/interface.c
 MAN_SRCS += $(SRCS_DR)/signals.c
+MAN_SRCS += $(SRCS_DR)/parser.c
 
 # MAN_SRCS += $(SRCS_DR)/parser_core.c
 # MAN_SRCS += $(SRCS_DR)/parser_utils.c

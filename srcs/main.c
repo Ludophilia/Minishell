@@ -6,7 +6,7 @@
 /*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/14 13:48:39 by jgermany          #+#    #+#             */
-/*   Updated: 2023/12/18 19:02:34 by jgermany         ###   ########.fr       */
+/*   Updated: 2023/12/27 14:44:18 by jgermany         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	main(void)
 {
-	if (sigmgr_init_handlers() == -1
+	if (sig_init_handlers() == -1
 		|| intf_loop_prompt() == -1)
 		return (1);
 	return (0);

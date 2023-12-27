@@ -6,7 +6,7 @@
 /*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 15:09:52 by ggay              #+#    #+#             */
-/*   Updated: 2023/12/26 17:11:35 by jgermany         ###   ########.fr       */
+/*   Updated: 2023/12/27 14:45:47 by jgermany         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,23 @@ typedef struct s_core
 	t_cmd	*cmds;
 }	t_core;
 
-int	sigmgr_init_handlers(void);
+enum e_typ
+{
+	TY_SPAC,
+	TY_RDIN,
+	TY_SPEC,
+	TY_RDOUT,
+	TY_CMDEND
+};
+
+int	sig_init_handlers(void);
 
 int	blt_exit(char *line);
+
+int	psr_is_type(enum e_typ type, char *line);
+int	psr_extract_cmd(int *i, char *line);
+int	psr_extract_path(char *name, int *i, char *line);
+int	psr_parse_line(char *line);
 
 int	intf_loop_prompt(void);
 
