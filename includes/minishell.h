@@ -6,7 +6,7 @@
 /*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 15:09:52 by ggay              #+#    #+#             */
-/*   Updated: 2023/12/27 15:19:36 by jgermany         ###   ########.fr       */
+/*   Updated: 2023/12/27 18:08:15 by jgermany         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,11 @@ typedef struct sigaction t_sigaction;
 
 typedef struct s_cmd
 {
-	char	*path;
+	char	*cmd;
 	char	**envp;
 	pid_t	pid;
-	int		infd[2];
-	int		outfd[2];
+	int		in_fds[2];
+	int		out_fds[2];
 }	t_cmd;
 
 typedef struct s_core

@@ -6,11 +6,29 @@
 /*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:18:13 by jgermany          #+#    #+#             */
-/*   Updated: 2023/12/27 15:42:35 by jgermany         ###   ########.fr       */
+/*   Updated: 2023/12/27 18:04:22 by jgermany         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+// (27/12) What to do?
+
+// - Start implementing exit status management. The exit status 
+//	of ^C should be 130.
+
+// - 
+
+// - GOAL: Having an array of commands ready to be execve'd in a subprocess
+// (variables expanded...)
+	// - e.g `/usr/bin/stat Makefile` should produce the following structure
+	//		- cmd: `/usr/bin/stat Makefile`
+	// - e.g `< infile > outfile cmd` should produce the following structure
+	//		- cmd: `cmd`
+	//		- in_fds: the file descriptor associated to the most recently 
+	//		opened file or pipe.
+	//		- out_fds: the file descriptor associated to the most recently
+	//		opened file or pipe.
 
 int	psr_parse_line(char *line)
 {
@@ -69,4 +87,3 @@ int	intf_loop_prompt(void)
 	}
 	return (0);
 }
-

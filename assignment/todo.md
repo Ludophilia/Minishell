@@ -104,6 +104,8 @@ into modules that can be built in parallel (by multiple people).
 
 ### `interface` module 
 
+- [ ] Start implementing error code related data 
+structures: 0 (zero)
 - [ ] Manage error code at startup: 0 (zero)
 
 - [x] Manage prompt (readline, infinite loop...)
@@ -123,7 +125,7 @@ into modules that can be built in parallel (by multiple people).
 
 ### `parser` module 
 
-- [ ] Manage
+- [ ] Extract What ()
 	- [ ] 
 
 - [ ] extract commands
