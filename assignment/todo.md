@@ -125,24 +125,37 @@ structures: 0 (zero)
 
 ### `parser` module 
 
-- [ ] Extract What ()
-	- [ ] 
+- [ ] Extract information about command and files from the line
+	- [ ] Manage to extract command + args
+	- [x] Manage to extract file path for input redirection
+	- [x] Manage to extract file path for output redirection
+	- [x] Manage to extract LIMITER for here documents
+	- [x] Manage to extract file path for output redirection in append mode
 
-- [ ] extract commands
+- [ ] Make transformations on the line parser to process `"` and `'`
+	- [ ] A `"` or `'` should make a ` ` (space) do nothing. With `"` or `'`
+	around, ` ` is not a  separator or a terminator anymore...
+	- [ ] A `'` should block every other metacharacter (`$`, `"`, `|`, `<`, `>`)
+	interpretation.
+	- [ ] A `"` should block every other metacharacter (`'`, `|`, `<`, `>`)
+	interpretation except `$`
+	- [ ] A `'` or `"` that is not matched should raise an error.
 
-- [ ] should not interpret unclosed quotes
-- [ ] should not interpret backlash (\)
-- [ ] should not interpret semicolon (;)
-- [ ] handle single quote (') - they should prevent metacharacters 
-interpretation
-- [ ] handle double quote (") - they should prevent metacharacters 
-interpretation except dollar sign ($)
+- [ ] Manage pipes (`|`)
+	- [ ] A pipe should signal two things:
+		- [ ] the end of a command (potentially the start of a new one if
+		there is smething beyond...) ;
+		- [ ] a new entry in 
+ 		- [ ] the creation of a pipe
 
 ### `expander` module (part of `parser`?)
 
-- [ ] manage environment variables ($): they should expand to their values
-- [ ] handle ($?) the exit status of the recent executed foreground 
-pipeline
+- [ ] Manage environment variables ($):
+	- [ ] they should expand to their values or nothing if there is nothing
+
+- [ ] Manage special variables ($):
+	- [ ] handle ($?) the exit status of the recent executed foreground 
+	pipeline
 
 ### `cmdenv builder` module 
 

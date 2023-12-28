@@ -6,7 +6,7 @@
 /*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 15:09:52 by ggay              #+#    #+#             */
-/*   Updated: 2023/12/27 18:08:15 by jgermany         ###   ########.fr       */
+/*   Updated: 2023/12/28 15:50:45 by jgermany         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
 
 # define DEFAULT_PATH "/bin:/usr/bin"
 # define INTF_PROMPT "minishell > "
-# define SPECIAL_CHARS "<>()|\"'&"
+# define SPECIAL_CHARS "<>|\"'"
 
 typedef struct sigaction t_sigaction;
 

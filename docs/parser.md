@@ -382,6 +382,9 @@ A sub program that take a line from the `interface` module and
 
 #### Effect: everything within quote is treated as an SINGLE unit
 
+Within a pair of `"`, ` ` (spaces) do nothing. They are not used as a separator
+or a terminator for commands or file paths anymore...
+
 - `"pwd"`
 	- executes the command `pwd`
 	- prints the working directory
@@ -417,6 +420,11 @@ A sub program that take a line from the `interface` module and
 	- bash: ./deez/nuts: No such file or directory
 	- exit status: 127
 
+- `> "Fate Apocrypha - 01.mkv" my_downloader`
+	- creates the file `Fate Apocrypha - 01.mkv` if it does not exist
+	- prints `my_downloader: command not found`
+	- exit status: 127
+
 #### Effect: Everything is treated as a unit, spaces are preserved
 
 - `echo "hello       world"`
@@ -443,6 +451,21 @@ NOTE: Only `$` should be managed in Minishell.
 	- execute stat <path_to_home>
 	- $HOME is expanded to its value
 	- exit status: 0
+
+- `"< /dev/random" head`
+	- `<` does not mean redirection anymore
+	- bash: < /dev/random: No such file or directory
+	- exit status: 127
+
+- `pwd "|" rev`
+	- prints current directory absolute path
+	- NOT in reverse, like it would have been done with `` 
+	- exit status: 0
+
+- `"<< LIMITER" tac`
+	- prints `<< LIMITER: command not found` on stderr
+	- This does not trigger here documents.
+	- exit status: 127
 
 #### Strange cases
 
@@ -527,9 +550,30 @@ of all characters within the quotes.
 
 - NOTE: Should NOT be managed by your minishell.
 
+- `echo \$PWD`
+	- prints `$PWD`
+	- exit code: 0
+
 ### Semi colon (;)
 
 - NOTE: Should NOT be managed by your minishell.
+
+- `whoami ; date ; tty`
+	- prints user, date and terminal path on a different line
+	- exit code: 0
+
+### Dollar sign (`$`)
+
+- `PIPE='|'`
+- `pwd $PIPE rev`
+	- prints current directory with no inversion whatsoever
+	- exit code: 0
+
+- `RBRACKET='>'`
+- `pwd $RBRACKET outfile`
+	- prints current directory with no redirection whatsoever
+	- exit code: 0
+
 
 ### BONUS: Wildcards (*)
 
@@ -591,6 +635,10 @@ This connection is performed before any redirections specified by `command1`.
 
 - `echo salut | fold -w 1`
 	- `salut` is written vertically on stdout
+	- exit status: 0
+
+- `pwd | rev`
+	- prints the current 
 	- exit status: 0
 
 #### Errors (|)

@@ -6,7 +6,7 @@
 /*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:18:13 by jgermany          #+#    #+#             */
-/*   Updated: 2023/12/27 18:04:22 by jgermany         ###   ########.fr       */
+/*   Updated: 2023/12/28 20:10:59 by jgermany         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,18 +17,25 @@
 // - Start implementing exit status management. The exit status 
 //	of ^C should be 130.
 
-// - 
+// Why do you extract from the line commands, arguments and file paths information?
 
-// - GOAL: Having an array of commands ready to be execve'd in a subprocess
-// (variables expanded...)
-	// - e.g `/usr/bin/stat Makefile` should produce the following structure
-	//		- cmd: `/usr/bin/stat Makefile`
-	// - e.g `< infile > outfile cmd` should produce the following structure
-	//		- cmd: `cmd`
-	//		- in_fds: the file descriptor associated to the most recently 
-	//		opened file or pipe.
-	//		- out_fds: the file descriptor associated to the most recently
-	//		opened file or pipe.
+// 	- The GOAL is to execute programs (commands) with some options (i/o 
+// redirected to a file or a pipe). 
+
+// - To realize this we need to pass data around different modules and thus
+// to create a structure to host commands and their information or an array
+// of those structures 
+	// - So, what does the structure contain?
+		// - the command obviously (name or absolute path)
+		// - the file descriptors for the input (if needed)
+			// - Why not store the path to a file and open it later
+			// in the process?
+			// 		- Not every redirection with <, <<, >>, > leads to a command...
+		// - the file descriptors for the output (if needed)
+		// - environment variables envp (in case)
+		// - ???
+
+
 
 int	psr_parse_line(char *line)
 {
