@@ -6,7 +6,7 @@
 /*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:59:28 by jgermany          #+#    #+#             */
-/*   Updated: 2023/12/29 15:46:46 by jgermany         ###   ########.fr       */
+/*   Updated: 2023/12/29 16:28:58 by jgermany         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static void	sigmgr_gen_handler(int sig_num)
 {
-	g_exit_status = sig_num + (0x8 << 4);
+	g_exit_status = sig_num + 128;
 	if (sig_num == SIGINT)
 	{
 		write(1, "\n", 2);

@@ -12,8 +12,7 @@ The rest will come as you're completing the assignment...
 
 ## Small experiments
 
-- [o] There is a lot of NEW external functions in this project. Learn to use
-EVERY ONE of them.
+- [o] There is a lot of NEW external functions in this project. Learn to use EVERY ONE of them.
 
 	- [x] readline
 	- [x] rl_clear_history
@@ -133,12 +132,12 @@ structures: 0 (zero)
 	- [x] Manage to extract file path for output redirection in append mode
 
 - [ ] Make transformations on the line parser to process `"` and `'`
-	- [ ] A `"` or `'` should make a ` ` (space) do nothing. With `"` or `'`
+	- [o] A `"` or `'` should make a ` ` (space) do nothing
+	(in the context of a command or a path). With `"` or `'`
 	around, ` ` is not a  separator or a terminator anymore...
 	- [ ] A `'` should block every other metacharacter (`$`, `"`, `|`, `<`, `>`)
 	interpretation.
-	- [ ] A `"` should block every other metacharacter (`'`, `|`, `<`, `>`)
-	interpretation except `$`
+	- [ ] A `"` should block every other metacharacter (`'`, `|`, `<`, `>`) interpretation except `$`...
 	- [ ] A `'` or `"` that is not matched should raise an error.
 
 - [ ] Manage pipes (`|`)
@@ -148,6 +147,9 @@ structures: 0 (zero)
 		- [ ] a new entry in 
  		- [ ] the creation of a pipe
 
+- [ ] Manage the parsing errors
+	- (parser.md)
+
 ### `expander` module (part of `parser`?)
 
 - [ ] Manage environment variables ($):
@@ -156,6 +158,8 @@ structures: 0 (zero)
 - [ ] Manage special variables ($):
 	- [ ] handle ($?) the exit status of the recent executed foreground 
 	pipeline
+
+- [ ] Cleanout the string: remove those `"` and `'`
 
 ### `cmdenv builder` module 
 

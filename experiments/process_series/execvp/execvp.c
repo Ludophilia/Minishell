@@ -6,7 +6,7 @@
 /*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/22 17:29:59 by jgermany          #+#    #+#             */
-/*   Updated: 2023/12/28 19:31:43 by jgermany         ###   ########.fr       */
+/*   Updated: 2023/12/29 19:15:34 by jgermany         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,9 @@
 
 int	main(void)
 {
-	if (execvp("git", (char *[]){"git", "log", "-3", "--oneline", 0}) == -1)
+	// if (execvp("git", (char *[]){"\"git\"", "\"log\"", "-3", "--oneline", 0}) == -1)
+	// 	return (1);
+	if (execvp("sleep", (char *[]){"sleep", "010", 0}) == -1)
 		return (1);
 	return (0);
 }
