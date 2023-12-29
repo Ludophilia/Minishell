@@ -6,7 +6,7 @@
 /*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 15:09:52 by ggay              #+#    #+#             */
-/*   Updated: 2023/12/28 15:50:45 by jgermany         ###   ########.fr       */
+/*   Updated: 2023/12/29 15:34:41 by jgermany         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,13 @@
 # include <fcntl.h>
 # include <errno.h>
 # include <signal.h>
+# include <stdint.h>
 
 # define DEFAULT_PATH "/bin:/usr/bin"
 # define INTF_PROMPT "minishell > "
 # define SPECIAL_CHARS "<>|\"'"
 
-typedef struct sigaction t_sigaction;
+typedef struct sigaction	t_sigaction;
 
 typedef struct s_cmd
 {
@@ -43,7 +44,8 @@ typedef struct s_cmd
 
 typedef struct s_core
 {
-	t_cmd	*cmds;
+	t_cmd		*cmds;
+	uint16_t	*exit;
 }	t_core;
 
 enum e_typ
@@ -57,6 +59,8 @@ enum e_typ
 	TY_CMDEND
 };
 
+extern uint16_t	g_exit_status;
+
 int	sig_init_handlers(void);
 
 int	blt_exit(char *line);
@@ -66,6 +70,6 @@ int	psr_extract_cmd(int *i, char *line);
 int	psr_extract_path(char *name, int *i, char *line);
 int	psr_parse_line(char *line);
 
-int	intf_loop_prompt(void);
+int	intf_loop_prompt(t_core *core);
 
 #endif

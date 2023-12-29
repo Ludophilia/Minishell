@@ -6,7 +6,7 @@
 /*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:18:13 by jgermany          #+#    #+#             */
-/*   Updated: 2023/12/28 20:10:59 by jgermany         ###   ########.fr       */
+/*   Updated: 2023/12/29 15:32:19 by jgermany         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,10 +71,11 @@ int	psr_parse_line(char *line)
 	return (0);
 }
 
-int	intf_loop_prompt(void)
+int	intf_loop_prompt(t_core *core)
 {
 	char	*line;
 
+	(void)core;
 	while (1)
 	{
 		line = readline(INTF_PROMPT);

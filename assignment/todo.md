@@ -104,9 +104,9 @@ into modules that can be built in parallel (by multiple people).
 
 ### `interface` module 
 
-- [ ] Start implementing error code related data 
+- [x] Start implementing error code related data 
 structures: 0 (zero)
-- [ ] Manage error code at startup: 0 (zero)
+- [x] Manage error code at startup: 0 (zero)
 
 - [x] Manage prompt (readline, infinite loop...)
 - [o] Add the command history (add history / clear_history?)
@@ -120,7 +120,7 @@ structures: 0 (zero)
 		SIGINT is sent. lol^C lol^C lol^C lel *enter* should be interpreted
 		as sending the lel command..
 		- [ ] MANAGE THE ERROR CODE! Error code: 130.
-	- [x] manage ctrl + d (exit or EOF?)
+	- [x] manage ctrl + D (exit or EOF?)
 	- [x] manage ctrl + \ (should do NOTHING)
 
 ### `parser` module 
