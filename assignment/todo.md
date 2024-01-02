@@ -138,7 +138,7 @@ structures: 0 (zero)
 	- [ ] A `'` should block every other metacharacter (`$`, `"`, `|`, `<`, `>`)
 	interpretation.
 	- [ ] A `"` should block every other metacharacter (`'`, `|`, `<`, `>`) interpretation except `$`...
-	- [ ] A `'` or `"` that is not matched should raise an error.
+	- [o] A `'` or `"` that is not matched should raise an error.
 
 - [ ] Manage pipes (`|`)
 	- [ ] A pipe should signal two things:

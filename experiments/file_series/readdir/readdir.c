@@ -6,7 +6,7 @@
 /*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 18:15:09 by jgermany          #+#    #+#             */
-/*   Updated: 2023/12/08 19:16:41 by jgermany         ###   ########.fr       */
+/*   Updated: 2024/01/02 15:56:57 by jgermany         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <stdio.h>
 #include <stdint.h>
 
-char *main_get_file_type(uint8_t filetype)
+char *main_get_file_typee(uint8_t filetype)
 {
 	switch (filetype)
 	{
@@ -46,7 +46,7 @@ void	main_print_dirent(struct dirent *dirent)
 	printf("\tcurrent location in directory stream: %lu\n", dirent->d_off);
 	printf("\tsize of the record: %u bytes\n", dirent->d_reclen);
 	printf("\tfile type: %u or %s\n",
-		dirent->d_type, main_get_file_type(dirent->d_type));	
+		dirent->d_type, main_get_file_typee(dirent->d_type));	
 }
 
 int	main(void)

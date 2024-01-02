@@ -6,7 +6,7 @@
 /*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 15:09:52 by ggay              #+#    #+#             */
-/*   Updated: 2023/12/29 17:33:30 by jgermany         ###   ########.fr       */
+/*   Updated: 2024/01/02 16:59:22 by jgermany         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,16 +48,25 @@ typedef struct s_core
 	uint16_t	*exit;
 }	t_core;
 
-enum e_typ
+typedef enum e_chartype
 {
-	TY_SPAC,
-	TY_SPEC,
+	TY_SPACE,
+	TY_SPECIAL,
 	TY_RDIN,
-	TY_RDHRD,
-	TY_RDAPN,
 	TY_RDOUT,
-	TY_CMDEND
-};
+	TY_HEREDOC,
+	TY_APPEND,
+	TY_SQUOTE,
+	TY_DQUOTE
+}	t_chartype;
+
+typedef enum e_endtype
+{
+	END_SQUOTE,
+	END_DQUOTE,
+	END_LINE,
+	END_SPECIAL
+}	t_endtype;
 
 extern uint16_t	g_exit_status;
 
@@ -65,7 +74,8 @@ int	sig_init_handlers(void);
 
 int	blt_exit(char *line);
 
-int	psr_is_type(enum e_typ type, char *line);
+int	psr_is_type(t_chartype type, char *line);
+
 int	psr_extract_cmd(int *i, char *line);
 int	psr_extract_path(char *name, int *i, char *line);
 int	psr_parse_line(char *line);

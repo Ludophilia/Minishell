@@ -385,6 +385,8 @@ A sub program that take a line from the `interface` module and
 Within a pair of `"`, ` ` (spaces) do nothing. They are not used as a separator
 or a terminator for commands or file paths anymore...
 
+#### Valid inclusions
+
 - `"pwd"`
 	- executes the command `pwd`
 	- prints the working directory
@@ -394,6 +396,18 @@ or a terminator for commands or file paths anymore...
 	- executes the command `last`
 	- prints the last sessions
 	- exit status: 0
+
+- `ls "-la"`
+	- executes the command `ls` with the args
+	- prints the list 
+	- exit status: 0
+
+- `> "Fate Apocrypha - 01.mkv" my_downloader`
+	- creates the file `Fate Apocrypha - 01.mkv` if it does not exist
+	- prints `my_downloader: command not found`
+	- exit status: 127
+
+#### Errors 
 
 - `"echo echo echo"`
 	- executes the command `echo echo echo`
@@ -405,24 +419,19 @@ or a terminator for commands or file paths anymore...
 	- last | head -5: command not found
 	- exit status: 127
 
-- `"du -hd0 $HOME"`
-	- executes the file at `du -hd0 /home/#@f`. (Mind the /)
-	- bash: du -hd0 /home/#@f: No such file or directory
-	- exit status: 127
-
 - `"du -hd0 home #@f"`
 	- executes the command `du -hd0 home #@f` (Mind the absence of /)
 	- du -hd0 home #@f: command not found
 	- exit status: 127
 
+- `"du -hd0 $HOME"`
+	- executes the file at `du -hd0 /home/#@f`. (Mind the /)
+	- bash: du -hd0 /home/#@f: No such file or directory
+	- exit status: 127
+
 - `"./deez/nuts"`
 	- executes the file at `./deez/nuts`. (Mind the /)
 	- bash: ./deez/nuts: No such file or directory
-	- exit status: 127
-
-- `> "Fate Apocrypha - 01.mkv" my_downloader`
-	- creates the file `Fate Apocrypha - 01.mkv` if it does not exist
-	- prints `my_downloader: command not found`
 	- exit status: 127
 
 #### Effect: Everything is treated as a unit, spaces are preserved
