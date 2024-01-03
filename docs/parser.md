@@ -380,7 +380,9 @@ A sub program that take a line from the `interface` module and
 
 ### Double quotes ("")
 
-#### Effect: everything within quote is treated as an SINGLE unit
+#### Effect: Deactivate whitespaces
+
+Everything within quote is treated as an SINGLE unit
 
 Within a pair of `"`, ` ` (spaces) do nothing. They are not used as a separator
 or a terminator for commands or file paths anymore...
@@ -406,6 +408,43 @@ or a terminator for commands or file paths anymore...
 	- creates the file `Fate Apocrypha - 01.mkv` if it does not exist
 	- prints `my_downloader: command not found`
 	- exit status: 127
+
+#### Parser notes: again, whitespaces semantics are disabled
+
+- `echo hello     world`
+	- 2 args
+	- prints `hello world`
+
+- `echo "hello     world"`
+	- 1 arg
+	- prints `hello     world`
+
+- `echo "\"hello     world\""`
+	- 1 arg
+	- prints `"hello     world"`
+
+- `echo"hello""world"`
+	- `echohelloworld: command not found`
+	- 0 arg: WHAT THE FORK?
+	- Quotes are definitely not separators, whitespaces still are, even when
+	quotes are present.
+	
+- `echo "hello""world"`
+	- prints `helloworld`
+	- 1 arg: WHAT THE... PORK?
+	- `"hello""world"` becomes one argument? There is one white spaces between
+	the command and the argument for sure but...
+
+- `echo " hello""world" again`
+	- 2 args
+	- prints ` helloworld again`
+	- `" hello""world"` is still one arg, `again` another, the split is done
+	on the whitespaces that are not within quotes.
+ 	
+- `echo " hello""world"again`
+	- 1 arg
+	- prints ` helloworldagain`
+	- Again, the split is done, on the whitespaces that are not within quotes.
 
 #### Errors 
 

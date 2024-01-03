@@ -6,36 +6,36 @@
 /*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/27 14:36:28 by jgermany          #+#    #+#             */
-/*   Updated: 2024/01/02 18:16:54 by jgermany         ###   ########.fr       */
+/*   Updated: 2024/01/03 18:30:25 by jgermany         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	psr_is_type(t_chartype type, char *line)
+int	psr_is_char(t_chartype type, char *line)
 {
 	int	i;
 
 	if (line == NULL)
 		return (-1);
 	i = 0;
-	while (type == TY_SPECIAL && SPECIAL_CHARS[i])
+	while (type == CHR_SPECIAL && SPECIAL_CHARS[i])
 	{
 		if (SPECIAL_CHARS[i++] == *line)
 			return (1);
 	}
-	if ((type == TY_SQUOTE && *line == '\'')
-		|| (type == TY_DQUOTE && *line == '\"')
-		|| (type == TY_SPACE && (*line == ' ' || (*line >= 9 && *line <= 13)))
-		|| (type == TY_RDIN && (*line == '<' && *(line + 1) != '<'))
-		|| (type == TY_RDOUT && (*line == '>' && *(line + 1) != '>'))
-		|| (type == TY_HEREDOC && (*line == '<' && *(line + 1) == '<'))
-		|| (type == TY_APPEND && (*line == '>' && *(line + 1) == '>')))
+	if ((type == CHR_SQUOTE && *line == '\'')
+		|| (type == CHR_DQUOTE && *line == '\"')
+		|| (type == CHR_SPACE && (*line == ' ' || (*line >= 9 && *line <= 13)))
+		|| (type == CHR_RDIN && (*line == '<' && *(line + 1) != '<'))
+		|| (type == CHR_RDOUT && (*line == '>' && *(line + 1) != '>'))
+		|| (type == CHR_HEREDOC && (*line == '<' && *(line + 1) == '<'))
+		|| (type == CHR_APPEND && (*line == '>' && *(line + 1) == '>')))
 		return (1);
 	return (0);
 }
 
-int	psr_has_type(t_endtype type, char *line)
+int	psr_has_char(t_endtype type, char *line)
 {
 	int	i;
 
@@ -43,7 +43,7 @@ int	psr_has_type(t_endtype type, char *line)
 	while ((type == END_LINE || type == END_SPECIAL) && line[++i])
 	{
 		if ((type == END_LINE && line[i + 1] == '\0')
-			|| (type == END_SPECIAL && psr_is_type(TY_SPECIAL, line + i + 1)))
+			|| (type == END_SPECIAL && psr_is_char(CHR_SPECIAL, line + i + 1)))
 			return (1);
 	}
 	while ((type == END_SQUOTE || type == END_DQUOTE) && line[++i])
@@ -57,6 +57,19 @@ int	psr_has_type(t_endtype type, char *line)
 
 // I think I misunderstood the role of quotes (\', \") in command formating...
 //		- They are not always at the start of the command, they can be in args too
+
+// Here are my assumptions:
+//	- When this function starts, the first character to parse is everything 
+//		except (<, >, |) and a space. So it could be a SQUOTE or a DQUOTE,
+//		but also anything else.
+//  - 
+
+// THE FIRST THING THAT SHOULD BE DONE:
+//		- Separating a command from its arguments. Should be done by respecting
+// quotes. Within a quote, whitespaces are not a separator anymore...
+//		- Don't trim the quotes initially, as more operations involving them is coming. 
+// - 
+// - 
 int	psr_extract_cmd(int *i, char *line)
 {
 	char	*cmd;
@@ -75,20 +88,20 @@ int	psr_extract_cmd(int *i, char *line)
 	j = 0;
 	quoted = 0;
 	while (line[j] && (quoted >= 1 || (quoted == 0
-		&& psr_is_type(TY_SPECIAL, line + j) == 0)))
+		&& psr_is_char(CHR_SPECIAL, line + j) == 0)))
 	{
 		if (line[j] == '\"' || line[j] == '\'')
 		{
 			if (line[j] == quoted)
 				break ; // WHY? POURQUOI? NAZE?
 			quoted = line[j];
-			if ((line[j] == '\'' && psr_has_type(END_SQUOTE, line + j) == 0)
-				|| (line[j] == '\"' && psr_has_type(END_DQUOTE, line + j) == 0))
+			if ((line[j] == '\'' && psr_has_char(END_SQUOTE, line + j) == 0)
+				|| (line[j] == '\"' && psr_has_char(END_DQUOTE, line + j) == 0))
 				return (-1);
 		}
-		else if (psr_is_type(TY_SPACE, line + j)
-			&& (psr_has_type(END_LINE, line + j)
-				|| psr_has_type(END_SPECIAL, line + j)))
+		else if (psr_is_char(CHR_SPACE, line + j)
+			&& (psr_has_char(END_LINE, line + j)
+				|| psr_has_char(END_SPECIAL, line + j)))
 			break ;
 		j++;
 	}
@@ -113,11 +126,11 @@ int	psr_extract_path(char *name, int *i, char *line)
 	if (i == NULL)
 		return (-1);
 	j = 0;
-	while (line[j] && psr_is_type(TY_SPACE, line + j) == 1)
+	while (line[j] && psr_is_char(CHR_SPACE, line + j) == 1)
 		j++;
 	k = j;
-	while (line[k] && psr_is_type(TY_SPACE, line + k) == 0
-		&& psr_is_type(TY_SPECIAL, line + k) == 0)
+	while (line[k] && psr_is_char(CHR_SPACE, line + k) == 0
+		&& psr_is_char(CHR_SPECIAL, line + k) == 0)
 		k++;
 	path = ft_substr(line, j, (k - j));
 	if (path == NULL)
@@ -171,21 +184,21 @@ int	psr_parse_line(char *line)
 		// 	// Manage matching " character or absence of matching character.
 		// }
 
-		if (psr_is_type(TY_SPACE, line + i) == 1)
+		if (psr_is_char(CHR_SPACE, line + i) == 1)
 			i += 1;
-		else if (psr_is_type(TY_SPECIAL, line + i) == 0
+		else if (psr_is_char(CHR_SPECIAL, line + i) == 0
 			&& psr_extract_cmd(&i, line + i) >= 0)
 			i += 0;
-		else if (psr_is_type(TY_RDIN, line + i) == 1
+		else if (psr_is_char(CHR_RDIN, line + i) == 1
 			&& psr_extract_path("inpath", &i, line + i + 1) >= 0)
 			i += 1;
-		else if (psr_is_type(TY_RDOUT, line + i) == 1
+		else if (psr_is_char(CHR_RDOUT, line + i) == 1
 			&& psr_extract_path("outpath", &i, line + i + 1) >= 0)
 			i += 1;
-		else if (psr_is_type(TY_HEREDOC, line + i) == 1
+		else if (psr_is_char(CHR_HEREDOC, line + i) == 1
 			&& psr_extract_path("here", &i, line + i + 2) >= 0)
 			i += 2;
-		else if (psr_is_type(TY_APPEND, line + i) == 1
+		else if (psr_is_char(CHR_APPEND, line + i) == 1
 			&& psr_extract_path("apnpath", &i, line + i + 2) >= 0)
 			i += 2;
 		else

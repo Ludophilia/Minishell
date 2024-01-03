@@ -6,7 +6,7 @@
 /*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 15:09:52 by ggay              #+#    #+#             */
-/*   Updated: 2024/01/02 16:59:22 by jgermany         ###   ########.fr       */
+/*   Updated: 2024/01/03 16:03:29 by jgermany         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
 # include <stdint.h>
 
 # define DEFAULT_PATH "/bin:/usr/bin"
-# define INTF_PROMPT "minishell > "
+# define INTF_PROMPT "> "
 # define SPECIAL_CHARS "<>|"
 
 typedef struct sigaction	t_sigaction;
@@ -50,14 +50,14 @@ typedef struct s_core
 
 typedef enum e_chartype
 {
-	TY_SPACE,
-	TY_SPECIAL,
-	TY_RDIN,
-	TY_RDOUT,
-	TY_HEREDOC,
-	TY_APPEND,
-	TY_SQUOTE,
-	TY_DQUOTE
+	CHR_SPACE,
+	CHR_SPECIAL,
+	CHR_RDIN,
+	CHR_RDOUT,
+	CHR_HEREDOC,
+	CHR_APPEND,
+	CHR_SQUOTE,
+	CHR_DQUOTE
 }	t_chartype;
 
 typedef enum e_endtype
@@ -74,7 +74,7 @@ int	sig_init_handlers(void);
 
 int	blt_exit(char *line);
 
-int	psr_is_type(t_chartype type, char *line);
+int	psr_is_char(t_chartype type, char *line);
 
 int	psr_extract_cmd(int *i, char *line);
 int	psr_extract_path(char *name, int *i, char *line);
