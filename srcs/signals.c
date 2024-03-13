@@ -6,7 +6,7 @@
 /*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:59:28 by jgermany          #+#    #+#             */
-/*   Updated: 2023/12/29 16:28:58 by jgermany         ###   ########.fr       */
+/*   Updated: 2024/03/13 19:37:33 by jgermany         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static void	sigmgr_gen_handler(int sig_num)
 	}
 }
 
-int	sig_init_handlers(void)
+int	sigmgr_init_handlers(void)
 {
 	t_sigaction	gen_sigaction;
 	t_sigaction	ign_sigaction;

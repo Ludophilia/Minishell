@@ -118,27 +118,32 @@ structures: 0 (zero)
 		- [x] Make sure that the line buffer is reset every time
 		SIGINT is sent. lol^C lol^C lol^C lel *enter* should be interpreted
 		as sending the lel command..
-		- [ ] MANAGE THE ERROR CODE! Error code: 130.
+		- [x] MANAGE THE ERROR CODE! Error code: 130.
 	- [x] manage ctrl + D (exit or EOF?)
 	- [x] manage ctrl + \ (should do NOTHING)
 
-### `parser` module 
+### [13/03 - Ongoing] `parser` module
 
 - [ ] Extract information about command and files from the line
 	- [ ] Manage to extract command + args
-	- [x] Manage to extract file path for input redirection
-	- [x] Manage to extract file path for output redirection
-	- [x] Manage to extract LIMITER for here documents
-	- [x] Manage to extract file path for output redirection in append mode
+
 
 - [ ] Make transformations on the line parser to process `"` and `'`
 	- [o] A `"` or `'` should make a ` ` (space) do nothing
 	(in the context of a command or a path). With `"` or `'`
 	around, ` ` is not a  separator or a terminator anymore...
+	- [o] A `'` or `"` that is not matched should raise an error.
+
 	- [ ] A `'` should block every other metacharacter (`$`, `"`, `|`, `<`, `>`)
 	interpretation.
-	- [ ] A `"` should block every other metacharacter (`'`, `|`, `<`, `>`) interpretation except `$`...
-	- [o] A `'` or `"` that is not matched should raise an error.
+	- [ ] A `"` should block every other metacharacter (`'`, `|`, `<`, `>`)
+	interpretation except `$`...
+
+- [ ] Extract information about command and files from the line
+	- [x] Manage to extract file path for input redirection
+	- [x] Manage to extract file path for output redirection
+	- [x] Manage to extract LIMITER for here documents
+	- [x] Manage to extract file path for output redirection in append mode
 
 - [ ] Manage pipes (`|`)
 	- [ ] A pipe should signal two things:

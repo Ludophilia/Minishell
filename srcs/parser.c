@@ -6,7 +6,7 @@
 /*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/27 14:36:28 by jgermany          #+#    #+#             */
-/*   Updated: 2024/01/03 18:30:25 by jgermany         ###   ########.fr       */
+/*   Updated: 2024/03/13 20:57:19 by jgermany         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,21 +141,21 @@ int	psr_extract_path(char *name, int *i, char *line)
 	return (0);
 }
 
+// ############################################################################
 
-// (27/12) What to do?
+// 13/03/24 - So this is where everything is happening...
 
-// - Start implementing exit status management. The exit status 
-//	of ^C should be 130.
+// Our job for this phase is simple: 
+	// The user type something after the prompt, a command line...
+	// ... and something should happen in response.
 
-// Why do you extract from the line commands, arguments and 
-// file paths information?
+// From a programmer standpoint. Once the user has submitted his line...
+	// We have to break down the instructions in the line (if they exist)...
+	// ...transmit those informations to the right module
+	// ... and return something.
 
-// 	- The GOAL is to execute programs (commands) with some options (i/o 
-// redirected to a file or a pipe). 
-
-// - To realize this we need to pass data around different modules and thus
-// to create a structure to host commands and their information or an array
-// of those structures 
+// For passing data around different modules, and a structure to host commands
+// and their information or an array of those structures will be needed... 
 	// - So, what does the structure contain?
 		// - the command obviously (name or absolute path)
 		// - the file descriptors for the input (if needed)
@@ -166,13 +166,17 @@ int	psr_extract_path(char *name, int *i, char *line)
 		// - environment variables envp (in case)
 		// - ???
 
+// ############################################################################
+
+// 
+
+// 
+
 int	psr_parse_line(char *line)
 {
 	int		i;
-	char	except;
 
 	i = 0;
-	except = 0;
 	while (line[i])
 	{
 		// if line[i] == "\"", something should happen, but what?
