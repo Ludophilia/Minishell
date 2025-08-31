@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
+/*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 15:09:52 by ggay              #+#    #+#             */
-/*   Updated: 2024/03/13 19:39:21 by jgermany         ###   ########.fr       */
+/*   Updated: 2025/08/31 19:51:52 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,15 @@
 # include <stdint.h>
 
 # define DEFAULT_PATH "/bin:/usr/bin"
-# define INTF_PROMPT "prompt> "
-# define SPECIAL_CHARS "<>|"
+# define UI_PROMPT "minishell> "
+
+extern uint32_t	g_exit_status;
 
 typedef struct sigaction	t_sigaction;
+
+// 31/08 - Are you sure about all of this below?
+
+# define SPECIAL_CHARS "<>|"
 
 typedef struct s_cmd
 {
@@ -68,18 +73,19 @@ typedef enum e_endtype
 	END_SPECIAL
 }	t_endtype;
 
-extern uint16_t	g_exit_status;
 
-int	sigmgr_init_handlers(void);
-
-int	bltn_exit(char *line);
-
+// 31/08 - I don't know about all of this...
 int	psr_is_char(t_chartype type, char *line);
 
 int	psr_extract_cmd(int *i, char *line);
 int	psr_extract_path(char *name, int *i, char *line);
 int	psr_parse_line(char *line);
 
-int	intf_loop_prompt(t_core *core);
+// 31/08 - Correct...
+int	sig_init_handlers(void);
+
+int	bi_exit(char *line);
+
+int	ui_loop_prompt(t_core *core);
 
 #endif

@@ -1,21 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   libft.h                                            :+:      :+:    :+:   */
+/*   ft_lstadd_back_bonus.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/11 15:11:24 by jegerman          #+#    #+#             */
-/*   Updated: 2025/04/23 20:49:11 by jegerman         ###   ########.fr       */
+/*   Created: 2024/11/19 16:58:12 by jegerman          #+#    #+#             */
+/*   Updated: 2025/08/31 18:44:40 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LIBFT_H
+#include "libft.h"
 
-# define LIBFT_H
+void	ft_lstadd_back(t_list **lst, t_list *new)
+{
+	t_list	*last;
 
-# include "libft/libft_bonus.h"
-# include "ft_printf/ft_printf_bonus.h"
-# include "get_next_line/get_next_line_bonus.h"
-
-#endif
+	if (lst == NULL || new == NULL)
+		return ;
+	if (*lst == NULL)
+		*lst = new;
+	else
+	{
+		last = ft_lstlast(*lst);
+		last->next = new;
+	}
+}

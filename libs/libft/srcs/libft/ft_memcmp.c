@@ -1,21 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   libft.h                                            :+:      :+:    :+:   */
+/*   ft_memcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/11 15:11:24 by jegerman          #+#    #+#             */
-/*   Updated: 2025/04/23 20:49:11 by jegerman         ###   ########.fr       */
+/*   Created: 2024/11/13 12:27:13 by jegerman          #+#    #+#             */
+/*   Updated: 2024/11/13 12:50:03 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LIBFT_H
+#include <stddef.h>
 
-# define LIBFT_H
+int	ft_memcmp(const void *s1, const void *s2, size_t n)
+{
+	size_t	i;
 
-# include "libft/libft_bonus.h"
-# include "ft_printf/ft_printf_bonus.h"
-# include "get_next_line/get_next_line_bonus.h"
-
-#endif
+	i = 0;
+	while (i < n)
+	{
+		if (((unsigned char *)s1)[i] != ((unsigned char *)s2)[i])
+			return (((unsigned char *)s1)[i] - ((unsigned char *)s2)[i]);
+		++i;
+	}
+	return (0);
+}

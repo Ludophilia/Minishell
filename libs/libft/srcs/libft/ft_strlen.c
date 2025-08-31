@@ -1,21 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   libft.h                                            :+:      :+:    :+:   */
+/*   ft_strlen.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/11 15:11:24 by jegerman          #+#    #+#             */
-/*   Updated: 2025/04/23 20:49:11 by jegerman         ###   ########.fr       */
+/*   Created: 2024/11/07 12:04:04 by jegerman          #+#    #+#             */
+/*   Updated: 2024/11/11 14:57:52 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LIBFT_H
+#include <stddef.h>
 
-# define LIBFT_H
+size_t	ft_strlen(const char *s)
+{
+	size_t	len;
 
-# include "libft/libft_bonus.h"
-# include "ft_printf/ft_printf_bonus.h"
-# include "get_next_line/get_next_line_bonus.h"
-
-#endif
+	len = 0;
+	while (s[len])
+		++len;
+	return (len);
+}

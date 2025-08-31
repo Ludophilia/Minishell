@@ -1,21 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   libft.h                                            :+:      :+:    :+:   */
+/*   ft_strlcpy.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/11 15:11:24 by jegerman          #+#    #+#             */
-/*   Updated: 2025/04/23 20:49:11 by jegerman         ###   ########.fr       */
+/*   Created: 2024/11/11 15:00:14 by jegerman          #+#    #+#             */
+/*   Updated: 2025/08/31 18:44:40 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LIBFT_H
+#include "libft.h"
 
-# define LIBFT_H
+size_t	ft_strlcpy(char *dst, const char *src, size_t size)
+{
+	size_t	i;
+	size_t	srclen;
 
-# include "libft/libft_bonus.h"
-# include "ft_printf/ft_printf_bonus.h"
-# include "get_next_line/get_next_line_bonus.h"
-
-#endif
+	srclen = ft_strlen(src);
+	if (size == 0)
+		return (srclen);
+	i = 0;
+	while (i < size - 1 && src[i])
+	{
+		dst[i] = src[i];
+		++i;
+	}
+	dst[i] = '\0';
+	return (srclen);
+}

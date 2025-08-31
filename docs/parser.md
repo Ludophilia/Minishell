@@ -38,7 +38,7 @@ A sub program that take a line from the `interface` module and
 	- exit status: 0
 
 - `bash -c "last -3"`
-	- execute the `last` command in a subshekk 
+	- execute the `last` command in a subshell
 	- exit status: 0
 
 ##### Errors (Standard command execution)

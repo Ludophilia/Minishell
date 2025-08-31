@@ -1,21 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   libft.h                                            :+:      :+:    :+:   */
+/*   ft_strncmp.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/11 15:11:24 by jegerman          #+#    #+#             */
-/*   Updated: 2025/04/23 20:49:11 by jegerman         ###   ########.fr       */
+/*   Created: 2024/11/12 16:28:56 by jegerman          #+#    #+#             */
+/*   Updated: 2024/11/22 16:29:34 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LIBFT_H
+#include <stddef.h>
 
-# define LIBFT_H
+int	ft_strncmp(const char *s1, const char *s2, size_t n)
+{
+	size_t			i;
+	unsigned char	*us1;
+	unsigned char	*us2;
 
-# include "libft/libft_bonus.h"
-# include "ft_printf/ft_printf_bonus.h"
-# include "get_next_line/get_next_line_bonus.h"
-
-#endif
+	us1 = (unsigned char *)s1;
+	us2 = (unsigned char *)s2;
+	i = 0;
+	while (i < n && (us1[i] || us2[i]))
+	{
+		if (us1[i] != us2[i])
+			return (us1[i] - us2[i]);
+		++i;
+	}
+	return (0);
+}

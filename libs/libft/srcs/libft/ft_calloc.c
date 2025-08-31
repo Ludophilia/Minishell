@@ -1,21 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   libft.h                                            :+:      :+:    :+:   */
+/*   ft_calloc.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/11 15:11:24 by jegerman          #+#    #+#             */
-/*   Updated: 2025/04/23 20:49:11 by jegerman         ###   ########.fr       */
+/*   Created: 2024/11/13 16:46:45 by jegerman          #+#    #+#             */
+/*   Updated: 2025/08/31 18:44:40 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LIBFT_H
+#include "libft.h"
 
-# define LIBFT_H
+void	*ft_calloc(size_t nmemb, size_t size)
+{
+	void	*buffer;
 
-# include "libft/libft_bonus.h"
-# include "ft_printf/ft_printf_bonus.h"
-# include "get_next_line/get_next_line_bonus.h"
-
-#endif
+	if (size > 0 && (nmemb != (nmemb * size) / size))
+		return (NULL);
+	buffer = malloc(nmemb * size);
+	if (buffer)
+		ft_bzero(buffer, nmemb * size);
+	return (buffer);
+}

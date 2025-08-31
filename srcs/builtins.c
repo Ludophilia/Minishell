@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
+/*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:05:43 by jgermany          #+#    #+#             */
-/*   Updated: 2024/03/13 17:55:27 by jgermany         ###   ########.fr       */
+/*   Updated: 2025/08/31 19:38:33 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	bltn_exit(char *line)
+int	bi_exit(char *line)
 {
 	printf("exit\n");
 	if (line)

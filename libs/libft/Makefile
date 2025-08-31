@@ -3,122 +3,108 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+         #
+#    By: jegerman <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2022/11/30 13:02:44 by jgermany          #+#    #+#              #
-#    Updated: 2023/12/14 13:43:35 by jgermany         ###   ########.fr        #
+#    Created: 2024/11/06 12:44:08 by jegerman          #+#    #+#              #
+#    Updated: 2025/08/31 18:46:44 by jegerman         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME 				:= libft.a
+NAME := libft.a
 
-LIB 				:= ft
-INCDIR 				:= includes
-LIBDIR 				:= .
+CC := cc
+AR := ar
+CFLAGS := -Wall -Wextra -Werror
+ARFLAGS := rcs
 
-CC 					:= cc
-CCFL 				:= -Wall -Wextra -Werror
+SRCS_LFTD := srcs/libft
+SRCS_PFBD := srcs/ft_printf
+SRCS_GNLBD := srcs/get_next_line
 
-DIR_CHAR			:= ./srcs/characters
-DIR_FIL				:= ./srcs/files
-DIR_INT				:= ./srcs/integers
-DIR_MEM				:= ./srcs/memory
-DIR_STR				:= ./srcs/strings
-DIR_LST				:= ./srcs/lists
-DIR_PF				:= $(DIR_STR)/printers/ft_dprintf
+INCL_LFT := includes
+INCL_PFB := includes/ft_printf
+INCL_GNLB := includes/get_next_line
 
-LFT_HDR				:= ./includes/libft.h
+SRCS_LFT := $(SRCS_LFTD)/ft_isalpha.c
+SRCS_LFT += $(SRCS_LFTD)/ft_isdigit.c
+SRCS_LFT += $(SRCS_LFTD)/ft_isalnum.c
+SRCS_LFT += $(SRCS_LFTD)/ft_isascii.c
+SRCS_LFT += $(SRCS_LFTD)/ft_isprint.c
+SRCS_LFT += $(SRCS_LFTD)/ft_strlen.c
+SRCS_LFT += $(SRCS_LFTD)/ft_memset.c
+SRCS_LFT += $(SRCS_LFTD)/ft_bzero.c
+SRCS_LFT += $(SRCS_LFTD)/ft_memcpy.c
+SRCS_LFT += $(SRCS_LFTD)/ft_memmove.c
+SRCS_LFT += $(SRCS_LFTD)/ft_strlcpy.c
+SRCS_LFT += $(SRCS_LFTD)/ft_strlcat.c
+SRCS_LFT += $(SRCS_LFTD)/ft_toupper.c
+SRCS_LFT += $(SRCS_LFTD)/ft_tolower.c
+SRCS_LFT += $(SRCS_LFTD)/ft_strchr.c
+SRCS_LFT += $(SRCS_LFTD)/ft_strrchr.c
+SRCS_LFT += $(SRCS_LFTD)/ft_strncmp.c
+SRCS_LFT += $(SRCS_LFTD)/ft_memchr.c
+SRCS_LFT += $(SRCS_LFTD)/ft_memcmp.c
+SRCS_LFT += $(SRCS_LFTD)/ft_strnstr.c
+SRCS_LFT += $(SRCS_LFTD)/ft_atoi.c
+SRCS_LFT += $(SRCS_LFTD)/ft_calloc.c
+SRCS_LFT += $(SRCS_LFTD)/ft_strdup.c
+SRCS_LFT += $(SRCS_LFTD)/ft_substr.c
+SRCS_LFT += $(SRCS_LFTD)/ft_strjoin.c
+SRCS_LFT += $(SRCS_LFTD)/ft_strtrim.c
+SRCS_LFT += $(SRCS_LFTD)/ft_split.c
+SRCS_LFT += $(SRCS_LFTD)/ft_itoa.c
+SRCS_LFT += $(SRCS_LFTD)/ft_strmapi.c
+SRCS_LFT += $(SRCS_LFTD)/ft_striteri.c
+SRCS_LFT += $(SRCS_LFTD)/ft_putchar_fd.c
+SRCS_LFT += $(SRCS_LFTD)/ft_putstr_fd.c
+SRCS_LFT += $(SRCS_LFTD)/ft_putendl_fd.c
+SRCS_LFT += $(SRCS_LFTD)/ft_putnbr_fd.c
+SRCS_LFT += $(SRCS_LFTD)/ft_lstnew_bonus.c
+SRCS_LFT += $(SRCS_LFTD)/ft_lstadd_front_bonus.c
+SRCS_LFT += $(SRCS_LFTD)/ft_lstsize_bonus.c
+SRCS_LFT += $(SRCS_LFTD)/ft_lstlast_bonus.c
+SRCS_LFT += $(SRCS_LFTD)/ft_lstadd_back_bonus.c
+SRCS_LFT += $(SRCS_LFTD)/ft_lstdelone_bonus.c
+SRCS_LFT += $(SRCS_LFTD)/ft_lstclear_bonus.c
+SRCS_LFT += $(SRCS_LFTD)/ft_lstiter_bonus.c
+SRCS_LFT += $(SRCS_LFTD)/ft_lstmap_bonus.c
 
-SRCS_MAN			:= $(DIR_CHAR)/classifiers/ft_isalnum.c
-SRCS_MAN			+= $(DIR_CHAR)/classifiers/ft_isalpha.c
-SRCS_MAN			+= $(DIR_CHAR)/classifiers/ft_isascii.c
-SRCS_MAN			+= $(DIR_CHAR)/classifiers/ft_isdigit.c
-SRCS_MAN			+= $(DIR_CHAR)/classifiers/ft_isprint.c
-SRCS_MAN			+= $(DIR_CHAR)/converters/ft_tolower.c
-SRCS_MAN			+= $(DIR_CHAR)/converters/ft_toupper.c
-SRCS_MAN			+= $(DIR_CHAR)/printers/ft_putchar_fd.c
+SRCS_PFB := $(SRCS_PFBD)/ft_printf_bonus.c
+SRCS_PFB += $(SRCS_PFBD)/printer_bonus.c
+SRCS_PFB += $(SRCS_PFBD)/processor_bonus.c
+SRCS_PFB += $(SRCS_PFBD)/parser_bonus.c
+SRCS_PFB += $(SRCS_PFBD)/parser_helpers_bonus.c
+SRCS_PFB += $(SRCS_PFBD)/processor_helpers_bonus.c
+SRCS_PFB += $(SRCS_PFBD)/flag_helpers_bonus.c
+SRCS_PFB += $(SRCS_PFBD)/bufferer_bonus.c
+SRCS_PFB += $(SRCS_PFBD)/bufferer_helpers_bonus.c
 
-SRCS_MAN			+= $(DIR_FIL)/misc/get_next_line.c
-SRCS_MAN			+= $(DIR_FIL)/misc/get_next_line_utils.c
+SRCS_GNLB := $(SRCS_GNLBD)/get_next_line_bonus.c
 
-SRCS_MAN			+= $(DIR_INT)/converters/ft_itoa.c
-SRCS_MAN			+= $(DIR_INT)/printers/ft_putnbr_fd.c
+OBJ_LFT := $(SRCS_LFT:.c=.o)
+OBJ_PFB := $(SRCS_PFB:.c=.o)
+OBJ_GNLB := $(SRCS_GNLB:.c=.o)
 
-SRCS_MAN			+= $(DIR_MEM)/comparators/ft_memcmp.c
-SRCS_MAN			+= $(DIR_MEM)/copiers/ft_memcpy.c
-SRCS_MAN			+= $(DIR_MEM)/copiers/ft_memmove.c
-SRCS_MAN			+= $(DIR_MEM)/initializers/ft_bzero.c
-SRCS_MAN			+= $(DIR_MEM)/initializers/ft_calloc.c
-SRCS_MAN			+= $(DIR_MEM)/initializers/ft_memset.c
-SRCS_MAN			+= $(DIR_MEM)/searchers/ft_memchr.c
+OBJS := $(OBJ_LFT) $(OBJ_PFB) $(OBJ_GNLB)
 
-SRCS_MAN			+= $(DIR_STR)/comparators/ft_strncmp.c
-SRCS_MAN			+= $(DIR_STR)/concatenaters/ft_strlcat.c
-SRCS_MAN			+= $(DIR_STR)/converters/ft_atoi.c
-SRCS_MAN			+= $(DIR_STR)/converters/ft_striteri.c
-SRCS_MAN			+= $(DIR_STR)/copiers/ft_strlcpy.c
-SRCS_MAN			+= $(DIR_STR)/initializers/ft_split.c
-SRCS_MAN			+= $(DIR_STR)/initializers/ft_strdup.c
-SRCS_MAN			+= $(DIR_STR)/initializers/ft_strjoin.c
-SRCS_MAN			+= $(DIR_STR)/initializers/ft_strmapi.c
-SRCS_MAN			+= $(DIR_STR)/initializers/ft_strtrim.c
-SRCS_MAN			+= $(DIR_STR)/initializers/ft_substr.c
-SRCS_MAN			+= $(DIR_STR)/misc/ft_strlen.c
-SRCS_MAN			+= $(DIR_STR)/printers/ft_putendl_fd.c
-SRCS_MAN			+= $(DIR_STR)/printers/ft_putstr_fd.c
-SRCS_MAN			+= $(DIR_STR)/searchers/ft_strchr.c
-SRCS_MAN			+= $(DIR_STR)/searchers/ft_strnstr.c
-SRCS_MAN			+= $(DIR_STR)/searchers/ft_strrchr.c
+all: $(NAME)
 
-SRCS_BON			:= $(DIR_LST)/adders/ft_lstadd_back_bonus.c
-SRCS_BON			+= $(DIR_LST)/adders/ft_lstadd_front_bonus.c
-SRCS_BON			+= $(DIR_LST)/converters/ft_lstiter_bonus.c
-SRCS_BON			+= $(DIR_LST)/deleters/ft_lstclear_bonus.c
-SRCS_BON			+= $(DIR_LST)/deleters/ft_lstdelone_bonus.c
-SRCS_BON			+= $(DIR_LST)/initializers/ft_lstmap_bonus.c
-SRCS_BON			+= $(DIR_LST)/initializers/ft_lstnew_bonus.c
-SRCS_BON			+= $(DIR_LST)/misc/ft_lstlast_bonus.c
-SRCS_BON			+= $(DIR_LST)/misc/ft_lstsize_bonus.c
+$(NAME): $(OBJS)
+	$(AR) $(ARFLAGS) $@ $^
 
-OBJS_MAN 			:= $(SRCS_MAN:.c=.o)
-OBJS_BON 			:= $(SRCS_BON:.c=.o)
+$(SRCS_LFTD)/%.o: $(SRCS_LFTD)/%.c
+	$(CC) $(CFLAGS) -o $@ -c $< -I$(INCL_LFT)
 
-AR 					:= ar
-ARFLM 				:= -rcs
-ARFLB 				:= -rcs
+$(SRCS_PFBD)/%.o: $(SRCS_PFBD)/%.c
+	$(CC) $(CFLAGS) -o $@ -c $< -I$(INCL_PFB) -I$(INCL_LFT)
 
-UNAME 				:= $(shell uname -s)
-ifeq 				($(UNAME), Linux)
-	VG 				:= valgrind
-	VGFL 			:= --leak-check=full --show-leak-kinds=all \
-						--track-origins=yes
-endif
+$(SRCS_GNLBD)/%.o: $(SRCS_GNLBD)/%.c
+	$(CC) $(CFLAGS) -o $@ -c $< -I$(INCL_GNLB) -I$(INCL_LFT)
 
-all: 				$(NAME)
-
-$(NAME): 			$(OBJS_MAN)
-					make -C $(DIR_PF)
-					$(AR) $(ARFLM) $@ $(OBJS_MAN)
-
-bonus: 				$(OBJS_BON)
-					$(AR) $(ARFLB) $(NAME) $^
-
-%.o: 				%.c $(LFT_HDR)
-					$(CC) $(CCFL) -I$(INCDIR) -c $< -o $@
-tests/%: 			all
-					@$(CC) $(CCFL) -I$(INCDIR) ./$@.c -l$(LIB) -L$(LIBDIR)
-					@./a.out
-mtests/%:			tests/%
-					$(VG) $(VGFL) ./a.out
-
-fclean: 			clean
-					@-rm -f $(NAME)
 clean:
-					@make -C $(DIR_PF) clean
-					@rm -f $(OBJS_MAN)
-					@rm -f $(OBJS_BON)
-					@rm -f a.out
+	rm -f $(OBJS)
 
-re: 				fclean all
+fclean: clean
+	rm -f $(NAME)
 
-.PHONY: 			all bonus re fclean clean
+re: fclean all

@@ -1,21 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   libft.h                                            :+:      :+:    :+:   */
+/*   ft_lstclear_bonus.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/11 15:11:24 by jegerman          #+#    #+#             */
-/*   Updated: 2025/04/23 20:49:11 by jegerman         ###   ########.fr       */
+/*   Created: 2024/11/20 14:44:20 by jegerman          #+#    #+#             */
+/*   Updated: 2025/08/31 18:44:40 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LIBFT_H
+#include "libft.h"
 
-# define LIBFT_H
+void	ft_lstclear(t_list **lst, void (*del)(void *))
+{
+	t_list	*node;
+	t_list	*next;
 
-# include "libft/libft_bonus.h"
-# include "ft_printf/ft_printf_bonus.h"
-# include "get_next_line/get_next_line_bonus.h"
-
-#endif
+	if (lst == NULL)
+		return ;
+	node = *lst;
+	while (node)
+	{
+		next = node->next;
+		ft_lstdelone(node, del);
+		node = next;
+	}
+	*lst = NULL;
+}

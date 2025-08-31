@@ -1,21 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   libft.h                                            :+:      :+:    :+:   */
+/*   get_next_line_bonus.h                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/11 15:11:24 by jegerman          #+#    #+#             */
-/*   Updated: 2025/04/23 20:49:11 by jegerman         ###   ########.fr       */
+/*   Created: 2024/11/24 14:04:27 by jegerman          #+#    #+#             */
+/*   Updated: 2025/04/23 20:54:21 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LIBFT_H
+#ifndef GET_NEXT_LINE_BONUS_H
 
-# define LIBFT_H
+# define GET_NEXT_LINE_BONUS_H
 
-# include "libft/libft_bonus.h"
-# include "ft_printf/ft_printf_bonus.h"
-# include "get_next_line/get_next_line_bonus.h"
+# include <unistd.h>
+# include <stdlib.h>
+# include "../libft/libft_bonus.h"
+
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 100
+# endif
+
+char		*get_next_line(int fd);
 
 #endif

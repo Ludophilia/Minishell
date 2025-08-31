@@ -1,21 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   libft.h                                            :+:      :+:    :+:   */
+/*   ft_strmapi.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/11 15:11:24 by jegerman          #+#    #+#             */
-/*   Updated: 2025/04/23 20:49:11 by jegerman         ###   ########.fr       */
+/*   Created: 2024/11/17 18:41:34 by jegerman          #+#    #+#             */
+/*   Updated: 2025/08/31 18:44:40 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LIBFT_H
+#include "libft.h"
 
-# define LIBFT_H
+char	*ft_strmapi(char const *s, char (*f)(unsigned int, char))
+{
+	char			*mpd_str;
+	unsigned int	i;
 
-# include "libft/libft_bonus.h"
-# include "ft_printf/ft_printf_bonus.h"
-# include "get_next_line/get_next_line_bonus.h"
-
-#endif
+	if (s == NULL || f == NULL)
+		return (NULL);
+	mpd_str = ft_calloc(ft_strlen(s) + 1, sizeof(char));
+	if (mpd_str == NULL)
+		return (NULL);
+	i = 0;
+	while (s[i])
+	{
+		mpd_str[i] = f(i, s[i]);
+		++i;
+	}
+	return (mpd_str);
+}

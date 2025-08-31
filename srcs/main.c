@@ -3,24 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
+/*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/14 13:48:39 by jgermany          #+#    #+#             */
-/*   Updated: 2024/03/13 19:52:01 by jgermany         ###   ########.fr       */
+/*   Updated: 2025/08/31 19:51:52 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-uint16_t	g_exit_status = 0;
+uint32_t	g_exit_status = 0;
 
-int	main(void)
+int	main(int argc, char **argv, char **envp)
 {
 	t_core	core;
 
+	(void)argc;
+	(void)argv;
+	(void)envp;
+
 	// (&core)->exit = &g_exit_status;
-	if (sigmgr_init_handlers() == -1
-		|| intf_loop_prompt(&core) == -1)
+	if (sig_init_handlers() == -1
+		|| ui_loop_prompt(&core) == -1)
 		return (1);
 	return (0);
 }

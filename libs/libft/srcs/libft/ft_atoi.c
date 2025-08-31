@@ -1,21 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   libft.h                                            :+:      :+:    :+:   */
+/*   ft_atoi.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/11 15:11:24 by jegerman          #+#    #+#             */
-/*   Updated: 2025/04/23 20:49:11 by jegerman         ###   ########.fr       */
+/*   Created: 2024/11/13 15:51:03 by jegerman          #+#    #+#             */
+/*   Updated: 2024/11/13 16:27:15 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LIBFT_H
+int	ft_atoi(const char *nptr)
+{
+	int	res[2];
 
-# define LIBFT_H
-
-# include "libft/libft_bonus.h"
-# include "ft_printf/ft_printf_bonus.h"
-# include "get_next_line/get_next_line_bonus.h"
-
-#endif
+	res[0] = 1;
+	res[1] = 0;
+	while ((*nptr >= 9 && *nptr <= 13) || *nptr == 32)
+		++nptr;
+	if (*nptr == '+' || *nptr == '-')
+	{
+		if (*nptr == '-')
+			res[0] = -1;
+		++nptr;
+	}
+	while (*nptr >= '0' && *nptr <= '9')
+	{
+		res[1] = 10 * res[1] + (*nptr - '0');
+		++nptr;
+	}
+	return (res[0] * res[1]);
+}

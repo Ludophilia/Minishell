@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jgermany <nyaritakunai@outlook.com>        +#+  +:+       +#+        */
+/*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:59:28 by jgermany          #+#    #+#             */
-/*   Updated: 2024/03/13 19:37:33 by jgermany         ###   ########.fr       */
+/*   Updated: 2025/08/31 19:51:52 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,17 +24,15 @@ static void	sigmgr_gen_handler(int sig_num)
 	}
 }
 
-int	sigmgr_init_handlers(void)
+int	sig_init_handlers(void)
 {
-	t_sigaction	gen_sigaction;
-	t_sigaction	ign_sigaction;
+	t_sigaction	gen_sigact;
+	t_sigaction	ign_sigact;
 
-	ft_bzero(&gen_sigaction, sizeof(t_sigaction));
-	ft_bzero(&ign_sigaction, sizeof(t_sigaction));
-	gen_sigaction.sa_handler = sigmgr_gen_handler;
-	ign_sigaction.sa_handler = SIG_IGN;
-	if (sigaction(SIGINT, &gen_sigaction, NULL) == -1
-		|| sigaction(SIGQUIT, &ign_sigaction, NULL) == -1)
+	ign_sigact = (t_sigaction){.sa_handler = SIG_IGN};
+	gen_sigact = (t_sigaction){.sa_handler = sigmgr_gen_handler};
+	if (sigaction(SIGINT, &gen_sigact, NULL) == -1
+		|| sigaction(SIGQUIT, &ign_sigact, NULL) == -1)
 		return (-1);
 	return (0);
 }

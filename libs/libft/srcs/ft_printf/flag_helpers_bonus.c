@@ -1,21 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   libft.h                                            :+:      :+:    :+:   */
+/*   flag_helpers_bonus.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/11 15:11:24 by jegerman          #+#    #+#             */
-/*   Updated: 2025/04/23 20:49:11 by jegerman         ###   ########.fr       */
+/*   Created: 2024/12/13 14:53:34 by jegerman          #+#    #+#             */
+/*   Updated: 2024/12/21 16:10:15 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LIBFT_H
+#include "ft_printf_bonus.h"
 
-# define LIBFT_H
+int	flags(unsigned int flags, t_meta *m)
+{
+	return ((m->flags & (flags)) == (flags));
+}
 
-# include "libft/libft_bonus.h"
-# include "ft_printf/ft_printf_bonus.h"
-# include "get_next_line/get_next_line_bonus.h"
+int	not_flags(unsigned int flags, t_meta *m)
+{
+	return ((m->flags & (flags)) == 0);
+}
 
-#endif
+int	flag(unsigned int flags, t_meta *m)
+{
+	return (m->flags & (flags));
+}
+
+int	not_flag(unsigned int flags, t_meta *m)
+{
+	return (!(m->flags & (flags)));
+}
