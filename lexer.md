@@ -2,9 +2,9 @@
 
 ## What should be done?
 
-Emit tokens as you scan a command line.
+- Emit tokens as you scan a command line.
 
-Which token should be emitted for:
+- Which token should be emitted for:
 
 ### Normal cases (examples are very important, otherwise I can't solve this)
 
@@ -21,7 +21,7 @@ Which token should be emitted for:
 - `'git log -3' --oneline`
 
 - `last | head -1`
-- `last           |                head                 -1`
+- `last | head -1`
 - `"last | head -1"`
 
 - `< Makefile head -5`
@@ -78,13 +78,13 @@ parsing phase.
 
 ## Why Tokenization?
 
-- Maybe it helps for the parsing phase.
+- Maybe it **helps for the parsing phase.**
 
-	-> Yes it does. It is separation of concerns in action.
+	-> Yes it does. **It is separation of concerns in action.**
 		- Part ONE (lexing): we IDENTIFY the different PARTS/COMPONENTS of the
 		command line: words, operators, EOL.
 
-		- Part ???(): expansion.
+		- Part ???: expansion.
 
 		- Part TWO (parsing): 
 			- we FOCUS on the MEANING/ROLE of those parts - its often a matter 
@@ -103,55 +103,90 @@ parsing phase.
 
 ## How to handle quotes?
 
-### Are they a special form of token? Or should they be handled like a WORD?
+### Some examples
 
 - `"ls -la"`
 	- `""` signal that `ls -la` should be viewed as ONE UNIQUE word.
+	- Stripped: `ls -la`
 
 - `'       '`
 	- Same, one UNIQUE word, full of spaces
+	- Stripped: `       `
 
 - `'`
 	- That's still ONE word, but it's limited by EOL rather than a matching `'`
-	in tokenization phase. Parser will open something to get more.
+	in tokenization phase. Parser will open something to get more - a multiline
+	command.
 
 - `'"'"`
-	- That's TWO words. One is limited by EOF.
+	- That will be ONE word. One quote is unclosed, limited by EOF. Parser 
+	will open something to get more.
+	- Stripped: `"\nlol` if typed lol" once enter in > phase.
 
-### Should quotes be included in Token?
+- `'"'lol`
+	- That's ONE word. `"lol: command not found`
+	- Stripped: `"lol`
+	- That also means a word doesn't stop at the end of a quote.
 
-- Yes. Except if we allow two quotes token.
+### What do quotes do, especially in that context?
 
-- That also means we will have to remove them in the expansion
-or parsing phase.
+- Quotes are just a way to block the value of some or all metacharacters...
+- This affects...
 
-## Expand the $ or not?
+	- How words are processed
+		- Usually, words are separated by space(s) or EOL.
+			- ls -la is TWO WORDS. `ls` `-la`
+				- ` ` can perform its function as a word separator.
+			- "ls -la" however is ONE WORD. `ls -la` 
+				- because spaces have lost their meaning as a 
+			separator.
 
-- Not here, separation of concerns.
+	- If operators are processed AS operators or not.
+		- This affect `<`, `<<`, `|`, `>>`, `>`
+			- `echo hey '>' james` prints `lol > james`, not writes hey in 
+			a file called james.
+			- `last '|' head`. Won't print the 10 first lines of last but
+			last sessions of users `|` and `head`, if exist 
+
+	- If `$` + `xxx` gets a special meaning or not.
+		- `echo "$USER"` prints the user name
+		- `echo '$USER'` prints $USER
+		- HOWEVER...
+			- `echo "$"USER` prints $USER. It seems that expansion can only 
+			happen within the confines of the dquotes if the $xxx pattern are
+			enclosed in them.
+
+### Are quotes a special form of token?
+
+- Let's leave them as part of the rest rather than as an explicit token
+that would only contain only them anyway.
+
+- However, **we do respect the effect of quotes in the lexing phase**. Meaning:
+	- They do affect how the line is broken down into WORDS.
+	- They also affect the emission of operator tokens.
+
+- The outer quotes will be removed later, at a later phase.
+
+### Which meta-characters are blocked with...
+
+- With single quotes ''
+	- Everyone of them.
+		- ` `, `<`, `<<`, `>>`, `>`, `$`
+
+- With double quotes ""
+	- ` `, `<`, `<<`, `>>`, `>`
+	- not `$`
+
+## Expand the $ in this phase or not?
+
+- Not here, separation of concerns. Here -> Identify the parts.
 
 ## Conclusion? Which tokens ?
 
-### Certainly
-
 - WORD,
-- OUTRD_OP,
-- INRD_OP
-- APPD_op
-- HDOC_OP,
+- ORD_OP,
+- ORDA_OP,
+- IRD_OP,
+- IRDHD_OP,
 - PIPE_OP,
 - EOL
-
-### No
-
-- single_q
-
-
-- singleq_word?
-- doubleq_word?
-	-> Quoted words are just a way to block some metacharacters...
-		- ls -la is TWO WORDS.
-		- "ls -la" is ONE WORD because spaces have lost their meaning as a 
-		separator.
-
-
-
