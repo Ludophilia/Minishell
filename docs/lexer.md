@@ -13,10 +13,12 @@
 
 - `tty`
 - `                          tty`
+	- 1 word.
 - `/usr/bin/whoami`
 
 - `ls -la`
 - `"ls -la"`
+	- 1 word.
 - `'ls -la'`
 
 - `git log -3 --oneline`
@@ -52,7 +54,7 @@
 
 - `< Makefile cat | rev >> elifekaM`
 
-### Strange cases like theses:
+### Strange cases like these:
 
 - `                  ` (line with space and lines, readline level)
 
@@ -66,6 +68,7 @@
 - `"`
 
 - `"'''"`
+	- That's ONE word
 
 - `last | ` (expect more with > next line)
 
@@ -79,6 +82,11 @@
 
 - `|`. Not `pwd |` which works, PIPE_OP checks if there something before at
 parsing phase.
+
+### Or some EXTREME situations like these:
+
+- `"ls'''''''''''''''''''''"" -la"`
+	- That's ONE WORD!
 
 ... that's the goal.
 

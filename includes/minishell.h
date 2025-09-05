@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 15:09:52 by ggay              #+#    #+#             */
-/*   Updated: 2025/09/05 16:44:24 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/05 18:04:25 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,10 @@
 
 # define UI_PROMPT "minishell> "
 
-# define DEFAULT_PATH "/bin:/usr/bin"
+# define TOK_MAX 128
+
+# define DEFAULT_PATH "/bin:/usr/bin" // Add a prefix to understand where the
+// macro belongs.
 
 extern uint32_t	g_exit_status;
 
@@ -37,10 +40,9 @@ typedef struct sigaction	t_sigaction;
 
 typedef enum e_tokt
 {
-	TOK_EOL, TOK_WORD,
+	TOK_EOL, TOK_WORD, TOK_PIPE,
 	TOK_IRED, TOK_IRED_HD,
 	TOK_ORED, TOK_ORED_AP,
-	TOK_PIPE,
 }	t_tokt;
 
 typedef struct s_tok
