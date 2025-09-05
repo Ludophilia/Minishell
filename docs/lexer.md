@@ -12,27 +12,33 @@
 	- empty command, mangaged by readline.
 
 - `tty`
+- `                          tty`
 - `/usr/bin/whoami`
 
 - `ls -la`
 - `"ls -la"`
+- `'ls -la'`
 
 - `git log -3 --oneline`
 - `'git log -3' --oneline`
 
 - `last | head -1`
-- `last | head -1`
+- `last|head -1`
 - `"last | head -1"`
 
 - `< Makefile head -5`
 
 - `< Makefile`
+- `<Makefile`
 
 - `> file1`
+- `>file3`
 
 - `>> file2`
+- `>>file2`
 
 - `<< END`
+- `<<$USER`
 
 - `$?`
 
@@ -84,10 +90,8 @@ parsing phase.
 		- Part ONE (lexing): we IDENTIFY the different PARTS/COMPONENTS of the
 		command line: words, operators, EOL.
 
-		- Part ???: expansion.
-
 		- Part TWO (parsing): 
-			- we FOCUS on the MEANING/ROLE of those parts - its often a matter 
+			- we FOCUS on the MEANING/ROLE of those parts - it's often a matter 
 			of token position.
 				- which one is the command (the first word outside operators
 				except pipe?)
@@ -100,6 +104,7 @@ parsing phase.
 				- Most operators and nothing after -> syntax error
 				- PIPE_OP nothing before -> syntax error
 
+		- Part ???: expansion.
 
 ## How to handle quotes?
 
@@ -170,12 +175,13 @@ that would only contain only them anyway.
 ### Which meta-characters are blocked with...
 
 - With single quotes ''
-	- Everyone of them.
-		- ` `, `<`, `<<`, `>>`, `>`, `$`
+	- ` `, `"`, `<`, `<<`, `>>`, `>`, `$`
+	- BONUS: `*`, `&&`, `||`, `(`, `)`
 
 - With double quotes ""
 	- ` `, `<`, `<<`, `>>`, `>`
-	- not `$`
+	- BONUS: `*`, `&&`, `||`, `(`, `)`
+	- NOT: `$.*` ($ + characters)
 
 ## Expand the $ in this phase or not?
 
@@ -184,9 +190,12 @@ that would only contain only them anyway.
 ## Conclusion? Which tokens ?
 
 - WORD,
-- ORD_OP,
-- ORDA_OP,
-- IRD_OP,
-- IRDHD_OP,
-- PIPE_OP,
+- IRED_OP, (<)
+- IRED_HD_OP, (<<)
+- ORED_OP, (>)
+- ORED_AP_OP, (>>)
+- PIPE_OP, (|)
 - EOL
+
+- BONUS:
+	- Later...

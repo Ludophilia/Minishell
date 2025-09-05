@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 15:09:52 by ggay              #+#    #+#             */
-/*   Updated: 2025/08/31 19:51:52 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/05 16:44:24 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,16 +27,28 @@
 # include <signal.h>
 # include <stdint.h>
 
-# define DEFAULT_PATH "/bin:/usr/bin"
 # define UI_PROMPT "minishell> "
+
+# define DEFAULT_PATH "/bin:/usr/bin"
 
 extern uint32_t	g_exit_status;
 
 typedef struct sigaction	t_sigaction;
 
-// 31/08 - Are you sure about all of this below?
+typedef enum e_tokt
+{
+	TOK_EOL, TOK_WORD,
+	TOK_IRED, TOK_IRED_HD,
+	TOK_ORED, TOK_ORED_AP,
+	TOK_PIPE,
+}	t_tokt;
 
-# define SPECIAL_CHARS "<>|"
+typedef struct s_tok
+{
+	enum e_tokt		type;
+	char			*start;
+	int				len;
+}	t_tok;
 
 typedef struct s_cmd
 {
@@ -47,41 +59,18 @@ typedef struct s_cmd
 	int		out_fds[2];
 }	t_cmd;
 
+// 5/9 - Isn't that a little... too small? 
 typedef struct s_core
 {
-	t_cmd		*cmds;
-	uint16_t	*exit;
+	t_cmd		*cmds; // Arrays? Lists?
+	// uint16_t	*exit; // ???
 }	t_core;
 
-typedef enum e_chartype
-{
-	CHR_SPACE,
-	CHR_SPECIAL,
-	CHR_RDIN,
-	CHR_RDOUT,
-	CHR_HEREDOC,
-	CHR_APPEND,
-	CHR_SQUOTE,
-	CHR_DQUOTE
-}	t_chartype;
+int	lex_is_quote(int c);
+int	lex_is_op(int c);
+int	lex_is_sep(int c);
+int	lex_tokenize_line(char *line);
 
-typedef enum e_endtype
-{
-	END_SQUOTE,
-	END_DQUOTE,
-	END_LINE,
-	END_SPECIAL
-}	t_endtype;
-
-
-// 31/08 - I don't know about all of this...
-int	psr_is_char(t_chartype type, char *line);
-
-int	psr_extract_cmd(int *i, char *line);
-int	psr_extract_path(char *name, int *i, char *line);
-int	psr_parse_line(char *line);
-
-// 31/08 - Correct...
 int	sig_init_handlers(void);
 
 int	bi_exit(char *line);

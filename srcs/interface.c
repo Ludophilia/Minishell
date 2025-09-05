@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:18:13 by jgermany          #+#    #+#             */
-/*   Updated: 2025/08/31 19:46:47 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/05 16:47:27 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,10 @@ int	ui_loop_prompt(t_core *core)
 		if (*line != 0)
 			add_history(line);
 
-		// 13/03/24 - So this is where we are stuck now. The parser...
-		if (*line != 0 && lex_parse_line(line) == -1)
-			return (-1);
+		// if (*line != 0 && lex_parse_line(line) == -1)
+		//	return (-1);
+
+		lex_tokenize_line(line);
 
 		// 31/08 - Really those builtins? Out there?
 		if (ft_strlen(line) == 4 && !ft_strncmp("exit", line, 4))

@@ -6,7 +6,7 @@
 #    By: jegerman <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/11 14:49:07 by ggay              #+#    #+#              #
-#    Updated: 2025/08/31 19:47:22 by jegerman         ###   ########.fr        #
+#    Updated: 2025/09/05 16:31:45 by jegerman         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,6 +32,7 @@ MAN_SRCS += $(SRCS_DR)/interface.c
 MAN_SRCS += $(SRCS_DR)/signals.c
 MAN_SRCS += $(SRCS_DR)/parser.c
 MAN_SRCS += $(SRCS_DR)/lexer.c
+MAN_SRCS += $(SRCS_DR)/lexer_utils.c
 
 # MAN_SRCS += $(SRCS_DR)/parser_core.c
 # MAN_SRCS += $(SRCS_DR)/parser_utils.c

@@ -39,4 +39,6 @@ expands only when delimiter is unquoted).
 - [ ] Signals: SIGINT interactive behavior (interrupt line, not exit), 
 SIGQUIT ignored in parent, default in children.
 
+### Part 4
+
 - [ ] Builtins: echo -n, cd, pwd, export, unset, env, exit.

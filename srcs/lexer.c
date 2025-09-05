@@ -6,67 +6,75 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 19:46:25 by jegerman          #+#    #+#             */
-/*   Updated: 2025/08/31 22:00:16 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/05 16:39:39 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/*
-## What should be done?
-
-	- Emitting tokens as you scan a command line
-
-## Why? What is the goal of that parser?
-
-	- Maybe it helps for the parsing phase. Yes it does, so we can identify the
-	commands and arguments and other operators (redirection, pipe) faster...
-
-	- Identify the different parts of a command line?
-
-	- Raising errors if the 
-
-## Which tokens ?
-
-	- Command (too early), arguments? (too early),
-
-	|_op
-
-	>_op, <_op, >>_op, <<_op, 
-
-	- quoted_word? dq_word? 
-
-## Conclusion?
-
-	- Lexing will identify the PARTS
-
-	- Parsing will MAKE SENSE of those PARTS:
-		- ORDER / positionning of words give them special meaning
-			- command is the first? WORD or the first WORD after some metachars like 
-			'|' '&&' or some operations like redirection
-
-*/
-
-enum e_tokt
+static int	lex_emit_token(t_tokt type, char *line, int len, t_tok *token)
 {
-	TOK_;	
-};
+	token->type = type;
+	token->start = line;
+	token->len = len;
+	return (len);
+}
 
-typedef struct s_tok
+static int	lex_emit_wtoken(char *line, t_tok *token)
 {
-	enum e_tokt		type;
-	char			*start;
-	int				len; // or malloc
-	struct s_tok	*next; // or array of tokens
-}	t_tok;
+	int		quoted;
+	int		j;
 
-int	lex_parse_line(char *line) // 31/08 - Temporary name
+	quoted = 0;
+	j = -1;
+	while (line[++j])
+	{
+		if (!quoted && lex_is_quote(line[j]))
+			quoted = line[j];
+		else if (quoted && line[j] == quoted)
+			quoted = 0;
+		if (!quoted && (lex_is_sep(line[j]) || lex_is_op(line[j])))
+			break ;
+	}
+	lex_emit_token(TOK_WORD, line, j, token);
+	return (j);
+}
+
+static int	lex_emit_optoken(char *line, t_tok *token)
 {
-	int	i;
-	//t_tok	tokens[128]; //
+	int		j;
+	
+	j = 0;
+	if (line[j] == '|')
+		j += lex_emit_token(TOK_PIPE, line, 1, token);
+	else if (line[j] == '<' && line[j + 1] != '<')
+		j += lex_emit_token(TOK_IRED, line, 1, token);
+	else if (line[j] == '<' && line[j + 1] == '<')
+		j += lex_emit_token(TOK_IRED_HD, line, 2, token);
+	else if (line[j] == '>' && line[j + 1] != '>')
+		j += lex_emit_token(TOK_ORED, line, 1, token);
+	else if (line[j] == '>' && line[j + 1] == '>')
+		j += lex_emit_token(TOK_ORED_AP, line, 2, token);
+	return (j);
+}
+
+int	lex_tokenize_line(char *line)
+{
+	t_tok	tokens[128]; // In the general, projet-level, struct?
+	int		tpos;
+	int		i;
 
 	i = 0;
+	tpos = 0;
 	while (line[i])
-		++i;
+	{
+		if (!lex_is_sep(line[i]) && !lex_is_op(line[i]))
+			i += lex_emit_wtoken(line + i, tokens + tpos++);
+		else if (lex_is_op(line[i]))
+			i += lex_emit_optoken(line + i, tokens + tpos++);
+		else
+			i++;
+	}
+	lex_emit_token(TOK_EOL, line + i, 1, tokens + tpos); // Is that really necessary?
 	return (0);
 }

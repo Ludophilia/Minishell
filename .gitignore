@@ -53,6 +53,7 @@ dkms.conf
 
 # Folders
 .vscode
+playground
 
 # Executables
 minishell
