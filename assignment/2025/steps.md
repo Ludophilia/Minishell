@@ -22,7 +22,7 @@
 
 ### Part 2
 
-- [o] Lexer that handles quotes, escapes, operators: |, <, >, >>, <<.
+- [x] Lexer that handles quotes, escapes, operators: |, <, >, >>, <<.
 
 - [ ] Expansions: $VAR, $?, ~ (optional), with quote rules 
 (no expand in single quotes; expand in double quotes; heredoc 

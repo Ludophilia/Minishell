@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 15:09:52 by ggay              #+#    #+#             */
-/*   Updated: 2025/09/05 18:04:25 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/05 18:30:01 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,9 @@ typedef struct s_core
 int	lex_is_quote(int c);
 int	lex_is_op(int c);
 int	lex_is_sep(int c);
-int	lex_tokenize_line(char *line);
+int	lex_tokenize_line(char *line, t_tok *tokens);
+
+int	psr_parse_line(char *line, t_core *core);
 
 int	sig_init_handlers(void);
 

@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:18:13 by jgermany          #+#    #+#             */
-/*   Updated: 2025/09/05 16:47:27 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/05 18:26:55 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ int	ui_loop_prompt(t_core *core)
 {
 	char	*line;
 
-	(void)core;
 	while (1)
 	{
 		line = readline(UI_PROMPT);
@@ -25,12 +24,11 @@ int	ui_loop_prompt(t_core *core)
 		if (*line != 0)
 			add_history(line);
 
-		// if (*line != 0 && lex_parse_line(line) == -1)
-		//	return (-1);
+		// 5/09 - Not at the right level anyway...
+		if (*line != 0 && psr_parse_line(line, core) == -1)
+			return (-1);
 
-		lex_tokenize_line(line);
-
-		// 31/08 - Really those builtins? Out there?
+		// 31/08 - Will certainly move somewhere else as well
 		if (ft_strlen(line) == 4 && !ft_strncmp("exit", line, 4))
 			return (bi_exit(line), 0);
 		free(line);

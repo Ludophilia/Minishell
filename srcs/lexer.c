@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 19:46:25 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/05 17:59:09 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/05 18:32:10 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static int	lex_emit_wtoken(char *line, t_tok *token)
 static int	lex_emit_optoken(char *line, t_tok *token)
 {
 	int		j;
-	
+
 	j = 0;
 	if (line[j] == '|')
 		j += lex_emit_token(TOK_PIPE, line, 1, token);
@@ -58,7 +58,6 @@ static int	lex_emit_optoken(char *line, t_tok *token)
 	return (j);
 }
 
-// 5/09 - Will be removed
 static int	lex_print_tokens(t_tok *tokens)
 {
 	int		i;
@@ -87,9 +86,8 @@ static int	lex_print_tokens(t_tok *tokens)
 	return (0);
 }
 
-int	lex_tokenize_line(char *line)
+int	lex_tokenize_line(char *line, t_tok *tokens)
 {
-	t_tok	tokens[TOK_MAX]; // In the general, projet-level, struct?
 	int		tpos;
 	int		i;
 
