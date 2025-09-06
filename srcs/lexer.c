@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 19:46:25 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/05 18:32:10 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/06 13:49:19 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,34 +58,6 @@ static int	lex_emit_optoken(char *line, t_tok *token)
 	return (j);
 }
 
-static int	lex_print_tokens(t_tok *tokens)
-{
-	int		i;
-	t_tok	*token;
-
-	i = -1;
-	while ((token = tokens + ++i)->type != TOK_EOL)
-	{
-		if (token->type == TOK_WORD)
-		{
-			write(1, "\tTOK_WORD: ", 11);
-			write(1, token->start, token->len);
-			write(1, "\n", 1);
-		}
-		else if (token->type == TOK_IRED)
-			printf("\tTOK_IRED\n");
-		else if (token->type == TOK_IRED_HD)
-			printf("\tTOK_IRED_HD\n");
-		else if (token->type == TOK_ORED)
-			printf("\tTOK_ORED\n");
-		else if (token->type == TOK_ORED_AP)
-			printf("\tTOK_ORED_AP\n");
-		else if (token->type == TOK_PIPE)
-			printf("\tTOK_PIPE\n");
-	}
-	return (0);
-}
-
 int	lex_tokenize_line(char *line, t_tok *tokens)
 {
 	int		tpos;
@@ -103,6 +75,5 @@ int	lex_tokenize_line(char *line, t_tok *tokens)
 			i++;
 	}
 	lex_emit_token(TOK_EOL, line + i, 1, tokens + tpos);
-	lex_print_tokens(tokens); // Remove
 	return (0);
 }

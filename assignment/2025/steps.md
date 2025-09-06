@@ -41,4 +41,8 @@ SIGQUIT ignored in parent, default in children.
 
 ### Part 4
 
-- [ ] Builtins: echo -n, cd, pwd, export, unset, env, exit.
+- [ ] Builtins: 
+	- echo -n, (no newline)
+ 	- cd, pwd, 
+	- export, unset, env,
+	- exit.
