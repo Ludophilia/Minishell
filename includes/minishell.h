@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/06 13:50:53 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/07 16:51:25 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@
 
 # define DEFAULT_PATH "/bin:/usr/bin" // Add a prefix to understand where the
 // macro belongs.
+# define ERR_SYNTAX "minishell: syntax error near unexpected token `%s'\n"
 
 extern uint32_t	g_exit_status;
 

@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:18:13 by jgermany          #+#    #+#             */
-/*   Updated: 2025/09/05 18:26:55 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/07 16:49:55 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,10 @@ int	ui_loop_prompt(t_core *core)
 
 		// 5/09 - Not at the right level anyway...
 		if (*line != 0 && psr_parse_line(line, core) == -1)
-			return (-1);
+		{
+			free(line);
+			continue ; // 7/09 - Find a better way.
+		}
 
 		// 31/08 - Will certainly move somewhere else as well
 		if (ft_strlen(line) == 4 && !ft_strncmp("exit", line, 4))

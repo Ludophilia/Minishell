@@ -9,8 +9,8 @@
 	instead.
 		- Operator token without WORD: `wow <`
 		- unmatched quote in a WORD: e.g - `"salut`
-		- leading pipe: `| head -5`
 		- trailing pipe (): e.g - `last |`
+		- leading pipe: `| head -5`
 
 	- and fill the structures with the data extracted from the command line
 	via the tokens, data that will be necessary for executing command(s), 
@@ -37,7 +37,7 @@
 #### Syntax errors with word
 
 - `"Word` or `"`
-	- Unmatched quotes, not bash behavior but simpler and its not required
-	by the subject.
+	- Unmatched quotes, bash does something to manage this, but the subject
+	does not require it, so I will throw an error instead.
 - `'Weird` or `'`
 	- 
