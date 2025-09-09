@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/07 16:51:25 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/09 19:11:57 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@
 # define UI_PROMPT "minishell> "
 
 # define TOK_MAX 128
+# define CMD_MAX 128
 
 # define DEFAULT_PATH "/bin:/usr/bin" // Add a prefix to understand where the
 // macro belongs.
@@ -56,8 +57,10 @@ typedef struct s_tok
 typedef struct s_cmd
 {
 	char	*cmd;
-	char	**envp;
+	// char	**envp;
+
 	pid_t	pid;
+
 	int		in_fds[2];
 	int		out_fds[2];
 }	t_cmd;
@@ -65,7 +68,9 @@ typedef struct s_cmd
 // 5/9 - Isn't that a little... too small? 
 typedef struct s_core
 {
-	t_cmd		*cmds; // Arrays? Lists?
+	t_cmd		cmds[CMD_MAX]; // Arrays? Lists?
+	int			cmd_nbr;
+	
 	// uint16_t	*exit; // ???
 }	t_core;
 
