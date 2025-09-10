@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:16:27 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/09 19:13:59 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/10 19:03:09 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,92 +67,80 @@ int	psr_error_check(t_tok *tokens)
 	return (0);
 }
 
-static int	lex_print_tokens(t_tok *tokens)
-{
-	int		i;
-	t_tok	*token;
+// ============================================================================
 
-	i = -1;
-	while ((token = tokens + ++i)->type != TOK_EOL)
-	{
-		if (token->type == TOK_WORD)
-		{
-			write(1, "\tTOK_WORD: ", 11);
-			write(1, token->start, token->len);
-			write(1, "\n", 1);
-		}
-		else if (token->type == TOK_IRED)
-			printf("\tTOK_IRED\n");
-		else if (token->type == TOK_IRED_HD)
-			printf("\tTOK_IRED_HD\n");
-		else if (token->type == TOK_ORED)
-			printf("\tTOK_ORED\n");
-		else if (token->type == TOK_ORED_AP)
-			printf("\tTOK_ORED_AP\n");
-		else if (token->type == TOK_PIPE)
-			printf("\tTOK_PIPE\n");
-	}
+// 11/09 - not_impl_function uses malloc and stuff...
+
+int	psr_add_red(t_red *reds, int *len, t_tok *token, int *i)
+{
+	t_red	*red;
+	
+	red = reds + *len;
+	red->type = token->type;
+	red->word = not_impl_function(token[1].start, token[1].len);
+	if (red->word == NULL)
+		return (-1);
+	*i += 1;
+	*len += 1;
 	return (0);
 }
 
 int	psr_parse_line(char *line, t_core *core)
 {
 	t_tok	tokens[TOK_MAX];
+	t_tok	*token;
+	int		i;
+	t_cmd	*cmd;
 
-	(void)core;
 	if (lex_tokenize_line(line, tokens) || psr_error_check(tokens) == -1)
 		return (-1);
+	ft_bzero(core->cmds, CMD_MAX * sizeof(t_cmd));
+	core->cmd_nbr = 0;
 
-	// 7/09 - What's next?
-	// 	- We have a clean list of tokens
+	i = 0;
+	cmd = core->cmds + core->cmd_nbr;
+	token = tokens + i;
+	while (token->type != TOK_EOL)
+	{
+		if (token->type == TOK_WORD && )
+			// ;
+		if (token->type == TOK_PIPE)
+			cmd = core->cmds + ++core->cmd_nbr;
+		if (((token->type == TOK_IRED || token->type == TOK_IRED_HD) // hard to read...
+				&& psr_add_red(cmd->ireds, &cmd->ilen, token, &i))
+			|| ((token->type == TOK_ORED || token->type == TOK_ORED_AP)
+				&& psr_add_red(cmd->oreds, &cmd->olen, token, &i)))
+			return (-1);
 
-	//	- Now we have to...
-	// 		- [Copy tokens in project structures.] (goal: -> execute commands)
-
-	//			- # Problem #1 - We don't know what does the project structure 
-	//			look like we don't know how to structure that struct
-	/*
-					- ## What should be stored (from that list of tokens) and why?
-					 (good question.)
-						- the WORD that contains the command
-							- the WORD(s) which indicate the IRED or IRED_HD
-								- IRED is not opened in the parent
-								- but IRED_HD is, stored in a pipe.
-							- the WORD(s) which indicate the ORED or ORED_AP
-								- ORED or ORED_AP are not opened in the parent
-
-						- the WORD that contains the next command
-							- ...
-
-					- ## How to store all of this...
-						- Array of structures that represents commands (seems correct)
-							- char *command for the WORD, expanded if necessary, cleaned from quotes
-								- TOK_PIPE -> next command
-								- TOK_EOL -> no more command
-			
-							- ... [what's next is the real deal]
-
-							- for redirections, it's more complicated.
-								- most redirections (<, >, >>) should be just stored as strings
-								files will be opened in child
-								- here docs will be opened parent/parser level and... stored
-								in a pipe.
-
-	*/
-	
-	//			- Problem #2 - 
-	// 				- [We also have that expansion and quote cleanup problem...]
-
-
-	
-
-	// - iterate on tokens
-		// - 
-	//	- 
-	
-	
-	lex_print_tokens(tokens);
+		token = tokens + ++i;
+	}
 	return (0);
 }
 
+// static int	lex_print_tokens(t_tok *tokens)
+// {
+// 	int		i;
+// 	t_tok	*token;
 
+// 	i = -1;
+// 	while ((token = tokens + ++i)->type != TOK_EOL)
+// 	{
+// 		if (token->type == TOK_WORD)
+// 		{
+// 			write(1, "\tTOK_WORD: ", 11);
+// 			write(1, token->start, token->len);
+// 			write(1, "\n", 1);
+// 		}
+// 		else if (token->type == TOK_IRED)
+// 			printf("\tTOK_IRED\n");
+// 		else if (token->type == TOK_IRED_HD)
+// 			printf("\tTOK_IRED_HD\n");
+// 		else if (token->type == TOK_ORED)
+// 			printf("\tTOK_ORED\n");
+// 		else if (token->type == TOK_ORED_AP)
+// 			printf("\tTOK_ORED_AP\n");
+// 		else if (token->type == TOK_PIPE)
+// 			printf("\tTOK_PIPE\n");
+// 	}
+// 	return (0);
+// }
