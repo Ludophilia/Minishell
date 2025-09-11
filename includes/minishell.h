@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/10 18:37:49 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/11 13:43:38 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@
 # define DEFAULT_PATH "/bin:/usr/bin"
 # define ERR_SYNTAX "minishell: syntax error near unexpected token `%s'\n"
 
-extern uint32_t	g_exit_status; // Why a g_??
+extern uint32_t	g_exit_status; // Why a straight g_?? Real G or just a bitch-ass n*?
 
 typedef struct sigaction	t_sigaction;
 
@@ -65,12 +65,12 @@ typedef struct s_red
 
 typedef struct s_cmd
 {
-	char	*cmd;
-	pid_t	pid;
+	char	**cmd;
 	t_red	ireds[RED_MAX];
 	int		ilen;
 	t_red	oreds[RED_MAX];
 	int		olen;
+	pid_t	pid;
 	int		ifds[2];
 	int		ofds[2];
 }	t_cmd;

@@ -75,7 +75,7 @@ a redirection operator.
 
 - **Array of structures** that represents commands.
 
-	- **char *command** for the WORD, expanded if necessary, cleaned from quotes.
+	- **char **command** for the WORD(s), expanded if necessary, cleaned from quotes.
 		- TOK_PIPE -> next command
 		- TOK_EOL -> no more command
 
@@ -87,6 +87,27 @@ a redirection operator.
 
 	- One **array of struct redirect** for output redirections
 		- ...
+
+### Commands
+
+- Commands are not just comprised of ONE word. Most of time, it's the command +
+arguments with sometimes quotes and expansions in the mix.
+
+- `echo context: $USER, via $SHELL at $PWD.`
+	- the first word is `echo`, the command shortcut or path...
+	- but `context:`, `$USER`, `via`, `$SHELL`, `at`, `$PWD` are still part of
+	the command line.
+
+- `$ECHO context: $USER, via $SHELL at $PWD.`
+	- if `export ECHO='echo'`
+	- $ECHO, the 
+	- is still a the command and will have to be expanded.
+
+
+if we find a word (not preceded by a redirection operator, who 
+always consumes EXACTLY one WORD.
+
+`$ECHO`
 
 ### Input Redirections
 

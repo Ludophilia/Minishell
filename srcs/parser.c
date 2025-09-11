@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:16:27 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/10 19:03:09 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/11 15:35:45 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,22 +69,73 @@ int	psr_error_check(t_tok *tokens)
 
 // ============================================================================
 
-// 11/09 - not_impl_function uses malloc and stuff...
+// 11/09 - Is that what chaos look like? Sure, but you have to understand
+// things before 
 
-int	psr_add_red(t_red *reds, int *len, t_tok *token, int *i)
+
+// 11/09 - fthat_malloc_expands_remove_quotes uses malloc and stuff...
+
+char	*psr_create_word(char *start, int len)
+{
+	// Not implemented yet
+	// 12/09
+}
+
+int	psr_add_red(t_red *reds, int *pos, t_tok *token, int *i)
 {
 	t_red	*red;
-	
-	red = reds + *len;
+
+	red = reds + *pos;
 	red->type = token->type;
-	red->word = not_impl_function(token[1].start, token[1].len);
+	red->word = fthat_malloc_expands_remove_quotes(token[1].start, token[1].len);
 	if (red->word == NULL)
 		return (-1);
 	*i += 1;
-	*len += 1;
+	*pos += 1;
 	return (0);
 }
 
+// psr_damn_those_names
+int	psr_cmd_count_words(t_tok *token)
+{
+	int	size;
+
+	size = 0;
+	while (token->type == TOK_WORD)
+	{
+		size++;
+		token++;
+	}
+	return (size);
+}
+
+// 10/09
+int	psr_add_cmd(char ***cmd, t_tok *token, int *i)
+{
+	int	size;
+	int	pos;
+
+	size = psr_cmd_count_words(token);
+	*cmd = malloc((size + 1) * sizeof(char *));
+	if (*cmd == NULL)
+		return (-1);
+	pos = 0;
+	while (token->type == TOK_WORD)
+	{
+		(*cmd)[pos] = fthat_malloc_expands_remove_quotes(token->start, token->len);
+		if ((*cmd)[pos++] == NULL)
+		{
+			// a function that destroys the array
+			return (-1);
+		}
+		token++;
+	}
+	(*cmd)[size] = NULL;
+	*i += (size - 1);
+	return (0);
+}
+
+// 10/09
 int	psr_parse_line(char *line, t_core *core)
 {
 	t_tok	tokens[TOK_MAX];
@@ -94,24 +145,37 @@ int	psr_parse_line(char *line, t_core *core)
 
 	if (lex_tokenize_line(line, tokens) || psr_error_check(tokens) == -1)
 		return (-1);
+
+	// Somewhere else please?
 	ft_bzero(core->cmds, CMD_MAX * sizeof(t_cmd));
 	core->cmd_nbr = 0;
 
 	i = 0;
 	cmd = core->cmds + core->cmd_nbr;
 	token = tokens + i;
+
+	// Please jeffrey-ize me that shit. Oh my god.
 	while (token->type != TOK_EOL)
 	{
-		if (token->type == TOK_WORD && )
-			// ;
-		if (token->type == TOK_PIPE)
+		if (token->type == TOK_WORD) 
+		{
+			if (psr_add_cmd(&cmd->cmd, token, &i) == -1)
+				return (-1);
+		}
+		else if (token->type == TOK_IRED || token->type == TOK_IRED_HD) // Not quite good enough.
+		{
+			if (psr_add_red(cmd->ireds, &cmd->ilen, token, &i) == -1)
+				return (-1);
+		}
+		else if (token->type == TOK_ORED || token->type == TOK_ORED_AP)
+		{
+			if (psr_add_red(cmd->oreds, &cmd->olen, token, &i) == -1)
+				return (-1);
+		}
+		else if (token->type == TOK_PIPE)
+		{
 			cmd = core->cmds + ++core->cmd_nbr;
-		if (((token->type == TOK_IRED || token->type == TOK_IRED_HD) // hard to read...
-				&& psr_add_red(cmd->ireds, &cmd->ilen, token, &i))
-			|| ((token->type == TOK_ORED || token->type == TOK_ORED_AP)
-				&& psr_add_red(cmd->oreds, &cmd->olen, token, &i)))
-			return (-1);
-
+		}
 		token = tokens + ++i;
 	}
 	return (0);

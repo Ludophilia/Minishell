@@ -4,9 +4,9 @@
 
 ### Part 0
 
-- [ ] Data architecture
+- [o] Data architecture
 
-- [ ] Project architecture
+- [o] Project architecture
 
 - [x] Makefile + Libft
 
@@ -14,7 +14,7 @@
 
 - [x] Prompt + line read (readline).
 
-- [ ] Strong testing routine throughout the whole ordeal.
+- [o] Strong testing routine throughout the whole ordeal.
 
 - [ ] Exit statuses exactly like bash where applicable.
 
@@ -24,11 +24,11 @@
 
 - [x] Lexer that handles quotes, escapes, operators: |, <, >, >>, <<.
 
-- [ ] Expansions: $VAR, $?, ~ (optional), with quote rules 
+- [o] Expansions: $VAR, $?, ~ (optional), with quote rules 
 (no expand in single quotes; expand in double quotes; heredoc 
 expands only when delimiter is unquoted).
 
-- [ ] Parser → AST (or a light pipeline/command list) with redirs & args
+- [o] Parser → AST (or a light pipeline/command list) with redirs & args
  attached to each command node.
 
 ### Part 3

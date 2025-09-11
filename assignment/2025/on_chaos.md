@@ -6,4 +6,4 @@
 	- High probability of mistakes/failures/course corrections.
 	- Will probably get stuck multiple times.
 
-	- Cleanup/structure will come once clarity is reached.
+- Cleanup/structure will come ONLY once clarity is reached.
