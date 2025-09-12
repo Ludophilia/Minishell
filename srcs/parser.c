@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:16:27 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/11 15:35:45 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/12 19:40:13 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,16 +69,74 @@ int	psr_error_check(t_tok *tokens)
 
 // ============================================================================
 
-// 11/09 - Is that what chaos look like? Sure, but you have to understand
-// things before 
+int	psr_is_idchar(char c, int pos)
+{
+	if (pos == 0)
+		return (ft_isalpha(c) || c == '_');
+	else
+		return (ft_isalnum(c) || c == '_');
+}
 
 
-// 11/09 - fthat_malloc_expands_remove_quotes uses malloc and stuff...
+// 12/09 - Alright, what should be done.
+int	psr_expand_envv(char *start, int *j, int len, char **expanded)
+{
+	char	e_var[ID_LMAX];
 
+	// copy 
+
+	// expand the identifier to its real value.
+
+	return ();
+}
+
+int	psr_count_chrs(char *start, int len, char **expanded)
+{
+	int		size;
+	char	quoted;
+	int		j;
+
+	size = 0;
+	j = 0;
+	quoted = 0;
+	while (j < len)
+	{
+		// Move that into a funct.
+		if ((!quoted && lex_is_quote(start[j])) || (quoted && start[j] == quoted))
+		{
+			((!quoted && (quoted = start[j])) || (quoted = 0));
+			j++;
+			continue ;
+		}
+		if (start[j] == '$' && quoted != '\'' && psr_is_idchar(start[j + 1], 0))
+			size += psr_expand_envv(start, &j, len, expanded);
+		else
+			j++, size++;
+	}
+	return (size);
+}
+	
 char	*psr_create_word(char *start, int len)
 {
-	// Not implemented yet
-	// 12/09
+	char	*word;
+	int		size;
+	int		i;
+	char	*expanded;
+
+	size = psr_count_chrs(start, len, &expanded);
+	word = malloc((size + 1) * sizeof(char));
+	if (word == NULL)
+		return (NULL);
+	i = -1;
+	while (++i < size)
+	{
+	// 	- Copy token byte by byte following the rules...
+	// 		- skip outer quotes if exist
+	//		- keep inner quotes if exist
+	//		- use expanded variables 
+	}
+	word[size] = 0;
+	return (word);
 }
 
 int	psr_add_red(t_red *reds, int *pos, t_tok *token, int *i)
@@ -87,7 +145,7 @@ int	psr_add_red(t_red *reds, int *pos, t_tok *token, int *i)
 
 	red = reds + *pos;
 	red->type = token->type;
-	red->word = fthat_malloc_expands_remove_quotes(token[1].start, token[1].len);
+	red->word = psr_create_word(token[1].start, token[1].len);
 	if (red->word == NULL)
 		return (-1);
 	*i += 1;
@@ -122,10 +180,10 @@ int	psr_add_cmd(char ***cmd, t_tok *token, int *i)
 	pos = 0;
 	while (token->type == TOK_WORD)
 	{
-		(*cmd)[pos] = fthat_malloc_expands_remove_quotes(token->start, token->len);
+		(*cmd)[pos] = psr_create_word(token->start, token->len);
 		if ((*cmd)[pos++] == NULL)
 		{
-			// a function that destroys the array
+			// Where are the routines for destroying data in that context.
 			return (-1);
 		}
 		token++;
@@ -160,17 +218,17 @@ int	psr_parse_line(char *line, t_core *core)
 		if (token->type == TOK_WORD) 
 		{
 			if (psr_add_cmd(&cmd->cmd, token, &i) == -1)
-				return (-1);
+				return (-1); // Where are the routines for destroying data?
 		}
 		else if (token->type == TOK_IRED || token->type == TOK_IRED_HD) // Not quite good enough.
 		{
 			if (psr_add_red(cmd->ireds, &cmd->ilen, token, &i) == -1)
-				return (-1);
+				return (-1); // Where are the routines for destroying data?
 		}
 		else if (token->type == TOK_ORED || token->type == TOK_ORED_AP)
 		{
 			if (psr_add_red(cmd->oreds, &cmd->olen, token, &i) == -1)
-				return (-1);
+				return (-1); // Where are the routines for destroying data?
 		}
 		else if (token->type == TOK_PIPE)
 		{

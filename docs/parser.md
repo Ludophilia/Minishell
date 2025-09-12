@@ -193,6 +193,14 @@ Pipeline Creation is to:
 - `echo "$"$USER`
 	-> $jegerman
 
+- `echo "'$USER'"`
+	-> 'jegerman'
+
+- `echo "'123$SHIT'"`
+	-> '123'
+	-> SHIT is not a defined variable, so it expands to nothing
+	-> equivalent to SHIT=""
+
 - `echo '$'$USER$USER$SHLVL`
 	-> $jegermanjegerman2
 
@@ -209,6 +217,17 @@ Pipeline Creation is to:
 - `"'''"`
 	-> '''
 
+### In which case a variable should be expanded 
+
+- the name is legal: 
+	- Beginning with a letter or underscore. ft_isapha() || '_'
+	- A word consisting solely of letters, numbers, and underscores,  ft_isalnum() || '_'
+
+- The variable name stops when:
+	- i <= len
+	- we meet something that is not  ft_isalnum() || '_'
+
+	
 
 ## [Parent level redirection: Here document and pipes]
 

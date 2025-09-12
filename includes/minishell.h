@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/11 13:43:38 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/12 19:20:52 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ typedef enum e_max
 	TOK_MAX = 1024,
 	CMD_MAX = 128,
 	RED_MAX = 32,
+	ID_LMAX = 128,
 }	t_max;
 
 typedef enum e_tokt
