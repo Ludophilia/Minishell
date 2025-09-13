@@ -100,12 +100,25 @@ arguments with sometimes quotes and expansions in the mix.
 
 - `$ECHO context: $USER, via $SHELL at $PWD.`
 	- if `export ECHO='echo'`
-	- $ECHO, the 
-	- is still a the command and will have to be expanded.
+	- $ECHO, the first word is still a the command and will have to be expanded
+	to `echo`.
+
+#### Weird cases
+
+- `ls < ../Makefile -l > out -a > out2 -t`
+- -> `[WORD] IRED_OP WORD [WORD] ORED_OP WORD [WORD] ORED_OP WORD [WORD]`
+
+	- if we find a word - not preceded by a redirection operator, who 
+	always consumes EXACTLY one WORD - it's very likely that this world is
+	the start of a command.
+
+	- However, that doesn't mean every next word will be part of the command,
+	as we can see in that example.
+
+	- Only `[WORD]` are a part of the command, the remainder are just
+	redirections and their operators.
 
 
-if we find a word (not preceded by a redirection operator, who 
-always consumes EXACTLY one WORD.
 
 `$ECHO`
 

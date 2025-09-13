@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/12 19:20:52 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/13 19:02:31 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ typedef struct s_red
 
 typedef struct s_cmd
 {
-	char	**cmd;
+	char	**argv;
 	t_red	ireds[RED_MAX];
 	int		ilen;
 	t_red	oreds[RED_MAX];
@@ -83,17 +83,29 @@ typedef struct s_core
 	uint16_t	*exit; // ???
 }	t_core;
 
-int	lex_is_quote(int c);
-int	lex_is_op(int c);
-int	lex_is_sep(int c);
-int	lex_tokenize_line(char *line, t_tok *tokens);
+int		lex_is_quote(int c);
+int		lex_is_op(int c);
+int		lex_is_sep(int c);
 
-int	psr_parse_line(char *line, t_core *core);
+int		lex_print_tokens(t_tok *tokens); // REMOVE
+int		lex_tokenize_line(char *line, t_tok *tokens);
 
-int	sig_init_handlers(void);
+int		psr_is_ired(t_tok *token);
+int		psr_is_ored(t_tok *token);
+int		psr_add_reds(t_tok *token, t_cmd *cmd);
 
-int	bi_exit(char *line);
+int		psr_add_cmd(t_tok *token, t_cmd *cmd);
 
-int	ui_loop_prompt(t_core *core);
+int		psr_error_check(t_tok *tokens);
+
+char	*psr_create_word(t_tok *token);
+
+int		psr_parse_line(char *line, t_core *core);
+
+int		sig_init_handlers(void);
+
+int		bi_exit(char *line);
+
+int		ui_loop_prompt(t_core *core);
 
 #endif
