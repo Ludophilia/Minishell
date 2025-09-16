@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 18:57:18 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/13 18:59:42 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/15 16:23:17 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int	psr_add_cmd(t_tok *token, t_cmd *cmd)
 			token += 2;
 			continue ;
 		}
-		cmd->argv[pos] = psr_create_word(token);
+		cmd->argv[pos] = psr_create_word(token, TOK_WORD);
 		if (cmd->argv[pos++] == NULL) // Where are the routines for destroying data in that context.
 			return (-1);
 		token++;

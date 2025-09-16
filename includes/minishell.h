@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/13 19:02:31 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/16 21:24:06 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,10 @@ typedef struct sigaction	t_sigaction;
 
 typedef enum e_max
 {
-	TOK_MAX = 1024,
-	CMD_MAX = 128,
-	RED_MAX = 32,
-	ID_LMAX = 128,
+	TOK_MAX = 2048,
+	CMD_MAX = 256,
+	RED_MAX = 64,
+	ID_LMAX = 1024,
 }	t_max;
 
 typedef enum e_tokt
@@ -86,6 +86,7 @@ typedef struct s_core
 int		lex_is_quote(int c);
 int		lex_is_op(int c);
 int		lex_is_sep(int c);
+int		lex_is_envv_chr(int c, int pos);
 
 int		lex_print_tokens(t_tok *tokens); // REMOVE
 int		lex_tokenize_line(char *line, t_tok *tokens);
@@ -98,7 +99,7 @@ int		psr_add_cmd(t_tok *token, t_cmd *cmd);
 
 int		psr_error_check(t_tok *tokens);
 
-char	*psr_create_word(t_tok *token);
+char	*psr_create_word(t_tok *token, t_tokt context);
 
 int		psr_parse_line(char *line, t_core *core);
 
@@ -109,3 +110,4 @@ int		bi_exit(char *line);
 int		ui_loop_prompt(t_core *core);
 
 #endif
+

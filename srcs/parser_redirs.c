@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 17:27:28 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/13 18:59:12 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/15 16:06:51 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static int	psr_add_red(t_red *reds, int *pos, t_tok **token)
 
 	red = reds + *pos;
 	red->type = (*token)->type;
-	red->word = psr_create_word(token[1]);
+	red->word = psr_create_word(token[1], (*token)->type);
 	if (red->word == NULL)
 		return (-1);
 	*pos += 1;

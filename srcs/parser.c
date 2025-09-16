@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:16:27 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/13 19:09:41 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/16 22:53:52 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,37 +16,73 @@
 
 // WORD CREATION, QUOTES REMOVAL, VARIABLE EXPANSION
 
-int	lex_is_cidentifier(char c, int pos)
+// #########################################################
+// parser_expander
+
+
+char	*psr_get_envv_value(char *start, int *envv_len)
 {
-	if (pos == 0)
-		return (ft_isalpha(c) || c == '_');
+	char	envv[ID_LMAX];
+	char	*envv_val;
+	int		len;
+
+	++start;
+	len = -1;
+	while (++len, lex_is_envv_chr(start[len], len))
+		envv[len] = start[len];
+	envv[len] = '\0';
+	envv_len && (*envv_len = len + 1);
+	envv_val = getenv(envv); // or custom funct
+	return (envv_val);
+}
+
+int	psr_get_envv_val_size(char *start, int *j)
+{
+	char	*envv_val;
+	int		size;
+	int		envv_len;
+
+	envv_val = psr_get_envv_value(start, &envv_len);
+	if (envv_val == NULL)
+		size = 0;
 	else
-		return (ft_isalnum(c) || c == '_');
+		size = ft_strlen(envv_val);
+	*j += envv_len;
+	return (size);
 }
 
-// 12/09 - Alright, what should be done?
-int	psr_expand_envv(char *start, int *j, int len, char **expanded)
+int	psr_copy_envv_value(char *start, int *i, char *word, int *j)
 {
-	char	e_var[ID_LMAX];
-
-	// copy the token start + len to e_var
-	//	- Sure, but why?
-
-	// expand the identifier to its real value.
-
-
-	// NO EXPANSION FOR HERE DOCUMENTS!
-
-	return ();
+	// - routine to get and copy the expanded variable
+	// or nothing if doesn't exist
+	// move j or don't move it all 
+	// move i past the envv section
 }
 
-// Count the number of characters needed to create the word from its token
-// - Includes outer quote removal
-// - Include variable expansions
-int	psr_count_chrs(char *start, int len, char **expanded)
+//###########################################################
+// parser_utils
+
+int	psr_is_outq(int c, int *quoted)
+{
+	if ((*quoted == 0 && lex_is_quote(c)) || (*quoted != 0 && *quoted == c))
+		return ((*quoted == 0 && (*quoted = c)) || !(*quoted = 0));
+	return (0);
+}
+
+int	psr_is_envv(char *c, int ct, int q)
+{
+	if (*c == '$' && ct != TOK_IRED_HD && q != '\'' && lex_is_envv_chr(c[1], 0))
+		return (1);
+	return (0);
+}
+
+// ##################################################################
+// parser_core ?
+
+char	*psr_alloc_word(char *start, int len, t_tokt context)
 {
 	int		size;
-	char	quoted;
+	int		quoted;
 	int		j;
 
 	size = 0;
@@ -54,50 +90,55 @@ int	psr_count_chrs(char *start, int len, char **expanded)
 	quoted = 0;
 	while (j < len)
 	{
-		// Move that into a funct.
-		if ((!quoted && lex_is_quote(start[j])) || (quoted && start[j] == quoted))
-		{
-			((!quoted && (quoted = start[j])) || (quoted = 0));
-			j++;
+		if (psr_is_outq(start[j], &quoted) && ++j)
 			continue ;
-		}
-		if (start[j] == '$' && quoted != '\'' && lex_is_cidentifier(start[j + 1], 0))
-			size += psr_expand_envv(start, &j, len, expanded);
+		if (psr_is_envv(start[j], context, quoted))
+			size += psr_get_envv_val_size(start + j, &j);
 		else
 			j++, size++;
 	}
-	return (size);
+	return (ft_calloc((size + 1), sizeof(char)));
 }
 
-// Creates the word from TOK_WORD:
-//	== without outer quotes (if needed)
-// 	== with variable expansion (if needed)
-char	*psr_create_word(t_tok *token)
+// That WORD is the thing that will be
+// - Part of argv if the word is part of the command
+// - Part of a redirection 
+// - Part of a delimiter for a HERE document
+
+char	*psr_create_word(t_tok *token, t_tokt context)
 {
 	char	*word;
-	int		size;
 	int		i;
-	char	*expanded;
+	int		j;
+	int		quoted;
 
-	size = psr_count_chrs(token->start, token->len, &expanded);
-	word = malloc((size + 1) * sizeof(char));
+	word = psr_alloc_word(token->start, token->len, context);
 	if (word == NULL)
 		return (NULL);
-	i = -1;
-	// NO EXPANSION FOR HERE DOCUMENTS!
-	while (++i < size)
+
+	j = 0; // it's for the new word.
+	i = 0;
+	while (i < token->len) // this if is for the new word.
 	{
-	// 	- Copy token byte by byte following the rules...
-	// 		- skip outer quotes if exist
-	//		- keep inner quotes if exist
-	//		- use expanded variables 
+		if (psr_is_outq(token->start[i], &quoted) && ++i)
+			continue ;
+		if (psr_is_envv(token->start + i, context, quoted))
+			psr_copy_envvv(token->start, &i, word, &j);
+		else
+			word[j++] = token->start[i++];
 	}
-	word[size] = 0;
 	return (word);
 }
 
+// NO EXPANSION FOR HERE DOCUMENTS!
+	
+// 	- Copy token byte by byte following the rules...
+// 		- skip outer quotes if exist
+//		- keep inner quotes if exist
+//		- use expanded variables
 
 // #########################################################
+// parser_core
 
 // MAIN PARSING ROUTINE
 
