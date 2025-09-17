@@ -6,51 +6,48 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 18:57:18 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/15 16:23:17 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/17 21:22:53 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	psr_count_argc(t_tok *token)
+static int	psr_count_args(t_tok *tok)
 {
 	int	size;
 
 	size = 0;
-	while (token->type != TOK_PIPE && token->type != TOK_EOL)
+	while (tok->type != TOK_PIPE && tok->type != TOK_EOL)
 	{
-		if (psr_is_ored(token) || psr_is_ired(token))
-			token += 2;
+		if (psr_is_ored(tok) || psr_is_ired(tok))
+			tok += 2;
 		else
-		{
-			size++;
-			token++;
-		}
+			(size++, tok++);
 	}
 	return (size);
 }
 
-int	psr_add_cmd(t_tok *token, t_cmd *cmd)
+int	psr_add_cmd(t_tok *tok, t_cmd *cmd)
 {
 	int		size;
 	int		pos;
 
-	size = psr_count_argc(token);
+	size = psr_count_args(tok);
 	cmd->argv = malloc((size + 1) * sizeof(char *));
 	if (cmd->argv == NULL)
 		return (-1);
 	pos = 0;
-	while (token->type != TOK_PIPE && token->type != TOK_EOL)
+	while (tok->type != TOK_PIPE && tok->type != TOK_EOL)
 	{
-		if (psr_is_ored(token) || psr_is_ired(token))
+		if (psr_is_ored(tok) || psr_is_ired(tok))
 		{
-			token += 2;
+			tok += 2;
 			continue ;
 		}
-		cmd->argv[pos] = psr_create_word(token, TOK_WORD);
+		cmd->argv[pos] = psr_create_word(tok, TOK_WORD);
 		if (cmd->argv[pos++] == NULL) // Where are the routines for destroying data in that context.
 			return (-1);
-		token++;
+		tok++;
 	}
 	cmd->argv[size] = NULL;
 	return (0);

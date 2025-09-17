@@ -6,43 +6,42 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 13:37:44 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/13 19:07:58 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/17 20:00:50 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	psr_optk_check(t_tok *token, int pos)
+static int	psr_optok_check(t_tok *tok, int pos)
 {
 	char	**tok_chr;
 
-	if (token->type == TOK_WORD)
+	if (tok->type == TOK_WORD)
 		return (0);
 	tok_chr = (char *[]){"|", "<", "<<", ">", ">>", 0};
-	if (token[1].type == TOK_EOL
-		|| token[1].type == token->type
-		|| (pos == 0 && token->type == TOK_PIPE))
+	if (tok[1].type == TOK_EOL || tok[1].type == tok->type
+		|| (pos == 0 && tok->type == TOK_PIPE))
 	{
-		ft_eprintf(ERR_SYNTAX, tok_chr[token->type - 2]);
+		ft_eprintf(ERR_SYNTAX, tok_chr[tok->type - 2]);
 		return (-1);
 	}
 	return (0);
 }
 
-static int	ps_wtk_check(t_tok *token)
+static int	psr_wtok_check(t_tok *tok)
 {
 	int		i;
 	int		quoted;
 
-	if (token->type != TOK_WORD)
+	if (tok->type != TOK_WORD)
 		return (0);
 	i = -1;
 	quoted = 0;
-	while (++i < token->len)
+	while (++i < tok->len)
 	{
-		if (!quoted && lex_is_quote(token->start[i]))
-			quoted = token->start[i];
-		else if (quoted && token->start[i] == quoted)
+		if (!quoted && lex_is_quote(tok->start[i]))
+			quoted = tok->start[i];
+		else if (quoted && tok->start[i] == quoted)
 			quoted = 0;
 	}
 	if (quoted != 0 && ft_eprintf(ERR_SYNTAX, "end-of-line"))
@@ -50,19 +49,19 @@ static int	ps_wtk_check(t_tok *token)
 	return (0);
 }
 
-int	psr_error_check(t_tok *tokens)
+int	psr_error_check(t_tok *toks)
 {
-	t_tok	*token;
+	t_tok	*tok;
 	int		i;
 
 	i = 0;
-	token = tokens + i;
-	while (token->type != TOK_EOL)
+	tok = toks + i;
+	while (tok->type != TOK_EOL)
 	{
-		if (psr_optk_check(token, i) == -1
-			|| ps_wtk_check(token) == -1)
+		if (psr_optok_check(tok, i) == -1
+			|| psr_wtok_check(tok) == -1)
 			return (-1);
-		token = tokens + ++i;
+		tok = toks + ++i;
 	}
 	return (0);
 }

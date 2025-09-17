@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/16 21:24:06 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/17 23:31:14 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,11 +67,9 @@ typedef struct s_red
 typedef struct s_cmd
 {
 	char	**argv;
-	t_red	ireds[RED_MAX];
-	int		ilen;
-	t_red	oreds[RED_MAX];
-	int		olen;
 	pid_t	pid;
+	t_red	ireds[RED_MAX];
+	t_red	oreds[RED_MAX];
 	int		ifds[2];
 	int		ofds[2];
 }	t_cmd;
@@ -86,21 +84,19 @@ typedef struct s_core
 int		lex_is_quote(int c);
 int		lex_is_op(int c);
 int		lex_is_sep(int c);
-int		lex_is_envv_chr(int c, int pos);
 
-int		lex_print_tokens(t_tok *tokens); // REMOVE
-int		lex_tokenize_line(char *line, t_tok *tokens);
+int		lex_tokenize_line(char *line, t_tok *toks);
 
-int		psr_is_ired(t_tok *token);
-int		psr_is_ored(t_tok *token);
-int		psr_add_reds(t_tok *token, t_cmd *cmd);
+int		psr_is_ired(t_tok *tok);
+int		psr_is_ored(t_tok *tok);
+int		psr_is_outq(int c, int *q);
+int		psr_is_envv(char *c, int ct, int q);
+int		psr_is_envv_chr(int c, int pos);
 
-int		psr_add_cmd(t_tok *token, t_cmd *cmd);
-
-int		psr_error_check(t_tok *tokens);
-
-char	*psr_create_word(t_tok *token, t_tokt context);
-
+char	*psr_create_word(t_tok *tok, t_tokt context);
+int		psr_add_reds(t_tok *tok, t_cmd *cmd);
+int		psr_add_cmd(t_tok *tok, t_cmd *cmd);
+int		psr_error_check(t_tok *toks);
 int		psr_parse_line(char *line, t_core *core);
 
 int		sig_init_handlers(void);
@@ -110,4 +106,3 @@ int		bi_exit(char *line);
 int		ui_loop_prompt(t_core *core);
 
 #endif
-

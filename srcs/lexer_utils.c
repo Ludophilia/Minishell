@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:31:20 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/16 20:53:45 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/17 21:26:17 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,18 +24,8 @@ int	lex_is_sep(int c)
 
 int	lex_is_quote(int c)
 {
-	return (c == '\'' | c == '\"');
+	return (c == '\'' || c == '\"');
 }
-
-int	lex_is_envv_chr(int c, int pos)
-{
-	if (pos == 0)
-		return (ft_isalpha(c) || c == '_');
-	else
-		return (ft_isalnum(c) || c == '_');
-}
-
-// ######################################################################
 
 int	lex_print_tokens(t_tok *tokens)
 {
