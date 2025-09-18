@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:59:28 by jgermany          #+#    #+#             */
-/*   Updated: 2025/08/31 19:51:52 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/18 23:37:19 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static void	sigmgr_gen_handler(int sig_num)
 	g_exit_status = sig_num + 128;
 	if (sig_num == SIGINT)
 	{
-		write(1, "\n", 2);
+		write(1, "\n", 1);
 		rl_on_new_line();
 		rl_replace_line("", 0);
 		rl_redisplay();

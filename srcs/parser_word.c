@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 19:13:16 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/17 22:25:59 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/19 00:02:14 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ static char	*psr_alloc_word(char *start, int len, t_tokt context)
 		else
 			(j++, size++);
 	}
-	return (ft_calloc((size + 1), sizeof(char)));
+	return (ft_calloc(size + 1, sizeof(char)));
 }
 
 char	*psr_create_word(t_tok *tok, t_tokt context)

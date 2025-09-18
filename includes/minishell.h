@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/17 23:31:14 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/19 00:49:04 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ typedef enum e_max
 	CMD_MAX = 256,
 	RED_MAX = 64,
 	ID_LMAX = 1024,
+	PFD_MAX = 2,
 }	t_max;
 
 typedef enum e_tokt
@@ -49,6 +50,11 @@ typedef enum e_tokt
 	TOK_IRED, TOK_IRED_HD,
 	TOK_ORED, TOK_ORED_AP
 }	t_tokt;
+
+typedef enum e_cflg
+{
+	FLG_CMDS = (1 << 0),
+}	t_cflg;
 
 typedef struct s_tok
 {
@@ -61,7 +67,7 @@ typedef struct s_red
 {
 	t_tokt	type;
 	char	*word;
-	int		fds[2];
+	int		fds[PFD_MAX];
 }	t_red;
 
 typedef struct s_cmd
@@ -70,15 +76,16 @@ typedef struct s_cmd
 	pid_t	pid;
 	t_red	ireds[RED_MAX];
 	t_red	oreds[RED_MAX];
-	int		ifds[2];
-	int		ofds[2];
+	int		ifds[PFD_MAX];
+	int		ofds[PFD_MAX];
 }	t_cmd;
 
 typedef struct s_core
 {
 	t_cmd		cmds[CMD_MAX];
-	int			cmd_nbr; // ???
+	int			cmd_pos;
 	uint16_t	*exit; // ???
+	uint32_t	flags;
 }	t_core;
 
 int		lex_is_quote(int c);
@@ -86,6 +93,9 @@ int		lex_is_op(int c);
 int		lex_is_sep(int c);
 
 int		lex_tokenize_line(char *line, t_tok *toks);
+
+int		psr_cleanup_red(t_red *red, int *fds);
+int		psr_cleanup_cmds(t_core *core);
 
 int		psr_is_ired(t_tok *tok);
 int		psr_is_ored(t_tok *tok);
@@ -98,6 +108,8 @@ int		psr_add_reds(t_tok *tok, t_cmd *cmd);
 int		psr_add_cmd(t_tok *tok, t_cmd *cmd);
 int		psr_error_check(t_tok *toks);
 int		psr_parse_line(char *line, t_core *core);
+
+int		utils_cleanup(t_cflg flags, t_core *core);
 
 int		sig_init_handlers(void);
 
