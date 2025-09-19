@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 19:13:16 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/19 00:02:14 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/20 00:59:07 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,24 @@
 
 static char	*psr_get_envv_value(char *start, int *envv_len)
 {
-	char	envv[ID_LMAX];
-	char	*envv_val;
-	int		len;
+	static char	exitw[EXW_MAX];
+	char		envv[ID_LMAX];
+	char		*envv_val;
+	int			len;
 
 	++start;
 	len = -1;
-	while (++len, psr_is_envv_chr(start[len], len))
-		envv[len] = start[len];
+	if (*start == '?' && len++)
+		envv[len++] = *start;
+	else
+		while (++len, psr_is_envv_chr(start[len], len))
+			envv[len] = start[len];
 	envv[len] = '\0';
 	(void)(envv_len && (*envv_len = len + 1)); // remove void
-	envv_val = getenv(envv); // or custom funct
+	if (ft_strncmp(envv, "?", 2) == 0)
+		envv_val = (utl_shitoa(g_exit_status, exitw), exitw); // correct?
+	else
+		envv_val = getenv(envv); // or custom funct
 	return (envv_val);
 }
 

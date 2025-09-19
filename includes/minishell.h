@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/19 00:49:04 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/20 00:57:45 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ typedef enum e_max
 	RED_MAX = 64,
 	ID_LMAX = 1024,
 	PFD_MAX = 2,
+	EXW_MAX = 16,
 }	t_max;
 
 typedef enum e_tokt
@@ -109,7 +110,8 @@ int		psr_add_cmd(t_tok *tok, t_cmd *cmd);
 int		psr_error_check(t_tok *toks);
 int		psr_parse_line(char *line, t_core *core);
 
-int		utils_cleanup(t_cflg flags, t_core *core);
+int		utl_cleanup(t_cflg flags, t_core *core);
+char	*utl_shitoa(unsigned int nbr, char *store);
 
 int		sig_init_handlers(void);
 
