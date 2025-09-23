@@ -50,3 +50,10 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Folders
+.vscode
+playground
+
+# Executables
+minishell
