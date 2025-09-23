@@ -200,6 +200,15 @@ Pipeline Creation is to:
 - `echo '$'USER`
 	-> $USER
 
+- `echo $'USER'`
+	-> USER
+
+- `echo $%USER`
+	-> $%USER
+
+- `echo "$"'_USER'` (does not work)
+	-> $_USER
+
 - `echo "$"USER`
 	-> $USER
 

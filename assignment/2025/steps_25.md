@@ -4,7 +4,7 @@
 
 ### Part 0
 
-- [o] Data architecture
+- [x] Data architecture
 
 - [o] Project architecture
 
@@ -16,19 +16,15 @@
 
 - [o] Strong testing routine throughout the whole ordeal.
 
-- [ ] Exit statuses exactly like bash where applicable.
-
-- [ ] Env as your own list/map; keep it authoritative (don’t trust environ after start).
-
 ### Part 2
 
 - [x] Lexer that handles quotes, escapes, operators: |, <, >, >>, <<.
 
-- [o] Expansions: $VAR, $?, ~ (optional), with quote rules 
+- [x] Expansions: $VAR, $?, ~ (optional), with quote rules 
 (no expand in single quotes; expand in double quotes; heredoc 
 expands only when delimiter is unquoted).
 
-- [o] Parser → AST (or a light pipeline/command list) with redirs & args
+- [x] Parser → AST (or a light pipeline/command list) with redirs & args
  attached to each command node.
 
 ### Part 3
@@ -38,6 +34,10 @@ expands only when delimiter is unquoted).
 
 - [ ] Signals: SIGINT interactive behavior (interrupt line, not exit), 
 SIGQUIT ignored in parent, default in children.
+
+- [ ] Exit statuses exactly like bash where applicable.
+
+- [ ] Env as your own list/map; keep it authoritative (don’t trust environ after start).
 
 ### Part 4
 

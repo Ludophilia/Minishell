@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:18:13 by jgermany          #+#    #+#             */
-/*   Updated: 2025/09/20 00:57:30 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/23 19:29:54 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	utils_print_cmds(t_core *core)
 		printf("\t=== args ===\n");
 		j = -1;
 		while (cmd->argv && cmd->argv[++j])
-			printf("\t'%s'\n", cmd->argv[j]);
+			printf("\t%s\n", cmd->argv[j]);
 		printf("\t=== ireds ===\n");
 		j = -1;
 		while (cmd->ireds[++j].type != TOK_EOL)
@@ -61,6 +61,31 @@ int	ui_loop_prompt(t_core *core)
 		if (*line != 0)
 			add_history(line);
 
+		// 22/09 - What should be done??
+
+		// Current state:
+
+		//	== We have a array of t_cmds.
+		//		== with each one
+		//		== - an array of char * (argv)
+		//		== - an array of ireds (input redirections)
+		//		== - an array if oreds (output redirections)
+
+		// What's next?
+
+		// == Understand where to open (parent / child) and how to open redirections
+		//		- Write the code to manage each redirections with error management
+		//			- '<<' Heredocs 
+		//			- '<' Input redirects
+		//			- '>' Output redirects with creation
+		//			- '>>' Output redirect with append
+
+		// == Understand how to build and manage the pipeline of commands
+		//		- Where to open pipes (parent / child)
+		//			- 
+
+		// == 
+					
 		// 5/09 - Not at the right level anyway...
 		if (*line != 0 && psr_parse_line(line, core) == -1)
 		{
