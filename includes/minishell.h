@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/20 00:57:45 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/26 19:45:47 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ typedef struct s_red
 {
 	t_tokt	type;
 	char	*word;
-	int		fds[PFD_MAX];
+	// int		fds[PFD_MAX];
 }	t_red;
 
 typedef struct s_cmd
@@ -84,7 +84,7 @@ typedef struct s_cmd
 typedef struct s_core
 {
 	t_cmd		cmds[CMD_MAX];
-	int			cmd_pos;
+	int			cmd_pmax;
 	uint16_t	*exit; // ???
 	uint32_t	flags;
 }	t_core;

@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 18:57:18 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/19 00:46:54 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/26 12:07:11 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	psr_cleanup_cmds(t_core *core)
 	int		i;
 
 	i = -1;
-	while (++i < (core->cmd_pos + 1))
+	while (++i < (core->cmd_pmax + 1))
 	{
 		cmd = core->cmds + i;
 		psr_cleanup_cmd(cmd);
@@ -40,7 +40,7 @@ int	psr_cleanup_cmds(t_core *core)
 		psr_cleanup_red(cmd->oreds, cmd->ofds);
 	}
 	core->flags |= ~FLG_CMDS;
-	core->cmd_pos = 0;
+	core->cmd_pmax = 0;
 	return (1);
 }
 

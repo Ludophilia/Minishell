@@ -6,7 +6,7 @@
 #    By: jegerman <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/09 12:08:14 by jegerman          #+#    #+#              #
-#    Updated: 2025/09/18 20:44:57 by jegerman         ###   ########.fr        #
+#    Updated: 2025/09/26 19:45:56 by jegerman         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,6 +41,8 @@ MAN_SRCS += $(SRCS_DR)/parser_error.c
 MAN_SRCS += $(SRCS_DR)/parser_redirs.c
 MAN_SRCS += $(SRCS_DR)/parser_word.c
 MAN_SRCS += $(SRCS_DR)/parser_utils.c
+
+# MAN_SRCS += $(SRCS_DR)/fmgr.c
 
 # MAN_SRCS += $(SRCS_DR)/ressources.c
 

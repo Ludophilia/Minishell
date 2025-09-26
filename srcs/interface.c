@@ -6,27 +6,29 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:18:13 by jgermany          #+#    #+#             */
-/*   Updated: 2025/09/23 19:29:54 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/26 19:46:52 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	utils_print_cmds(t_core *core)
+int	utl_print_cmds(t_core *core)
 {
 	t_cmd	*cmd;
 	int		i;
 	int		j;
 
 	i = -1;
-	while (++i < (core->cmd_pos + 1))
+	while (++i < (core->cmd_pmax + 1))
 	{
 		cmd = &core->cmds[i];
 		printf("%i\n", i);
 		printf("\t=== args ===\n");
 		j = -1;
+		if (!cmd->argv)
+			printf("\t(NULL)\n");
 		while (cmd->argv && cmd->argv[++j])
-			printf("\t%s\n", cmd->argv[j]);
+			printf("\t%s.\n", cmd->argv[j]);
 		printf("\t=== ireds ===\n");
 		j = -1;
 		while (cmd->ireds[++j].type != TOK_EOL)
@@ -48,7 +50,7 @@ int	ui_loop_prompt(t_core *core)
 
 	ft_bzero(core->cmds, CMD_MAX * sizeof(t_cmd));
 	core->flags = 0;
-	core->cmd_pos = 0;
+	core->cmd_pmax = 0;
 	while (1)
 	{
 		line = readline(UI_PROMPT);
@@ -60,32 +62,8 @@ int	ui_loop_prompt(t_core *core)
 
 		if (*line != 0)
 			add_history(line);
+		
 
-		// 22/09 - What should be done??
-
-		// Current state:
-
-		//	== We have a array of t_cmds.
-		//		== with each one
-		//		== - an array of char * (argv)
-		//		== - an array of ireds (input redirections)
-		//		== - an array if oreds (output redirections)
-
-		// What's next?
-
-		// == Understand where to open (parent / child) and how to open redirections
-		//		- Write the code to manage each redirections with error management
-		//			- '<<' Heredocs 
-		//			- '<' Input redirects
-		//			- '>' Output redirects with creation
-		//			- '>>' Output redirect with append
-
-		// == Understand how to build and manage the pipeline of commands
-		//		- Where to open pipes (parent / child)
-		//			- 
-
-		// == 
-					
 		// 5/09 - Not at the right level anyway...
 		if (*line != 0 && psr_parse_line(line, core) == -1)
 		{
@@ -93,7 +71,19 @@ int	ui_loop_prompt(t_core *core)
 			continue ; // 7/09 - Find a better way.
 		}
 
-		utils_print_cmds(core);
+		// 22/09, 26/09 - What should be done??
+
+		
+		utl_print_cmds(core);
+		// Past that point. the structures are filled up.
+		
+		// Open redirections / pipes / and set the right things into the right structure.
+		// 26
+		// fmgr_set_reds(core); // == -1...
+
+	
+
+		
 		(void)(line && utl_cleanup(core->flags, core)); /// ???
 
 		// 31/08 - Will certainly move somewhere else as well
