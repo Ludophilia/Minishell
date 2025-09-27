@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/26 19:45:47 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/27 19:00:53 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,15 @@
 # include <stdint.h>
 
 # define UI_PROMPT "minishell> "
-# define DEFAULT_PATH "/bin:/usr/bin"
+
+# define ENV_DFLT_PATH "/bin:/usr/bin" // DEFAULT_PATH
+
 # define ERR_SYNTAX "minishell: syntax error near unexpected token `%s'\n"
+# define ERR_GNR "minishell: %s\n"
+# define ERR_PTH "minishell: %s: %s\n"
+# define ERR_CMD "minishell: %s: command not found\n"
+
+# define FL_PRMS 00664
 
 extern uint32_t	g_exit_status; // Why a straight g_?? Real G or just a bitch-ass n*?
 
@@ -74,6 +81,7 @@ typedef struct s_red
 typedef struct s_cmd
 {
 	char	**argv;
+	bool	xready;
 	pid_t	pid;
 	t_red	ireds[RED_MAX];
 	t_red	oreds[RED_MAX];
@@ -109,6 +117,11 @@ int		psr_add_reds(t_tok *tok, t_cmd *cmd);
 int		psr_add_cmd(t_tok *tok, t_cmd *cmd);
 int		psr_error_check(t_tok *toks);
 int		psr_parse_line(char *line, t_core *core);
+
+int		fmgr_access(char *path, int type);
+int		fmgr_open(char *path, int openflags, mode_t openmode);
+int		fmgr_pipe(int fds[2]);
+int		fmgr_close(int pos, int *fds);
 
 int		utl_cleanup(t_cflg flags, t_core *core);
 char	*utl_shitoa(unsigned int nbr, char *store);

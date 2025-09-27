@@ -28,26 +28,64 @@
 	why use a subshell to open that file?
 	- returns 0
 
-`> file1 > file2 <notfile1`
-	- bash: notfile1: No such file or directory
-	- Create file1 and file2 in the current directory. Fails to create
-	notfile1.
-	- returns 1
-
-`> file1 > file2 <notfile1 | > file3`
-	- bash: notfile1: No such file or directory
-	- Create file1, file2 AND file3 in the current directory.
-	- Fails to create notfile1 but does not stops creating file3 after that.
-	- returns 0 (>file3)
-
 - `> file1 > file2 <<END | <<OFF > file3`
 	- Heredoc with END delimiter first read
 	- Then heredoc with OFF
 	- return 0
 
+#### Examples errors
+
 - `< fileNotFound sleep 10`
 	- bash: oof: No such file or directory
+	- sleep 10 is NOT EXECUTED
 	- return 1
+
+- `> file1 > file2 <notfile1 | > file3`
+	- bash: notfile1: No such file or directory
+	- Create file1, file2 AND file3 in the current directory.
+	- Fails to create notfile1 but does not stops creating file3 after that.
+	- returns 0 (>file3)
+
+- (!!) `> file1 > file2 <notfile1`
+	- bash: notfile1: No such file or directory
+	- Create file1 and file2 in the current directory. 
+	- Fails to create notfile1.
+	- returns 1
+
+- (!!) `<notfile1 > file1 > file2`
+	- bash: notfile1: No such file or directory
+	- Fails to create  file1 and file2 in the current directory.
+	- returns 1
+
+- `< ../Makefile cat > file41 >file42 >file43 | < fileNotFound head`
+	- file41, file42, file43 are created if needed
+
+	- Makefile is copied to file43 (the last one)
+
+	- head failed and didn't do anything
+	- bash: fileNotFound: No such file or directory
+	- returns 1
+
+- `< fileNotFound head | < ../Makefile cat > file41 >file42 >file43`
+	- bash: fileNotFound: No such file or directory
+		- that command group stop at `< fileNotFound`
+
+	- The following command is still executed
+	- file41, file42, file43 are created if needed
+	- Makefile is copied to file43 (the last one)
+
+	- returns 0
+
+- `< fileNotFound1 < ../Makefile cat > file41 | < fileNotFound2 head`
+	- bash: fileNotFound1: No such file or directory
+	- bash: fileNotFound2: No such file or directory
+
+	- `cat` is not executed, file41 is not created.
+	- The subgroup stops at first error.
+
+	- `head` is not executed either. 
+
+	- returns 1
 
 ### Where to open?
 
