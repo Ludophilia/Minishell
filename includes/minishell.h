@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/27 19:00:53 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/28 21:39:43 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,10 @@
 # define ERR_CMD "minishell: %s: command not found\n"
 
 # define FL_PRMS 00664
+# define FL_IRED O_RDONLY
+# define FL_ORED (O_CREAT | O_TRUNC | O_WRONLY)
+# define FL_ORED_AP (O_CREAT | O_APPEND | O_WRONLY)
+
 
 extern uint32_t	g_exit_status; // Why a straight g_?? Real G or just a bitch-ass n*?
 
@@ -122,6 +126,9 @@ int		fmgr_access(char *path, int type);
 int		fmgr_open(char *path, int openflags, mode_t openmode);
 int		fmgr_pipe(int fds[2]);
 int		fmgr_close(int pos, int *fds);
+
+int		fmgr_set_hdocs(int *ifds, t_red *red);
+int		fmgr_set_reds(t_core *core);
 
 int		utl_cleanup(t_cflg flags, t_core *core);
 char	*utl_shitoa(unsigned int nbr, char *store);

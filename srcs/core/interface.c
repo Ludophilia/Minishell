@@ -6,13 +6,13 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:18:13 by jgermany          #+#    #+#             */
-/*   Updated: 2025/09/26 19:46:52 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/28 21:22:41 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	utl_print_cmds(t_core *core)
+static int	utl_print_cmds(t_core *core)
 {
 	t_cmd	*cmd;
 	int		i;
@@ -71,18 +71,18 @@ int	ui_loop_prompt(t_core *core)
 			continue ; // 7/09 - Find a better way.
 		}
 
-		// 22/09, 26/09 - What should be done??
-
 		
 		utl_print_cmds(core);
 		// Past that point. the structures are filled up.
 		
 		// Open redirections / pipes / and set the right things into the right structure.
 		// 26
-		// fmgr_set_reds(core); // == -1...
+		fmgr_set_reds(core);
 
 	
+		// 28
 
+		// = Next: Execution.
 		
 		(void)(line && utl_cleanup(core->flags, core)); /// ???
 
