@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:18:13 by jgermany          #+#    #+#             */
-/*   Updated: 2025/09/28 21:22:41 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/28 23:37:31 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,22 +23,30 @@ static int	utl_print_cmds(t_core *core)
 	{
 		cmd = &core->cmds[i];
 		printf("%i\n", i);
-		printf("\t=== args ===\n");
+		printf("\targs:\n");
 		j = -1;
 		if (!cmd->argv)
-			printf("\t(NULL)\n");
+			printf("\t\t(NULL)\n");
 		while (cmd->argv && cmd->argv[++j])
-			printf("\t%s.\n", cmd->argv[j]);
-		printf("\t=== ireds ===\n");
+			printf("\t\t%s.\n", cmd->argv[j]);
+		printf("\tireds:\n");
+		if (cmd->ireds[0].type == TOK_EOL)
+				printf("\t\t(EOL)\n");
 		j = -1;
 		while (cmd->ireds[++j].type != TOK_EOL)
-			printf("\ttype: %i; word: %s\n",
+			printf("\t\ttype: %i; word: %s\n",
 				cmd->ireds[j].type, cmd->ireds[j].word);
-		printf("\t=== oreds ===\n");
+		printf("\toreds:\n");
+		if (cmd->oreds[0].type == TOK_EOL)
+				printf("\t\t(EOL)\n");
 		j = -1;
 		while (cmd->oreds[++j].type != TOK_EOL)
-			printf("\ttype: %i; word: %s\n",
+			printf("\t\ttype: %i; word: %s\n",
 				cmd->oreds[j].type, cmd->oreds[j].word);
+		printf("\tifds:\n");
+		printf("\t\t[%i; %i]\n", cmd->ifds[0], cmd->ifds[1]);
+		printf("\tofds:\n");
+		printf("\t\t[%i; %i]\n", cmd->ofds[0], cmd->ofds[1]);
 		printf("\n");
 	}
 	return (0);
@@ -71,20 +79,27 @@ int	ui_loop_prompt(t_core *core)
 			continue ; // 7/09 - Find a better way.
 		}
 
-		
-		utl_print_cmds(core);
-		// Past that point. the structures are filled up.
-		
-		// Open redirections / pipes / and set the right things into the right structure.
-		// 26
+
 		fmgr_set_reds(core);
 
-	
-		// 28
+
+		// 29/09 - We need something to track the opened fds
+		utl_print_cmds(core);
+
+
+		// 29/09 - We count on this for cleaning all fds
+		// = That's the test.
+		//		= Are all fds closed?
+		//		= In every scenario?
+		//			= Happy Path
+		//			= Errors...
+		// 		= valgrind --track-fds=yes to know
+
+
+		(void)(line && printf("cleanup...\n") && utl_cleanup(core->flags, core)); /// remove void
+		utl_print_cmds(core);
 
 		// = Next: Execution.
-		
-		(void)(line && utl_cleanup(core->flags, core)); /// ???
 
 		// 31/08 - Will certainly move somewhere else as well
 		if (ft_strlen(line) == 4 && !ft_strncmp("exit", line, 4))

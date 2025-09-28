@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/28 21:39:43 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/28 23:35:05 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,6 @@ int		lex_is_sep(int c);
 
 int		lex_tokenize_line(char *line, t_tok *toks);
 
-int		psr_cleanup_red(t_red *red, int *fds);
 int		psr_cleanup_cmds(t_core *core);
 
 int		psr_is_ired(t_tok *tok);
@@ -128,6 +127,8 @@ int		fmgr_pipe(int fds[2]);
 int		fmgr_close(int pos, int *fds);
 
 int		fmgr_set_hdocs(int *ifds, t_red *red);
+int		fmgr_set_pipe(int pos, int pmax, t_cmd *cmd);
+int		fmgr_set_red(int pos, int *fds, int openflags, t_red *red);
 int		fmgr_set_reds(t_core *core);
 
 int		utl_cleanup(t_cflg flags, t_core *core);
