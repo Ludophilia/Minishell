@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/28 23:35:05 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/29 20:22:12 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,18 +41,16 @@
 # define FL_ORED (O_CREAT | O_TRUNC | O_WRONLY)
 # define FL_ORED_AP (O_CREAT | O_APPEND | O_WRONLY)
 
-
-extern uint32_t	g_exit_status; // Why a straight g_?? Real G or just a bitch-ass n*?
+extern uint32_t	g_exit_status; // signals, please improve this...
 
 typedef struct sigaction	t_sigaction;
 
 typedef enum e_max
 {
 	TOK_MAX = 2048,
-	CMD_MAX = 256,
-	RED_MAX = 64,
-	ID_LMAX = 1024,
-	PFD_MAX = 2,
+	CMD_MAX = 128,
+	RED_MAX = 128,
+	ID_LMAX = 256,
 	EXW_MAX = 16,
 }	t_max;
 
@@ -79,25 +77,23 @@ typedef struct s_red
 {
 	t_tokt	type;
 	char	*word;
-	// int		fds[PFD_MAX];
 }	t_red;
 
 typedef struct s_cmd
 {
-	char	**argv;
 	bool	xready;
+	char	**argv;
 	pid_t	pid;
-	t_red	ireds[RED_MAX];
-	t_red	oreds[RED_MAX];
-	int		ifds[PFD_MAX];
-	int		ofds[PFD_MAX];
+	t_red	reds[RED_MAX];
+	int		ifd;
+	int		ofd;
 }	t_cmd;
 
 typedef struct s_core
 {
 	t_cmd		cmds[CMD_MAX];
 	int			cmd_pmax;
-	uint16_t	*exit; // ???
+	uint8_t		exitv; // later in the execution pipeline
 	uint32_t	flags;
 }	t_core;
 
@@ -124,11 +120,11 @@ int		psr_parse_line(char *line, t_core *core);
 int		fmgr_access(char *path, int type);
 int		fmgr_open(char *path, int openflags, mode_t openmode);
 int		fmgr_pipe(int fds[2]);
-int		fmgr_close(int pos, int *fds);
+int		fmgr_close(int *xfd);
 
 int		fmgr_set_hdocs(int *ifds, t_red *red);
 int		fmgr_set_pipe(int pos, int pmax, t_cmd *cmd);
-int		fmgr_set_red(int pos, int *fds, int openflags, t_red *red);
+int		fmgr_set_red(int *xfd, int openflags, t_red *red);
 int		fmgr_set_reds(t_core *core);
 
 int		utl_cleanup(t_cflg flags, t_core *core);

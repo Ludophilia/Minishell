@@ -6,21 +6,25 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 21:29:52 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/28 23:34:22 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/29 16:53:12 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	fmgr_get_user_input(char *lim, int len, int *opn, int *fds)
+static int	fmgr_get_user_input(int *opn, int *fds, t_red *red)
 {
 	char	*uinp;
+	char	*lim;
+	int		len;
 
 	if (write(1, "> ", 2) == -1)
 		return (-1);
 	uinp = get_next_line(0);
 	if (uinp == NULL)
 		return (-1);
+	lim = red->word;
+	len = ft_strlen(lim);
 	if (!ft_strncmp(uinp, lim, len) && uinp[len] == '\n')
 		return ((*opn)--, free(uinp), 0);
 	else if (write(fds[1], uinp, ft_strlen(uinp)) == -1)
@@ -28,46 +32,48 @@ static int	fmgr_get_user_input(char *lim, int len, int *opn, int *fds)
 	return (free(uinp), 0);
 }
 
-int	fmgr_set_hdocs(int *ifds, t_red *red)
+int	fmgr_set_hdocs(int *ifd, t_red *red)
 {
 	int		opn;
 	int		fds[2];
-	char	*lim;
-		
+
+	if (ifd == 0)
+		return (0);
 	if (fmgr_pipe(fds) == -1)
 		return (-1);
 	opn = true;
-	lim = red->word;
 	while (opn)
-		if (fmgr_get_user_input(lim, ft_strlen(lim), &opn, fds) == -1)
-			return (fmgr_close(0, fds), fmgr_close(1, fds), -1);
-	if (fmgr_close(1, fds) == -1
-		|| (ifds[0] > 2 && fmgr_close(0, ifds) == -1))
-		return (fmgr_close(0, fds), -1);
-	ifds[0] = fds[0];
+		if (fmgr_get_user_input(&opn, fds, red) == -1)
+			return (close(fds[0]), close(fds[1]), -1);
+	if (fmgr_close(fds + 1) == -1
+		|| (*ifd > 2 && fmgr_close(ifd) == -1))
+		return (close(fds[0]), -1);
+	*ifd = fds[0];
 	return (0);
 }
 
 int	fmgr_set_pipe(int pos, int pmax, t_cmd *cmd)
-{
-	if (pmax == 0)
+{	
+	int	fds[2];
+
+	if (pos == pmax)
 		return (0);
-	if (pos != pmax && fmgr_pipe(cmd->ofds) == -1)
+	if (fmgr_pipe(fds) == -1)
 		return (-1);
-	if (pos != 0)
-		cmd->ifds[0] = (cmd - 1)->ofds[0];
+	cmd->ofd = fds[1];
+	(cmd + 1)->ifd = fds[0];
 	return (0);
 }
 
-int	fmgr_set_red(int pos, int *fds, int openflags, t_red *red)
+int	fmgr_set_red(int *xfd, int openflags, t_red *red)
 {
 	int	fd;
 
 	fd = fmgr_open(red->word, openflags, FL_PRMS);
 	if (fd == -1)
 		return (-1);
-	if (fds[pos] > 2 && fmgr_close(0, fds) == -1)
-		return (fmgr_close(0, &fd), -1);
-	fds[pos] = fd;
+	if (*xfd > 2 && fmgr_close(xfd) == -1)
+		return (fmgr_close(&fd), -1);
+	*xfd = fd;
 	return (0);
 }

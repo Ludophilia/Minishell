@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 17:27:28 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/28 22:44:08 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/29 17:27:45 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,8 @@ int	psr_add_reds(t_tok *tok, t_cmd *cmd)
 {
 	while (tok->type != TOK_PIPE && tok->type != TOK_EOL)
 	{
-		if ((psr_is_ired(tok) && psr_add_red(cmd->ireds, &tok) == -1)
-			|| (psr_is_ored(tok) && psr_add_red(cmd->oreds, &tok) == -1))
+		if ((psr_is_ored(tok) || psr_is_ired(tok))
+			&& psr_add_red(cmd->reds, &tok) == -1)
 			return (-1);
 		tok++;
 	}

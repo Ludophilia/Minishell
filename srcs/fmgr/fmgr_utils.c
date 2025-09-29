@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:05:19 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/28 21:00:40 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/29 16:55:56 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,12 +41,12 @@ int	fmgr_pipe(int fds[2])
 	return (0);
 }
 
-int	fmgr_close(int pos, int *fds)
+int	fmgr_close(int *xfd)
 {
-	if (fds[pos] <= 2)
+	if (xfd == NULL || *xfd <= 2)
 		return (0);
-	if (close(fds[pos]) == -1 && ft_eprintf(ERR_GNR, strerror(errno)))
+	if (close(*xfd) == -1 && ft_eprintf(ERR_GNR, strerror(errno)))
 		return (-1);
-	fds[pos] = 0; // 0 or -1 ?
+	*xfd = 0;
 	return (0);
 }

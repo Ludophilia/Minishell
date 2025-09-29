@@ -23,48 +23,83 @@
 
 #### Examples
 
-`> file1`
+- [x] `> file1`
+	- Create file1 in the current directory. (if doesn't exist)
+	- Truncate file 
+	- There's is no program to run, why use a subshell to open that file?
+	- returns 0
+
+- [x] `>> file1`
 	- Create file1 in the current directory. There's is no program to run,
 	why use a subshell to open that file?
 	- returns 0
 
-- `> file1 > file2 <<END | <<OFF > file3`
+- [x] `< Makefile`
+	- Reads Makefile (if exists)
+	- returns 0
+
+- [x] `<< END`
+	- Opens stdin to get the data...
+	- returns 0
+
+- [x] `> file1 | < Makefile`
+	- Copies in `file1`
+	- Open `Makefile`
+	- returns 0
+
+- [x] `> file1 | <<OFF`
+	- Copies in `file1`
+	- Open heredoc with limiter `OFF`
+	- return 0
+
+- [x] `> file1 > file2 <<END | <<OFF > file3`
 	- Heredoc with END delimiter first read
 	- Then heredoc with OFF
 	- return 0
 
-#### Examples errors
+#### Errors examples
 
-- `< fileNotFound sleep 10`
+- [x] `< fileNotFound sleep 10`
 	- bash: oof: No such file or directory
 	- sleep 10 is NOT EXECUTED
 	- return 1
 
-- `> file1 > file2 <notfile1 | > file3`
-	- bash: notfile1: No such file or directory
-	- Create file1, file2 AND file3 in the current directory.
-	- Fails to create notfile1 but does not stops creating file3 after that.
-	- returns 0 (>file3)
-
-- (!!) `> file1 > file2 <notfile1`
+- [x] `> file1 > file2 <notfile1`
 	- bash: notfile1: No such file or directory
 	- Create file1 and file2 in the current directory. 
 	- Fails to create notfile1.
 	- returns 1
 
-- (!!) `<notfile1 > file1 > file2`
+- [x] `<notfile1 > file1 > file2`
 	- bash: notfile1: No such file or directory
 	- Fails to create  file1 and file2 in the current directory.
 	- returns 1
 
-- `< ../Makefile cat > file41 >file42 >file43 | < fileNotFound head`
-	- file41, file42, file43 are created if needed
+- [x] `> file1 > file2 <notfile1 | > file3`
+	- bash: notfile1: No such file or directory
+	- Create file1, file2 AND file3 in the current directory.
+	- Fails to create notfile1 but does not stops creating file3 after that.
+	- returns 0 (>file3)
 
-	- Makefile is copied to file43 (the last one)
+- [x] `<notfile1 > file1 > file2 | > file3`
+	- bash: notfile1: No such file or directory
+	- Fails to create  file1 and file2 in the current directory.
+	- Create file3 in the current directory.
+	- returns 0
 
-	- head failed and didn't do anything
-	- bash: fileNotFound: No such file or directory
+#### Extreme examples
+
+- [ ] `< Makefile cat > file1 | <file2 tac >file3 | < fileNotFound head > file4`
+	- file1 is created (if needed) -> cat executed.
+		- Makefile is copied to file1
+	- file2 fails -> file3 not created ; cmd not executed.
+	- fileNotFound fails -> file4 not created ; head not executed.
+
+	- `bash: file2: No such file or directory`
+	- `bash: fileNotFound: No such file or directory`
 	- returns 1
+
+// Please come back once you can execute commands.
 
 - `< fileNotFound head | < ../Makefile cat > file41 >file42 >file43`
 	- bash: fileNotFound: No such file or directory

@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 22:43:08 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/28 23:15:18 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/29 19:34:15 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ static int	psr_cleanup_cmd(t_cmd *cmd)
 {
 	int	j;
 
+	cmd->xready = 0;
 	if (cmd->argv == NULL)
 		return (1);
 	j = 0;
@@ -23,11 +24,15 @@ static int	psr_cleanup_cmd(t_cmd *cmd)
 		free(cmd->argv[j++]);
 	free(cmd->argv);
 	cmd->argv = NULL;
+	// pid?
 	return (1);
 }
 
-static int	psr_cleanup_red(int is_inpt, t_red *red, int *fds)
+static int	psr_cleanup_red(t_cmd *cmd)
 {
+	t_red *red;
+
+	red = cmd->reds;
 	while (red->type != TOK_EOL)
 	{
 		red->type = TOK_EOL;
@@ -35,7 +40,8 @@ static int	psr_cleanup_red(int is_inpt, t_red *red, int *fds)
 		red->word = NULL;
 		red++;
 	}
-	(void)((is_inpt && fmgr_close(0, fds)) || fmgr_close(1, fds)); // remove void
+	fmgr_close(&cmd->ifd);
+	fmgr_close(&cmd->ofd);
 	return (0);
 }
 
@@ -49,8 +55,7 @@ int	psr_cleanup_cmds(t_core *core)
 	{
 		cmd = core->cmds + i;
 		psr_cleanup_cmd(cmd);
-		psr_cleanup_red(true, cmd->ireds, cmd->ifds);
-		psr_cleanup_red(false, cmd->oreds, cmd->ofds);
+		psr_cleanup_red(cmd);
 	}
 	core->flags |= ~FLG_CMDS;
 	core->cmd_pmax = 0;
