@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/29 20:22:12 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/29 21:46:13 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,10 +81,10 @@ typedef struct s_red
 
 typedef struct s_cmd
 {
-	bool	xready;
-	char	**argv;
-	pid_t	pid;
 	t_red	reds[RED_MAX];
+	bool	xready;
+	pid_t	pid;
+	char	**argv;
 	int		ifd;
 	int		ofd;
 }	t_cmd;
@@ -93,6 +93,7 @@ typedef struct s_core
 {
 	t_cmd		cmds[CMD_MAX];
 	int			cmd_pmax;
+	char		**envp; // provisory
 	uint8_t		exitv; // later in the execution pipeline
 	uint32_t	flags;
 }	t_core;

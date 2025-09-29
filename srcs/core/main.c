@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/14 13:48:39 by jgermany          #+#    #+#             */
-/*   Updated: 2025/09/29 20:34:07 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/29 21:48:58 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	main(int argc, char **argv, char **envp)
 
 	if (++argv, --argc != 0)
 		return (1);
-	(void)envp;
+	core.envp = envp; // provisory
 	// (&core)->exit = &g_exit_status;
 	if (sig_init_handlers() == -1
 		|| ui_loop_prompt(&core) == -1)

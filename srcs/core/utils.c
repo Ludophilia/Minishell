@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 19:18:23 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/29 19:33:48 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/29 21:06:36 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 int	utl_cleanup(t_cflg flags, t_core *core)
 {
+	printf("cleanup...\n"); // remove
 	if (flags & FLG_CMDS)
 		psr_cleanup_cmds(core);
 	return (1);
