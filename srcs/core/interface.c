@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:18:13 by jgermany          #+#    #+#             */
-/*   Updated: 2025/09/29 21:54:47 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/30 11:29:17 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ int	ui_loop_prompt(t_core *core)
 		//				= dup2
 		//				= execve
 
-		exc_exec_cmds(core); // less go
+		exc_exec_cmds(core);
 		
 		// utl_print_cmds(core);
 		(void)(line && utl_cleanup(core->flags, core)); /// remove void

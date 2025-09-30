@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/29 21:46:13 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/30 17:50:51 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,11 @@ typedef enum e_tokt
 	TOK_ORED, TOK_ORED_AP
 }	t_tokt;
 
+// typedef enum e_bid
+// {
+// 	BID_
+// }	t_bid;
+
 typedef enum e_cflg
 {
 	FLG_CMDS = (1 << 0),
@@ -83,7 +88,8 @@ typedef struct s_cmd
 {
 	t_red	reds[RED_MAX];
 	bool	xready;
-	pid_t	pid;
+	// pid_t	pid;
+	// int		is_bltn;
 	char	**argv;
 	int		ifd;
 	int		ofd;

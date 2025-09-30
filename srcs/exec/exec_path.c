@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec_utils.c                                       :+:      :+:    :+:   */
+/*   exec_path.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:18:44 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/27 16:20:48 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/30 18:28:11 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 // Execve
 
 
-static char	**ptbb_load_env_paths(char **envp)
+static char	**exc_load_env_paths(char **envp)
 {
 	char	**paths;
 	int		is_dflt;
@@ -35,7 +35,7 @@ static char	**ptbb_load_env_paths(char **envp)
 }
 
 // Builds the full path for the program, if needed.
-static char	*ptbb_build_path(char **strs)
+static char	*exc_build_path(char **strs)
 {
 	char	*path;
 	size_t	path_len;
@@ -61,8 +61,7 @@ static char	*ptbb_build_path(char **strs)
 	return (path);
 }
 
-// 27/09 - For how long?
-static int	pgmb_free_strs(int from_id, char **strs)
+static int	exc_free_strs(int from_id, char **strs)
 {
 	int	i;
 
@@ -76,31 +75,30 @@ static int	pgmb_free_strs(int from_id, char **strs)
 }
 
 // returns 0. When a file is found and executable. 
-int	ptbb_check_path(char **cmd_args, char **envp)
+int	exc_check_path(char **argv, char **envp)
 {
-	char	**paths;
-	char	*new_path;
+	char	**env_paths;
+	char	*prg_pth;
 	int		i;
 
-	if (ft_strchr(*cmd_args, '/'))
-		return (fmgr_access(*cmd_args, X_OK));
-	paths = ptbb_load_env_paths(envp);
-	if (paths == NULL)
+	if (ft_strchr(*argv, '/'))
+		return (fmgr_access(*argv, X_OK));
+	env_paths = exc_load_env_paths(envp);
+	if (env_paths == NULL)
 		return (-1);
 	i = -1;
-	while (paths[++i])
+	while (env_paths[++i])
 	{
-		new_path = ptbb_build_path((char *[]){paths[i], "/", cmd_args[0], 0});
-		if (new_path == NULL && pgmb_free_strs(0, paths))
-			return (-1);
-		if (access(new_path, X_OK) == 0 && pgmb_free_strs(0, paths))
+		prg_pth = exc_build_path((char *[]){env_paths[i], "/", argv[0], 0});
+		if (prg_pth == NULL)
+			return (exc_free_strs(0, env_paths), -1);
+		if (access(prg_pth, X_OK) == 0)
 		{
-			free(*cmd_args);
-			*cmd_args = new_path;
-			return (0);
+			free(*argv);
+			*argv = prg_pth;
+			return (exc_free_strs(0, env_paths), 0);
 		}
-		free(new_path);
+		free(prg_pth);
 	}
-	(ft_eprintf(ERR_CMD, *cmd_args), pgmb_free_strs(0, paths));
-	return (-1);
+	return (ft_eprintf(ERR_CMD, *argv), exc_free_strs(0, env_paths), -1);
 }
