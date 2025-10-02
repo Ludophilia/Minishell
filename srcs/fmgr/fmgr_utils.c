@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:05:19 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/29 16:55:56 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/01 22:11:00 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,15 @@ int	fmgr_open(char *path, int openflags, mode_t openmode)
 	if (fd == -1 && ft_eprintf(ERR_PTH, path, strerror(errno)))
 		return (-1);
 	return (fd);
+}
+
+int fmgr_dup2(int old_fd, int new_fd)
+{
+	if (old_fd <= 2)
+		return (0);
+	if (dup2(old_fd, new_fd) == -1 && ft_eprintf(ERR_GNR, strerror(errno)))
+		return (-1);
+	return (0);
 }
 
 int	fmgr_pipe(int fds[2])

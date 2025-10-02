@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 22:43:08 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/29 19:34:15 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/01 23:51:42 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,10 @@ static int	psr_cleanup_red(t_cmd *cmd)
 	}
 	fmgr_close(&cmd->ifd);
 	fmgr_close(&cmd->ofd);
-	return (0);
+	return (1);
 }
 
-int	psr_cleanup_cmds(t_core *core)
+int	psr_cleanup_cmds(t_cflg flags, t_core *core)
 {
 	t_cmd	*cmd;
 	int		i;
@@ -54,10 +54,15 @@ int	psr_cleanup_cmds(t_core *core)
 	while (++i < (core->cmd_pmax + 1))
 	{
 		cmd = core->cmds + i;
-		psr_cleanup_cmd(cmd);
-		psr_cleanup_red(cmd);
+		if (flags & FLG_CMDS)
+			psr_cleanup_cmd(cmd);
+		if (flags & FLG_REDS)
+			psr_cleanup_red(cmd);
 	}
-	core->flags |= ~FLG_CMDS;
+	if (flags & FLG_CMDS)
+		core->flags |= ~FLG_CMDS;
+	if (flags & FLG_REDS)
+		core->flags |= ~FLG_REDS;
 	core->cmd_pmax = 0;
 	return (1);
 }

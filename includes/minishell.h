@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/30 17:50:51 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/01 23:32:39 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ typedef enum e_tokt
 typedef enum e_cflg
 {
 	FLG_CMDS = (1 << 0),
+	FLG_REDS = (1 << 1),
 }	t_cflg;
 
 typedef struct s_tok
@@ -110,7 +111,7 @@ int		lex_is_sep(int c);
 
 int		lex_tokenize_line(char *line, t_tok *toks);
 
-int		psr_cleanup_cmds(t_core *core);
+int		psr_cleanup_cmds(t_cflg flags, t_core *core);
 
 int		psr_is_ired(t_tok *tok);
 int		psr_is_ored(t_tok *tok);
@@ -128,6 +129,7 @@ int		fmgr_access(char *path, int type);
 int		fmgr_open(char *path, int openflags, mode_t openmode);
 int		fmgr_pipe(int fds[2]);
 int		fmgr_close(int *xfd);
+int		fmgr_dup2(int old_fd, int new_fd);
 
 int		fmgr_set_hdocs(int *ifds, t_red *red);
 int		fmgr_set_pipe(int pos, int pmax, t_cmd *cmd);
@@ -136,6 +138,11 @@ int		fmgr_set_reds(t_core *core);
 
 int		utl_cleanup(t_cflg flags, t_core *core);
 char	*utl_shitoa(unsigned int nbr, char *store);
+
+int		exc_check_path(char **argv, char **envp);
+int		exc_exec_cmds(t_core *core);
+
+int		utl_print_cmds(t_core *core); // REMOVE
 
 int		sig_init_handlers(void);
 

@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:18:44 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/30 18:28:11 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/01 22:49:09 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,9 +77,9 @@ static int	exc_free_strs(int from_id, char **strs)
 // returns 0. When a file is found and executable. 
 int	exc_check_path(char **argv, char **envp)
 {
+	int		i;
 	char	**env_paths;
 	char	*prg_pth;
-	int		i;
 
 	if (ft_strchr(*argv, '/'))
 		return (fmgr_access(*argv, X_OK));
@@ -100,5 +100,5 @@ int	exc_check_path(char **argv, char **envp)
 		}
 		free(prg_pth);
 	}
-	return (ft_eprintf(ERR_CMD, *argv), exc_free_strs(0, env_paths), -1);
+	return (exc_free_strs(0, env_paths), ft_eprintf(ERR_CMD, *argv), -1);
 }

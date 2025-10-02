@@ -6,38 +6,38 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:18:13 by jgermany          #+#    #+#             */
-/*   Updated: 2025/09/30 11:29:17 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/02 01:10:33 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	utl_print_cmds(t_core *core)
+int	utl_print_cmds(t_core *core)
 {
 	t_cmd	*cmd;
 	int		i;
-	int		j;
+	// int		j;
 
 	i = -1;
 	while (++i < (core->cmd_pmax + 1))
 	{
 		cmd = &core->cmds[i];
-		printf("%i\n", i);
-		printf("\txready:\n");
-		printf("\t\t%i\n", cmd->xready);
-		printf("\targs:\n");
-		j = -1;
-		if (!cmd->argv)
-			printf("\t\t(NULL)\n");
-		while (cmd->argv && cmd->argv[++j])
-			printf("\t\t%s.\n", cmd->argv[j]);
-		printf("\treds:\n");
-		if (cmd->reds[0].type == TOK_EOL)
-				printf("\t\t(EOL)\n");
-		j = -1;
-		while (cmd->reds[++j].type != TOK_EOL)
-			printf("\t\ttype: %i; word: %s\n",
-				cmd->reds[j].type, cmd->reds[j].word);
+		// printf("%i\n", i);
+		// printf("\txready:\n");
+		// printf("\t\t%i\n", cmd->xready);
+		// printf("\targs:\n");
+		// j = -1;
+		// if (!cmd->argv)
+		// 	printf("\t\t(NULL)\n");
+		// while (cmd->argv && cmd->argv[++j])
+		// 	printf("\t\t%s.\n", cmd->argv[j]);
+		// printf("\treds:\n");
+		// if (cmd->reds[0].type == TOK_EOL)
+		// 		printf("\t\t(EOL)\n");
+		// j = -1;
+		// while (cmd->reds[++j].type != TOK_EOL)
+		// 	printf("\t\ttype: %i; word: %s\n",
+		// 		cmd->reds[j].type, cmd->reds[j].word);
 		printf("\tifd:\n");
 		printf("\t\t[%i]\n", cmd->ifd);
 		printf("\tofd:\n");
@@ -62,6 +62,8 @@ int	ui_loop_prompt(t_core *core)
 			return (0);
 		if (*line != 0)
 			add_history(line);
+
+			
 		if (line && psr_parse_line(line, core) == -1)
 		{
 			free(line);
@@ -70,29 +72,15 @@ int	ui_loop_prompt(t_core *core)
 		}
 	
 		// 29/09 - Execution.
-		fmgr_set_reds(core); // open files.
-		// What should be done now?
-		// = Take the array of commands
-		// = And execute every one? of them
-
-		// 		= Execution:
-		//			= Parent:
-		//				= fork() (every one of them or just those xready, 
-		//				maybe this will cause some problems if just xready)
-		//				= waitpid(-1)...
-		//
-		//			= Child
-		//				= path resolution (builtin, full path command)
-		//				= dup2
-		//				= execve
-
+		fmgr_set_reds(core);
+		// printf("IN PARENT:\n");
+		// utl_print_cmds(core);
 		exc_exec_cmds(core);
 		
-		// utl_print_cmds(core);
-		(void)(line && utl_cleanup(core->flags, core)); /// remove void
+		// (void)(line && utl_cleanup(core->flags, core));
 		
-		if (ft_strlen(line) == 4 && !ft_strncmp("exit", line, 4))
-			return (bi_exit(line), 0);
+		// if (ft_strlen(line) == 4 && !ft_strncmp("exit", line, 4))
+		// 	return (bi_exit(line), 0);
 		free(line);
 	}
 	return (0);
