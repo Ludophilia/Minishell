@@ -29,19 +29,19 @@ expands only when delimiter is unquoted).
 
 ### Part 3
 
-- [ ] Executor: build the pipeline, set up redirs/dup2, heredocs, exec external
+- [o] Executor: build the pipeline, set up redirs/dup2, heredocs, exec external
  commands or run builtins in-proc when no pipe.
 
-- [ ] Signals: SIGINT interactive behavior (interrupt line, not exit), 
+- [o] Signals: SIGINT interactive behavior (interrupt line, not exit), 
 SIGQUIT ignored in parent, default in children.
 
 - [ ] Exit statuses exactly like bash where applicable.
 
-- [ ] Env as your own list/map; keep it authoritative (don’t trust environ after start).
+- [o] Env as your own list/map; keep it authoritative (don’t trust environ after start).
 
 ### Part 4
 
-- [ ] Builtins: 
+- [o] Builtins: 
 	- echo -n, (no newline)
  	- cd, pwd, 
 	- export, unset, env,
