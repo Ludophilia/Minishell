@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:07:42 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/02 02:27:59 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/02 22:23:01 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,8 +67,7 @@ static int	exc_exec_cmd(t_cmd *cmd, t_core *core)
 	// 	return (-1);
 	// 
 	if (!is_built && (exc_check_path(cmd->argv, core->envp) == -1
-		|| (1
-			&& execve(*cmd->argv, cmd->argv, core->envp) == -1)))
+		|| (execve(*cmd->argv, cmd->argv, core->envp) == -1)))
 	{
 		utl_cleanup(core->flags, core);
 		return (-1);

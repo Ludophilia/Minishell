@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/01 23:32:39 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/02 22:15:46 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,10 @@
 
 # define ENV_DFLT_PATH "/bin:/usr/bin" // DEFAULT_PATH
 
-# define ERR_SYNTAX "minishell: syntax error near unexpected token `%s'\n"
-# define ERR_GNR "minishell: %s\n"
-# define ERR_PTH "minishell: %s: %s\n"
-# define ERR_CMD "minishell: %s: command not found\n"
+# define ERR_SYNTAX "syntax error near unexpected token `%s'\n"
+# define ERR_GNR "%s\n"
+# define ERR_PTH "%s: %s\n"
+# define ERR_CMD "%s: command not found\n"
 
 # define FL_PRMS 00664
 # define FL_IRED O_RDONLY
