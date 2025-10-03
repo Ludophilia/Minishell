@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/03 21:39:26 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/03 22:38:56 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,8 +139,11 @@ int		fmgr_set_pipe(int pos, int pmax, t_cmd *cmd);
 int		fmgr_set_red(int *xfd, int openflags, t_red *red);
 int		fmgr_set_reds(t_core *core);
 
+int		utl_free_strs(int from_id, char **strs);
 int		utl_cleanup(t_cflg flags, t_core *core);
 char	*utl_shitoa(unsigned int nbr, char *store);
+
+int		exc_is_builtin(char *arg);
 
 int		exc_check_path(char **argv, char **envp);
 int		exc_exec_cmds(t_core *core);

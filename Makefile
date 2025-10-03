@@ -6,7 +6,7 @@
 #    By: jegerman <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/09 12:08:14 by jegerman          #+#    #+#              #
-#    Updated: 2025/10/01 21:50:14 by jegerman         ###   ########.fr        #
+#    Updated: 2025/10/03 23:28:02 by jegerman         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,8 +36,7 @@ EXEC_DR := $(SRCS_DR)/exec
 MAN_SRCS := $(CORE_DR)/main.c
 MAN_SRCS += $(CORE_DR)/interface.c
 MAN_SRCS += $(CORE_DR)/utils.c
-MAN_SRCS += $(BLTN_DR)/builtins.c
-MAN_SRCS += $(SGNL_DR)/signals.c
+
 MAN_SRCS += $(LEXR_DR)/lexer.c
 MAN_SRCS += $(LEXR_DR)/lexer_utils.c
 MAN_SRCS += $(PRSR_DR)/parser.c
@@ -52,6 +51,10 @@ MAN_SRCS += $(FMGR_DR)/fmgr_reds.c
 MAN_SRCS += $(FMGR_DR)/fmgr_utils.c
 MAN_SRCS += $(EXEC_DR)/exec.c
 MAN_SRCS += $(EXEC_DR)/exec_path.c
+MAN_SRCS += $(EXEC_DR)/exec_builtins.c
+
+MAN_SRCS += $(BLTN_DR)/builtins.c
+MAN_SRCS += $(SGNL_DR)/signals.c
 
 MAN_OBJS := $(MAN_SRCS:.c=.o)
 

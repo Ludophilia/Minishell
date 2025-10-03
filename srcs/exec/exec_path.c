@@ -6,23 +6,19 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:18:44 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/01 22:49:09 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/03 23:34:06 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// Logic to check from the envp if a file can be executed
-// Execve
-
-
-static char	**exc_load_env_paths(char **envp)
+static char	**exc_load_paths(char **envp)
 {
 	char	**paths;
 	int		is_dflt;
 	int		i;
 
-	is_dflt = 1;
+	is_dflt = true;
 	i = -1;
 	while (envp[++i])
 		if (ft_strnstr(envp[i], "PATH", 4) && is_dflt--)
@@ -34,7 +30,6 @@ static char	**exc_load_env_paths(char **envp)
 	return (paths);
 }
 
-// Builds the full path for the program, if needed.
 static char	*exc_build_path(char **strs)
 {
 	char	*path;
@@ -53,52 +48,34 @@ static char	*exc_build_path(char **strs)
 	{
 		path_len = ft_strlen(path) + ft_strlen(strs[i]);
 		if (ft_strlcat(path, strs[i], path_len + 1) != path_len)
-		{
-			free(path);
-			return (NULL);
-		}
+			return (free(path), NULL);
 	}
 	return (path);
 }
 
-static int	exc_free_strs(int from_id, char **strs)
-{
-	int	i;
-
-	if (strs == NULL)
-		return (-1);
-	i = 0;
-	while (strs[from_id + i])
-		free(strs[from_id + i++]);
-	free(strs);
-	return (1);
-}
-
-// returns 0. When a file is found and executable. 
 int	exc_check_path(char **argv, char **envp)
 {
+	char	**paths;
+	char	*path;
 	int		i;
-	char	**env_paths;
-	char	*prg_pth;
 
 	if (ft_strchr(*argv, '/'))
 		return (fmgr_access(*argv, X_OK));
-	env_paths = exc_load_env_paths(envp);
-	if (env_paths == NULL)
+	paths = exc_load_paths(envp);
+	if (paths == NULL)
 		return (-1);
 	i = -1;
-	while (env_paths[++i])
+	while (paths[++i])
 	{
-		prg_pth = exc_build_path((char *[]){env_paths[i], "/", argv[0], 0});
-		if (prg_pth == NULL)
-			return (exc_free_strs(0, env_paths), -1);
-		if (access(prg_pth, X_OK) == 0)
+		path = exc_build_path((char *[]){paths[i], "/", argv[0], 0});
+		if (path == NULL && utl_free_strs(0, paths))
+			return (-1);
+		if (access(path, X_OK) == 0 && utl_free_strs(0, paths))
 		{
-			free(*argv);
-			*argv = prg_pth;
-			return (exc_free_strs(0, env_paths), 0);
+			*argv = (free(*argv), path);
+			return (0);
 		}
-		free(prg_pth);
+		free(path);
 	}
-	return (exc_free_strs(0, env_paths), ft_eprintf(ERR_CMD, *argv), -1);
+	return (utl_free_strs(0, paths), ft_eprintf(ERR_CMD, *argv), -1);
 }

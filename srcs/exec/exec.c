@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:07:42 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/03 17:38:31 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/03 22:53:48 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,29 +26,6 @@ static int	exc_wait_cmds(int i)
 	return (0);
 }
 
-int	exc_is_builtin(char *arg)
-{
-	char	**builtins;
-	int		j;
-
-	builtins = (char *[8]){"echo", "cd", "pwd", "export",
-		"unset", "env", "exit", 0};
-	j = -1;
-	while (builtins[++j])	
-		if (!ft_strncmp(arg, builtins[j], ft_strlen(builtins[j])))
-			return (j);
-	return (0);
-}
-
-// int	exc_builtins(int id, char **argv, char **envp)
-// {
-// 	int (**arr)();
-	
-// 	arr = (int (*[8])()){, NULL};
-	
-// 	arr[id]();
-// }
-
 static int	exc_exec_cmd(t_cmd *cmd, t_core *core)
 {
 	int	is_built;
@@ -66,7 +43,7 @@ static int	exc_exec_cmd(t_cmd *cmd, t_core *core)
 	is_built = exc_is_builtin(*cmd->argv);
 	// if (is_built && exc_builtins(cmd->argv, envp) == -1) // arrays to pointer to funct?
 	// 	return (-1);
-	if (!is_built && (exc_check_path(cmd->argv, core->envp) == -1
+	if (is_built == false && (exc_check_path(cmd->argv, core->envp) == -1
 		|| (execve(*cmd->argv, cmd->argv, core->envp) == -1)))
 	{
 		utl_cleanup(core->flags, core);
