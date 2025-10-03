@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/02 22:15:46 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/03 21:39:26 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,9 @@
 # include <signal.h>
 # include <stdint.h>
 
-# define UI_PROMPT "minishell> "
+# define UI_MAGENTA "\033[1;35m"
+# define UI_RESET "\033[0m"
+# define UI_PROMPT "\033[1;35mMinishell> \033[0m"
 
 # define ENV_DFLT_PATH "/bin:/usr/bin" // DEFAULT_PATH
 
@@ -35,6 +37,7 @@
 # define ERR_GNR "%s\n"
 # define ERR_PTH "%s: %s\n"
 # define ERR_CMD "%s: command not found\n"
+# define ERR_ECMD "'%c': command not found\n"
 
 # define FL_PRMS 00664
 # define FL_IRED O_RDONLY

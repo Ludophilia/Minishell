@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 12:04:49 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/29 20:31:39 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/03 17:19:26 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ int	fmgr_set_reds(t_core *core)
 			return (-1);
 		if (fmgr_set_xfds(cmd) == -1)
 			continue ;
-		if (cmd->argv)
+		if (cmd->argv != NULL && *cmd->argv != NULL)
 			cmd->xready = true;
 	}
 	return (0);
