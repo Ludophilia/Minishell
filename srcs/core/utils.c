@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 19:18:23 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/02 00:40:46 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/03 22:37:05 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,19 @@
 
 int	utl_cleanup(t_cflg flags, t_core *core)
 {
-	// printf("[%i] cleaning...\n", getpid());
-	// printf("\t[%i] fcmds -> %i\n", getpid(), (flags & FLG_CMDS));
-	// printf("\t[%i] freds -> %i\n", getpid(), (flags & FLG_REDS));
 	if ((flags & FLG_CMDS) || (flags & FLG_REDS))
 		psr_cleanup_cmds(flags, core);
+	return (1);
+}
+
+int	utl_free_strs(int from_id, char **strs)
+{
+	int	j;
+
+	j = 0;
+	while (strs[from_id + j])
+		free(strs[from_id + j++]);
+	free(strs);
 	return (1);
 }
 
