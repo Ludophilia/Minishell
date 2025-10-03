@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:16:27 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/20 00:57:30 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/02 00:35:56 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	psr_parse_line(char *line, t_core *core)
 
 	if (lex_tokenize_line(line, toks) || psr_error_check(toks) == -1)
 		return (-1);
-	cmd = core->cmds + core->cmd_pos;
+	cmd = core->cmds + core->cmd_pmax;
 	tok = toks;
 	while (tok->type != TOK_EOL)
 	{
@@ -32,9 +32,9 @@ int	psr_parse_line(char *line, t_core *core)
 		while (tok->type != TOK_PIPE && tok->type != TOK_EOL)
 			tok++;
 		if (tok->type == TOK_PIPE)
-			cmd = (++tok, core->cmds + ++core->cmd_pos);
-		// Nothing else to add once the structures are full?
+			cmd = (++tok, core->cmds + ++core->cmd_pmax);
 	}
-	core->flags |= (FLG_CMDS);
+	core->flags |= FLG_CMDS;
+	core->flags |= FLG_REDS;
 	return (0);
 }

@@ -118,8 +118,6 @@ arguments with sometimes quotes and expansions in the mix.
 	- Only `[WORD]` are a part of the command, the remainder are just
 	redirections and their operators.
 
-
-
 `$ECHO`
 
 ### Input Redirections

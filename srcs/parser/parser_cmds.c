@@ -6,43 +6,11 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 18:57:18 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/19 00:46:54 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/28 22:44:05 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-static int	psr_cleanup_cmd(t_cmd *cmd)
-{
-	int	j;
-
-	if (cmd->argv == NULL)
-		return (1);
-	j = 0;
-	while (cmd->argv[j])
-		free(cmd->argv[j++]);
-	free(cmd->argv);
-	cmd->argv = NULL;
-	return (1);
-}
-
-int	psr_cleanup_cmds(t_core *core)
-{
-	t_cmd	*cmd;
-	int		i;
-
-	i = -1;
-	while (++i < (core->cmd_pos + 1))
-	{
-		cmd = core->cmds + i;
-		psr_cleanup_cmd(cmd);
-		psr_cleanup_red(cmd->ireds, cmd->ifds);
-		psr_cleanup_red(cmd->oreds, cmd->ofds);
-	}
-	core->flags |= ~FLG_CMDS;
-	core->cmd_pos = 0;
-	return (1);
-}
 
 static int	psr_count_args(t_tok *tok)
 {

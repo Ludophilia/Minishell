@@ -6,24 +6,11 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 17:27:28 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/19 00:44:52 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/09/29 17:27:45 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-int	psr_cleanup_red(t_red *red, int *fds)
-{
-	while (red->type != TOK_EOL)
-	{
-		red->type = TOK_EOL;
-		free(red->word);
-		red->word = NULL;
-		*(long *)fds = 0;
-		red++;
-	}
-	return (0);
-}
 
 static int	psr_add_red(t_red *reds, t_tok **tok)
 {
@@ -45,8 +32,8 @@ int	psr_add_reds(t_tok *tok, t_cmd *cmd)
 {
 	while (tok->type != TOK_PIPE && tok->type != TOK_EOL)
 	{
-		if ((psr_is_ired(tok) && psr_add_red(cmd->ireds, &tok) == -1)
-			|| (psr_is_ored(tok) && psr_add_red(cmd->oreds, &tok) == -1))
+		if ((psr_is_ored(tok) || psr_is_ired(tok))
+			&& psr_add_red(cmd->reds, &tok) == -1)
 			return (-1);
 		tok++;
 	}

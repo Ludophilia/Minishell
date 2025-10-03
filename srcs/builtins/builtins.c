@@ -1,29 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/18 19:18:23 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/20 00:57:45 by jegerman         ###   ########.fr       */
+/*   Created: 2023/12/18 18:05:43 by jgermany          #+#    #+#             */
+/*   Updated: 2025/10/01 23:58:14 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	utl_cleanup(t_cflg flags, t_core *core)
+int	bi_exit(char *line)
 {
-	if (flags & FLG_CMDS)
-		psr_cleanup_cmds(core);
-	return (1);
-}
-
-char	*utl_shitoa(unsigned int nbr, char *store)
-{
-	if (nbr >= 10)
-		store = utl_shitoa(nbr / 10, store);
-	*store++ = '0' + (nbr % 10);
-	*store = 0;
-	return (store);
+	printf("exit\n");
+	if (line)
+		free(line);
+	// exit(EXIT_SUCCESS);
+	// utl_cleanup(t_cflg flags, t_core *core);
+	return (0);
 }
