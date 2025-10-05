@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:18:44 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/03 23:34:06 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/05 15:14:22 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,9 +73,9 @@ int	exc_check_path(char **argv, char **envp)
 		if (access(path, X_OK) == 0 && utl_free_strs(0, paths))
 		{
 			*argv = (free(*argv), path);
-			return (0);
+			return (1);
 		}
 		free(path);
 	}
-	return (utl_free_strs(0, paths), ft_eprintf(ERR_CMD, *argv), -1);
+	return (utl_free_strs(0, paths), ft_eprintf(ERR_CMD, *argv), 0);
 }

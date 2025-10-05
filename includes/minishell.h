@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/03 22:38:56 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/06 00:25:17 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@
 # define UI_RESET "\033[0m"
 # define UI_PROMPT "\033[1;35mMinishell> \033[0m"
 
-# define ENV_DFLT_PATH "/bin:/usr/bin" // DEFAULT_PATH
+# define ENV_DFLT_PATH "/bin:/usr/bin"
 
 # define ERR_SYNTAX "syntax error near unexpected token `%s'\n"
 # define ERR_GNR "%s\n"
@@ -64,15 +64,13 @@ typedef enum e_tokt
 	TOK_ORED, TOK_ORED_AP
 }	t_tokt;
 
-// typedef enum e_bid
-// {
-// 	BID_
-// }	t_bid;
 
 typedef enum e_cflg
 {
 	FLG_CMDS = (1 << 0),
 	FLG_REDS = (1 << 1),
+	FLG_CORE = (1 << 2),
+	FLG_ALL = (FLG_CMDS | FLG_REDS | FLG_CORE)
 }	t_cflg;
 
 typedef struct s_tok
@@ -103,6 +101,7 @@ typedef struct s_core
 {
 	t_cmd		cmds[CMD_MAX];
 	int			cmd_pmax;
+	int			cmd_xrdy;
 	char		**envp; // provisory
 	uint8_t		exitv; // later in the execution pipeline
 	uint32_t	flags;
@@ -142,13 +141,11 @@ int		fmgr_set_reds(t_core *core);
 int		utl_free_strs(int from_id, char **strs);
 int		utl_cleanup(t_cflg flags, t_core *core);
 char	*utl_shitoa(unsigned int nbr, char *store);
+int		utl_free(void *ptr);
 
 int		exc_is_builtin(char *arg);
-
 int		exc_check_path(char **argv, char **envp);
 int		exc_exec_cmds(t_core *core);
-
-int		utl_print_cmds(t_core *core); // REMOVE
 
 int		sig_init_handlers(void);
 

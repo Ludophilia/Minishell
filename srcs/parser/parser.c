@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:16:27 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/02 00:35:56 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/06 00:25:30 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,14 @@ int	psr_parse_line(char *line, t_core *core)
 	t_cmd	*cmd;
 
 	if (lex_tokenize_line(line, toks) || psr_error_check(toks) == -1)
-		return (-1);
+		return (-2);
 	cmd = core->cmds + core->cmd_pmax;
 	tok = toks;
 	while (tok->type != TOK_EOL)
 	{
 		if (psr_add_cmd(tok, cmd) == -1 || psr_add_reds(tok, cmd) == -1)
 		{
-			utl_cleanup(FLG_CMDS, core);
+			core->flags |= (FLG_ALL);
 			return (-1);
 		}
 		while (tok->type != TOK_PIPE && tok->type != TOK_EOL)
@@ -34,7 +34,6 @@ int	psr_parse_line(char *line, t_core *core)
 		if (tok->type == TOK_PIPE)
 			cmd = (++tok, core->cmds + ++core->cmd_pmax);
 	}
-	core->flags |= FLG_CMDS;
-	core->flags |= FLG_REDS;
+	core->flags |= (FLG_ALL);
 	return (0);
 }

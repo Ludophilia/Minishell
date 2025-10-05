@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 19:18:23 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/03 22:37:05 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/04 23:48:10 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,12 @@ int	utl_free_strs(int from_id, char **strs)
 	while (strs[from_id + j])
 		free(strs[from_id + j++]);
 	free(strs);
+	return (1);
+}
+
+int	utl_free(void *ptr)
+{
+	free(ptr);
 	return (1);
 }
 
