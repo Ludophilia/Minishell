@@ -207,7 +207,7 @@ Pipeline Creation is to:
 - `echo "$"'_USER'` (does not work)
 	-> $_USER
 
-- `echo "$"USER`
+- `echo "$"USER` (does not work)
 	-> $USER
 
 - `echo "$"$USER`

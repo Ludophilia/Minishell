@@ -6,35 +6,48 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:18:13 by jgermany          #+#    #+#             */
-/*   Updated: 2025/10/06 00:52:11 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/06 21:03:35 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// static int	ui_process_line(char *line, t_core *core)
-// {
-// 	add_history(line);
-// 	if (psr_parse_line(line, core) == -1
-// 		|| fmgr_set_reds(core) == -1
-// 		|| (exc_exec_cmds(core) == -1 && printf("exec problem\n")))
-// 	{
-// 		utl_cleanup(core->flags, core);
-// 		return (free(line), -1);
-// 	}
-// 	utl_cleanup(core->flags, core);
-// 	return (free(line), 0);
-// }
+static int	ui_init_core(t_core *core)
+{
+	core->flags = 0;
+	core->cmd_pmax = 0;
+	core->cmd_xrdy = 0;
+	core->flags = 0;
+	ft_bzero(core->cmds, CMD_MAX * sizeof(t_cmd));
+	// 6/10 - We are not over yet...
+	return (0);
+}
+
+static int	ui_process_line(char *line, t_core *core)
+{
+	int		psr_exv;
+
+	add_history(line);
+	psr_exv = psr_parse_line(line, core);
+	if (psr_exv == -2)
+		return (-2);
+	if (psr_exv == -1
+		|| fmgr_set_reds(core) == -1
+		|| exc_exec_cmds(core) == -1)
+	{
+		utl_cleanup(core->flags, core);
+		return (-1);
+	}
+	utl_cleanup(core->flags, core);
+	return (0);
+}
 
 int	ui_loop_prompt(t_core *core)
 {
 	char	*line;
-	int		psr_exv;
+	int		proc_exv;
 
-	ft_bzero(core->cmds, CMD_MAX * sizeof(t_cmd));
-	core->flags = 0;
-	core->cmd_pmax = 0;
-	core->cmd_xrdy = 0;
+	ui_init_core(core);
 	while (1)
 	{
 		line = readline(UI_PROMPT);
@@ -42,19 +55,11 @@ int	ui_loop_prompt(t_core *core)
 			return (0);
 		if (*line == 0 && utl_free(line))
 			continue ;
-		add_history(line);
-
-		psr_exv = psr_parse_line(line, core);
-		if (psr_exv == -2 && utl_free(line))
+		proc_exv = ui_process_line(line, core);
+		if (proc_exv == -1 && utl_free(line))
+			return (-1);
+		if (proc_exv == -2 && utl_free(line))
 			continue ;
-		if (psr_exv == -1 || fmgr_set_reds(core) == -1
-			|| exc_exec_cmds(core) == -1)
-		{
-			utl_cleanup(core->flags, core);
-			return (free(line), -1);
-		}
-
-		utl_cleanup(core->flags, core);
 		free(line);
 	}
 	return (0);

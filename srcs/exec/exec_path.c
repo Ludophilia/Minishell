@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:18:44 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/05 15:14:22 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/06 19:28:37 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,29 +53,61 @@ static char	*exc_build_path(char **strs)
 	return (path);
 }
 
+static int	exc_check_access(char *path)
+{
+	struct stat	statb;
+	int			acc_ex;
+	int			sta_ex;
+
+	acc_ex = fmgr_access(path, X_OK);
+	sta_ex = stat(path, &statb);
+	if (acc_ex == -1
+		|| (sta_ex == -1 && ft_eprintf(ERR_PTH, path, strerror(errno))))
+		return (0);
+	if (acc_ex == 0 && S_ISREG(statb.st_mode))
+		return (1);
+	ft_eprintf(ERR_PTH, path, "Is not a file");
+	return (0);
+}
+
+static int exc_check_access_for_path(int i, char **paths, char **argv)
+{
+	int		check_rtv;
+	char	*path;
+
+	path = exc_build_path((char *[]){paths[i], "/", argv[0], 0});
+	if (path == NULL)
+		return (-1);
+	check_rtv = access(path, X_OK);
+	if (check_rtv == 0)
+	{
+		*argv = (free(*argv), path);
+		return (1);
+	}
+	return (free(path), 0);
+}
+
 int	exc_check_path(char **argv, char **envp)
 {
 	char	**paths;
-	char	*path;
+	int		checkp_rtv;
 	int		i;
 
 	if (ft_strchr(*argv, '/'))
-		return (fmgr_access(*argv, X_OK));
+		return (exc_check_access(*argv));
 	paths = exc_load_paths(envp);
 	if (paths == NULL)
 		return (-1);
 	i = -1;
 	while (paths[++i])
 	{
-		path = exc_build_path((char *[]){paths[i], "/", argv[0], 0});
-		if (path == NULL && utl_free_strs(0, paths))
+		checkp_rtv = exc_check_access_for_path(i, paths, argv);
+		if (checkp_rtv == -1 && utl_free_strs(0, paths))
 			return (-1);
-		if (access(path, X_OK) == 0 && utl_free_strs(0, paths))
-		{
-			*argv = (free(*argv), path);
+		if (checkp_rtv == 1 && utl_free_strs(0, paths))
 			return (1);
-		}
-		free(path);
 	}
-	return (utl_free_strs(0, paths), ft_eprintf(ERR_CMD, *argv), 0);
+	utl_free_strs(0, paths);
+	ft_eprintf(ERR_CMD, *argv);
+	return (-2);
 }
