@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 18:57:18 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/28 22:44:05 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/07 17:20:53 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ static int	psr_count_args(t_tok *tok)
 		if (psr_is_ored(tok) || psr_is_ired(tok))
 			tok += 2;
 		else
-			(size++, tok++);
+			(void)(size++, tok++);
 	}
 	return (size);
 }
