@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 12:04:49 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/06 00:54:48 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/07 17:11:37 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static int	fmgr_set_xfds(t_cmd *cmd)
 	red = cmd->reds + ++j;
 	while (red->type != TOK_EOL)
 	{
-		if ((red->type == TOK_IRED 
+		if ((red->type == TOK_IRED
 				&& fmgr_set_red(&cmd->ifd, FL_IRED, red) == -1)
 			|| (red->type == TOK_ORED
 				&& fmgr_set_red(&cmd->ofd, FL_ORED, red) == -1)

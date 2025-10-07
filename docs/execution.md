@@ -235,4 +235,40 @@ set them in the process that connect those two programs together, the parent.
 
 ## Builtins
 
-	- later?
+### Examples
+
+```
+$> export LOL="laughing out loud"
+$> echo $LOL
+laughing out loud
+$> unset LOL | pwd
+/home/jegerman/Documents/42/level3/Minishell
+$> echo $LOL
+laughing out loud
+$> unset LOL
+$> echo $LOL
+```
+
+```
+>$ pwd
+/home/jegerman/Documents/42/level3/Minishell
+>$ cd .. | nl
+>$ pwd
+/home/jegerman/Documents/42/level3/Minishell
+```
+
+- In a pipeline, the builtins DO NOT modify the shell vars but the subshell
+
+### Examples error
+
+```
+>$ pwd
+/home/jegerman/Documents/42/level3/Minishell
+>$ suriipu 1 | cd /
+suriipu: command not found
+>$ pwd
+/home/jegerman/Documents/42/level3/Minishell
+```
+
+- In a pipeline, the builtins DO NOT modify the shell vars but the subshell.
+Here cd / doesn't really do anything.

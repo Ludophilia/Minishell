@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:18:13 by jgermany          #+#    #+#             */
-/*   Updated: 2025/10/06 21:03:35 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/07 17:33:06 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,8 @@ static int	ui_init_core(t_core *core)
 	core->flags = 0;
 	core->cmd_pmax = 0;
 	core->cmd_xrdy = 0;
-	core->flags = 0;
+	core->exitv = 0; // ??? Unsure about this one.
 	ft_bzero(core->cmds, CMD_MAX * sizeof(t_cmd));
-	// 6/10 - We are not over yet...
 	return (0);
 }
 
@@ -47,7 +46,7 @@ int	ui_loop_prompt(t_core *core)
 	char	*line;
 	int		proc_exv;
 
-	ui_init_core(core);
+	ui_init_core(core); // 7/10 - I may move this in main...
 	while (1)
 	{
 		line = readline(UI_PROMPT);

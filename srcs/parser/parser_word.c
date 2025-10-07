@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 19:13:16 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/23 15:46:19 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/07 17:28:25 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,11 @@ static char	*psr_get_envv_value(char *start, int *envv_len)
 		while (++len, psr_is_envv_chr(start[len], len))
 			envv[len] = start[len];
 	envv[len] = '\0';
-	(void)(envv_len && (*envv_len = len + 1)); // remove void
+	(void)(envv_len && (*envv_len = len + 1));
 	if (ft_strncmp(envv, "?", 2) == 0)
-		envv_val = (utl_shitoa(g_exit_status, exitw), exitw); // correct?
+		envv_val = (utl_shitoa(g_exit_status, exitw), exitw);
 	else
-		envv_val = getenv(envv); // or custom funct
+		envv_val = getenv(envv); // 7/10 - Should we stick to that version?
 	return (envv_val);
 }
 
@@ -79,7 +79,7 @@ static char	*psr_alloc_word(char *start, int len, t_tokt context)
 		if (psr_is_envv(start + j, context, quoted))
 			size += psr_get_envv_val_size(start + j, &j);
 		else
-			(j++, size++);
+			(void)(j++, size++);
 	}
 	return (ft_calloc(size + 1, sizeof(char)));
 }

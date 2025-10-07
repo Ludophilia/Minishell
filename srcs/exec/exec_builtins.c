@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 22:26:53 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/03 22:51:51 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/07 17:10:41 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,17 +24,8 @@ int	exc_is_builtin(char *arg)
 	builtins = (char *[8]){"echo", "cd", "pwd", "export",
 		"unset", "env", "exit", 0};
 	j = -1;
-	while (builtins[++j])	
+	while (builtins[++j])
 		if (!ft_strncmp(arg, builtins[j], ft_strlen(builtins[j])))
 			return (j);
 	return (0);
 }
-
-// int	exc_builtins(int id, char **argv, char **envp)
-// {
-// 	int (**arr)();
-	
-// 	arr = (int (*[8])()){, NULL};
-	
-// 	arr[id]();
-// }

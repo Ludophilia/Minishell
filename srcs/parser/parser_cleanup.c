@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 22:43:08 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/06 00:50:03 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/07 17:32:31 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static int	psr_cleanup_cmd(t_cmd *cmd)
 
 static int	psr_cleanup_red(t_cmd *cmd)
 {
-	t_red *red;
+	t_red	*red;
 
 	red = cmd->reds;
 	while (red->type != TOK_EOL)
@@ -47,7 +47,7 @@ static int	psr_cleanup_core(t_core *core)
 	return (1);
 }
 
-static int psr_reset_flgs(t_cflg flags, t_core *core)
+static int	psr_reset_flgs(t_cflg flags, t_core *core)
 {
 	if (flags & FLG_CMDS)
 		core->flags |= ~FLG_CMDS;
@@ -75,6 +75,5 @@ int	psr_cleanup_cmds(t_cflg flags, t_core *core)
 	if (flags & FLG_CORE)
 		psr_cleanup_core(core);
 	psr_reset_flgs(flags, core);
-	// more?
 	return (1);
 }

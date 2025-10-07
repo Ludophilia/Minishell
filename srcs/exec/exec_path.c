@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:18:44 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/06 19:28:37 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/07 17:10:57 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ static int	exc_check_access(char *path)
 	return (0);
 }
 
-static int exc_check_access_for_path(int i, char **paths, char **argv)
+static int	exc_check_access_for_path(int i, char **paths, char **argv)
 {
 	int		check_rtv;
 	char	*path;
@@ -107,7 +107,7 @@ int	exc_check_path(char **argv, char **envp)
 		if (checkp_rtv == 1 && utl_free_strs(0, paths))
 			return (1);
 	}
-	utl_free_strs(0, paths);
 	ft_eprintf(ERR_CMD, *argv);
+	utl_free_strs(0, paths);
 	return (-2);
 }

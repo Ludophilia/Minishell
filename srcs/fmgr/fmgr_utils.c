@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:05:19 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/01 22:11:00 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/07 17:11:59 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	fmgr_open(char *path, int openflags, mode_t openmode)
 	return (fd);
 }
 
-int fmgr_dup2(int old_fd, int new_fd)
+int	fmgr_dup2(int old_fd, int new_fd)
 {
 	if (old_fd <= 2)
 		return (0);
