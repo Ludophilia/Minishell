@@ -14,8 +14,9 @@ fresh and cleaned from line to line...
 - [x] Restructure exec.c
 	- [ ] Improve waiting logic
 
-- [ ] Restructure parser
-	- [ ] especially parser_word.c which is very stuffy or confused
+- [x] Restructure parser
+	- [x] especially parser_word.c which is very stuffy or confused
+	- [ ] test it... I hope everything still runs well.
 
 ### Project Wide Variables
 

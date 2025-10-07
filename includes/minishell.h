@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/07 13:07:45 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/07 18:59:15 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,8 @@ int		psr_is_outq(int c, int *q);
 int		psr_is_envv(char *c, int ct, int q);
 int		psr_is_envv_chr(int c, int pos);
 
+int		psr_envv_value_len(char *start, int *j);
+int		psr_copy_envv_value(char *start, char *word, int *j);
 char	*psr_create_word(t_tok *tok, t_tokt context);
 int		psr_add_reds(t_tok *tok, t_cmd *cmd);
 int		psr_add_cmd(t_tok *tok, t_cmd *cmd);
