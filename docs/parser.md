@@ -193,48 +193,123 @@ Pipeline Creation is to:
 	- Remove OUTER quotes, if they exists.
 	- Expand the $ variable.
 
-### Examples
+### Examples (basic, quoted)
 
-- `echo '$'USER`
+- [x] `echo $USER`
+	-> user_name (jegerman)
+
+- [x] `echo $USER$SHLVL$LANG`
+	-> jegerman2en_US.UTF-8
+
+- [x] `echo "$USER"`
+	-> user_name (jegerman)
+
+- [x] `echo '$USER'`
 	-> $USER
 
-- `echo $'USER'`
-	-> USER
+- [x] `echo "$USER$SHLVL$LANG"`
+	-> jegerman2en_US.UTF-8
 
-- `echo $%USER`
-	-> $%USER
+- [x] `echo '$USER$SHLVL$LANG'`
+	-> $USER$SHLVL
 
-- `echo "$"'_USER'` (does not work)
+- [x] `echo $ USER`
+	-> $ USER
+
+### Examples (quoted $ sign)
+
+- [x] `echo '$' USER`
+	-> $ USER
+
+- [ ] `echo "$" USER`
+	-> $ USER (minishell: USER)
+
+- [x] `echo '$'USER`
+	-> $USER
+
+- [ ] `echo "$"USER`
+	-> $USER (minishell: USER)
+
+- [ ] `echo "'$'USER"`
+	-> '$'USER (minishell: ''USER)
+
+- [ ] `echo "\"$\"USER"`
+	-> "$"USER (minishell: out of scope)
+
+- [x] `echo '"$"USER'`
+	-> "$"USER
+
+- [ ] `echo "$"$USER`
+	-> $jegerman (minishell: jegerman)
+
+- [x] `echo '$'$USER$USER$SHLVL`
+	-> $jegermanjegerman2
+
+- [ ] `echo "$"$USER$USER'$'SHLVL`
+	-> $jegermanjegerman$SHLVL (minishell: jegermanjegerman$SHLVL)
+
+- [ ] `echo "$"'_USER'`
 	-> $_USER
 
-- `echo "$"USER` (does not work)
-	-> $USER
+### Examples (quotes side by side)
 
-- `echo "$"$USER`
-	-> $jegerman
+- [x] `echo $`
+	-> $
 
-- `echo "'$USER'"`
+- [ ] `echo "$"`
+	-> $ (minishell: )
+
+- [ ] `echo '$'`
+	-> '$'
+
+- [ ] `echo $""`
+	-> $ 
+	- WTF?
+
+- [ ] `echo $''`
+	-> 
+	- WTF?
+
+- [ ] `echo $"MINI"`
+	- MINI
+
+- [ ] `echo "$""MINI"`
+	- $MINI
+
+- [x] `echo $'USER'`
+	-> USER
+
+
+
+
+- [x] `echo $%USER`
+	-> $%USER
+
+
+### Examples ()
+
+- [ ] `echo "'$USER'"`
 	-> 'jegerman'
 
-- `echo "'123$SHIT'"`
+- [ ] `echo "'123$SHIT'"`
 	-> '123'
 	-> SHIT is not a defined variable, so it expands to nothing
 	-> equivalent to SHIT=""
 
-- `echo '$'$USER$USER$SHLVL`
-	-> $jegermanjegerman2
+### Examples (Id focused)
 
-- `echo '$'$USER$USER'$'SHLVL`
-	-> $jegermanjegerman$SHLVL
+###
 
-- `<< $USER` `<< '$USER'` `<< $USER`
+- [ ] `<< $USER` `<< '$USER'` `<< $USER`
 	-> Here document will use $USER as their terminator.
 
-- `""` `''`
+###
+
+- [ ] `""` `''`
 	-> Results in an empty character string (one NULL in an array of chars).
 	-> Command '' not found
 
-- `"'''"`
+- [ ] `"'''"`
 	-> '''
 
 ### In which case a variable should be expanded 

@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 22:43:08 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/07 17:32:31 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/08 17:46:00 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 static int	psr_cleanup_cmd(t_cmd *cmd)
 {
 	cmd->xready = 0;
+	cmd->pid = 0;
 	if (cmd->argv == NULL)
 		return (1);
 	utl_free_strs(0, cmd->argv);

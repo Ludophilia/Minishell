@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:07:42 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/07 16:53:26 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/08 18:40:44 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,18 +15,23 @@
 // 6/10 = Improve waiting logic so that < /dev/urandom tail does not fail
 // ^C make the child defunct. The SIGINT processing logic need to be 
 // implemented.
-static int	exc_wait_cmds(int i)
+static int	exc_wait_cmds(t_core *core)
 {
-	int	wstat;
-	int	cfails;
+	t_cmd	*cmd;
+	int		wstat;
+	int		i;
 
-	cfails = 0;
-	while (--i >= 0)
-		if ((waitpid(-1, &wstat, 0) == -1) // the pipe order shld be respected.
-			|| WEXITSTATUS(wstat) == EXIT_FAILURE)
-			++cfails;
-	if (cfails != 0)
-		return (0); // 6/10 = Error code from "waited" command should be here.
+	i = -1;
+	while (++i < (core->cmd_pmax + 1))
+	{
+		cmd = core->cmds + i;
+		if (cmd->xready == false)
+			continue ;
+		if (waitpid(cmd->pid, &wstat, 0) == -1) // DANGER
+			return (-1);
+		core->exitv = WEXITSTATUS(wstat); // One way...
+		g_exit_status = WEXITSTATUS(wstat); // ...or the other.
+	}
 	return (0);
 }
 
@@ -54,14 +59,16 @@ static int	exc_exec_cmd(t_cmd *cmd, t_core *core)
 
 static int	exc_init_subsh(int i, pid_t *pid, t_core *core)
 {
-	int	exit_val;
-	int	exec_rv;
+	t_cmd	*cmd;
+	int		exit_val;
+	int		exec_rv;
 
+	cmd = core->cmds + i;
 	*pid = fork();
 	if (*pid == -1 && ft_eprintf(ERR_GNR, strerror(errno)))
 		return (-1);
 	if (*pid > 0)
-		return (0);
+		return (cmd->pid = *pid, 0);
 	exit_val = EXIT_SUCCESS;
 	exec_rv = exc_exec_cmd(core->cmds + i, core);
 	psr_cleanup_cmds(core->flags, core);
@@ -82,12 +89,14 @@ int	exc_exec_cmds(t_core *core)
 		if (core->cmds[i].xready == false)
 			continue ;
 		if (exc_init_subsh(i, &pid, core) == -1
-			&& exc_wait_cmds(core->cmd_xrdy))
+			&& psr_cleanup_cmds(core->flags, core)
+			&& exc_wait_cmds(core))
 			return (-1);
 	}
 	if (pid > 0
-		&& utl_cleanup((FLG_CMDS | FLG_REDS), core)
-		&& exc_wait_cmds(core->cmd_xrdy) == -1)
+		&& utl_cleanup((FLG_REDS), core)
+		&& exc_wait_cmds(core) == -1)
 		return (-1);
+	psr_cleanup_cmds(core->flags, core);
 	return (0);
 }

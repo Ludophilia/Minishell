@@ -12,7 +12,7 @@ fresh and cleaned from line to line...
 - [ ] check if most modules are norm compliant
 
 - [x] Restructure exec.c
-	- [ ] Improve waiting logic
+	- [o] Improve waiting logic
 
 - [x] Restructure parser
 	- [x] especially parser_word.c which is very stuffy or confused
@@ -26,4 +26,4 @@ fresh and cleaned from line to line...
 
 ### Execution
 
-- [ ] set EXIT statuses for every situations (reds, signals, execution)
+- [o] set EXIT statuses for every situations (reds, signals, execution)

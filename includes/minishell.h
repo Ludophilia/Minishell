@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/07 18:59:15 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/08 15:54:15 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ typedef struct s_cmd
 {
 	t_red	reds[RED_MAX];
 	bool	xready;
-	// pid_t	pid;
+	pid_t	pid;
 	// int		is_bltn;
 	char	**argv;
 	int		ifd;
