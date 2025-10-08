@@ -6,11 +6,22 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 22:43:08 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/08 17:46:00 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/08 19:29:23 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+static int	psr_reset_flgs(t_cflg flags, t_core *core)
+{
+	if (flags & FLG_CMDS)
+		core->flags |= ~FLG_CMDS;
+	if (flags & FLG_REDS)
+		core->flags |= ~FLG_REDS;
+	if (flags & FLG_CORE)
+		core->flags |= ~FLG_CORE;
+	return (1);
+}
 
 static int	psr_cleanup_cmd(t_cmd *cmd)
 {
@@ -45,17 +56,6 @@ static int	psr_cleanup_core(t_core *core)
 {
 	core->cmd_pmax = 0;
 	core->cmd_xrdy = 0;
-	return (1);
-}
-
-static int	psr_reset_flgs(t_cflg flags, t_core *core)
-{
-	if (flags & FLG_CMDS)
-		core->flags |= ~FLG_CMDS;
-	if (flags & FLG_REDS)
-		core->flags |= ~FLG_REDS;
-	if (flags & FLG_CORE)
-		core->flags |= ~FLG_CORE;
 	return (1);
 }
 

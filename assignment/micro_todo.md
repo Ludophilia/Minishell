@@ -16,6 +16,7 @@ fresh and cleaned from line to line...
 
 - [x] Restructure parser
 	- [x] especially parser_word.c which is very stuffy or confused
+	- [ ] Improve environment variable expansions
 	- [ ] test it... I hope everything still runs well.
 
 ### Project Wide Variables

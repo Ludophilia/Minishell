@@ -261,32 +261,15 @@ Pipeline Creation is to:
 
 - [ ] `echo '$'`
 	-> '$'
-
-- [ ] `echo $""`
-	-> $ 
-	- WTF?
-
-- [ ] `echo $''`
-	-> 
-	- WTF?
-
-- [ ] `echo $"MINI"`
-	- MINI
-
 - [ ] `echo "$""MINI"`
-	- $MINI
-
-- [x] `echo $'USER'`
-	-> USER
+	- $MINI 
 
 
-
+### Examples ()
 
 - [x] `echo $%USER`
 	-> $%USER
 
-
-### Examples ()
 
 - [ ] `echo "'$USER'"`
 	-> 'jegerman'
@@ -311,6 +294,26 @@ Pipeline Creation is to:
 
 - [ ] `"'''"`
 	-> '''
+
+
+### Examples (Not regular parameters)
+
+- [ ] `echo $""`
+	-> $ 
+	- WTF? (Not a parameter, locale specific translation)
+
+- [ ] `echo $''`
+	-> 
+	- WTF? (Not a parameter, ANSI-C Quoting)
+
+- [ ] `echo $"MINI"`
+	- MINI (Not a parameter, locale specific translation)
+
+- [x] `echo $'USER'`
+	-> USER (Not a parameter, ANSI-C Quoting)
+
+
+
 
 ### In which case a variable should be expanded 
 
