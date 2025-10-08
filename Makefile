@@ -6,7 +6,7 @@
 #    By: jegerman <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/09 12:08:14 by jegerman          #+#    #+#              #
-#    Updated: 2025/09/18 20:44:57 by jegerman         ###   ########.fr        #
+#    Updated: 2025/10/03 23:28:02 by jegerman         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,28 +25,36 @@ LFT := $(LIBFT_DR)/libft.a
 CFLAGS += -I$(ICL_DR) -I$(LIBFT_DR)/includes
 LIBCFLAGS := -L$(LIBFT_DR) -lft -lreadline
 
-MAN_SRCS := $(SRCS_DR)/main.c
+CORE_DR := $(SRCS_DR)/core
+BLTN_DR := $(SRCS_DR)/builtins
+SGNL_DR := $(SRCS_DR)/signals
+LEXR_DR := $(SRCS_DR)/lexer
+PRSR_DR := $(SRCS_DR)/parser
+FMGR_DR := $(SRCS_DR)/fmgr
+EXEC_DR := $(SRCS_DR)/exec
 
-MAN_SRCS += $(SRCS_DR)/builtins.c
-MAN_SRCS += $(SRCS_DR)/interface.c
-MAN_SRCS += $(SRCS_DR)/signals.c
-MAN_SRCS += $(SRCS_DR)/utils.c
+MAN_SRCS := $(CORE_DR)/main.c
+MAN_SRCS += $(CORE_DR)/interface.c
+MAN_SRCS += $(CORE_DR)/utils.c
 
-MAN_SRCS += $(SRCS_DR)/lexer.c
-MAN_SRCS += $(SRCS_DR)/lexer_utils.c
+MAN_SRCS += $(LEXR_DR)/lexer.c
+MAN_SRCS += $(LEXR_DR)/lexer_utils.c
+MAN_SRCS += $(PRSR_DR)/parser.c
+MAN_SRCS += $(PRSR_DR)/parser_cmds.c
+MAN_SRCS += $(PRSR_DR)/parser_error.c
+MAN_SRCS += $(PRSR_DR)/parser_redirs.c
+MAN_SRCS += $(PRSR_DR)/parser_word.c
+MAN_SRCS += $(PRSR_DR)/parser_utils.c
+MAN_SRCS += $(PRSR_DR)/parser_cleanup.c
+MAN_SRCS += $(FMGR_DR)/fmgr.c
+MAN_SRCS += $(FMGR_DR)/fmgr_reds.c
+MAN_SRCS += $(FMGR_DR)/fmgr_utils.c
+MAN_SRCS += $(EXEC_DR)/exec.c
+MAN_SRCS += $(EXEC_DR)/exec_path.c
+MAN_SRCS += $(EXEC_DR)/exec_builtins.c
 
-MAN_SRCS += $(SRCS_DR)/parser.c
-MAN_SRCS += $(SRCS_DR)/parser_cmds.c
-MAN_SRCS += $(SRCS_DR)/parser_error.c
-MAN_SRCS += $(SRCS_DR)/parser_redirs.c
-MAN_SRCS += $(SRCS_DR)/parser_word.c
-MAN_SRCS += $(SRCS_DR)/parser_utils.c
-
-# MAN_SRCS += $(SRCS_DR)/ressources.c
-
-# MAN_SRCS += $(SRCS_DR)/pipex_cmdmgr.c
-# MAN_SRCS += $(SRCS_DR)/pipex_filemgr.c
-# MAN_SRCS += $(SRCS_DR)/pipex_sanicheck.c
+MAN_SRCS += $(BLTN_DR)/builtins.c
+MAN_SRCS += $(SGNL_DR)/signals.c
 
 MAN_OBJS := $(MAN_SRCS:.c=.o)
 

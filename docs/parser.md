@@ -8,16 +8,16 @@
 
 - Now we have to check:
 
-- if the tokens makes sense / if something is missing, raise an error 
+- if the tokens makes sense / if something is missing, raise an error
 instead.
 	- Operator token without WORD: `wow <`
 	- unmatched quote in a WORD: e.g - `"salut`
 	- trailing pipe (): e.g - `last |`
 	- leading pipe: `| head -5`
 and fill the structures with the data extracted from the command line
-via the tokens, data that will be necessary for executing command(s), 
+via the tokens, data that will be necessary for executing command(s),
 managing redirections...
-	-  
+	-
 	- expand the $ environment variables
 
 ### Example of erroneous command lines
@@ -41,13 +41,13 @@ managing redirections...
 		does not require it, so I will throw an error instead.
 
 	- `'Weird` or `'`
-		- 
+		-
 
 ## [Pipeline Creation]
 
 ### Where are we now?
 
-- We have a clean list of tokens, now we have to... copy those tokens in the 
+- We have a clean list of tokens, now we have to... copy those tokens in the
 project structures, so we can execute commands.
 
 #### We have no idea what the project structures look like.
@@ -62,7 +62,7 @@ project structures, so we can execute commands.
 	- the WORD(s) that indicate the delimiter for IRED_HD
 		- IRED_HD is opened right after and stored in a pipe.
 
-	- the WORD(s) that indicate the path for ORED 
+	- the WORD(s) that indicate the path for ORED
 		- ORED is not opened in the parent
 
 	- the WORD(s) that indicate the path for ORED_AP
@@ -108,7 +108,7 @@ arguments with sometimes quotes and expansions in the mix.
 - `ls < ../Makefile -l > out -a > out2 -t`
 - -> `[WORD] IRED_OP WORD [WORD] ORED_OP WORD [WORD] ORED_OP WORD [WORD]`
 
-	- if we find a word - not preceded by a redirection operator, who 
+	- if we find a word - not preceded by a redirection operator, who
 	always consumes EXACTLY one WORD - it's very likely that this world is
 	the start of a command.
 
@@ -117,8 +117,6 @@ arguments with sometimes quotes and expansions in the mix.
 
 	- Only `[WORD]` are a part of the command, the remainder are just
 	redirections and their operators.
-
-
 
 `$ECHO`
 
@@ -138,7 +136,7 @@ arguments with sometimes quotes and expansions in the mix.
 - `< fileNotFound < Makefile cat | head | sleep 10 | sleep 20`
 	- minishell: fileNotFound: No such file or directory
 	- `head`, `sleep 10`, `sleep 20` are still executed in their subshell, in
-	parallel. That would mean that file and pipes are not opened in the parent but... 
+	parallel. That would mean that file and pipes are not opened in the parent but...
 	- How are pipes managed then? They have to be opened in the parent.
 	to be shared between childs.
 
@@ -239,9 +237,9 @@ Pipeline Creation is to:
 - `"'''"`
 	-> '''
 
-### In which case a variable should be expanded 
+### In which case a variable should be expanded
 
-- the name is legal: 
+- the name is legal:
 	- Beginning with a letter or underscore. ft_isapha() || '_'
 	- A word consisting solely of letters, numbers, and underscores,  ft_isalnum() || '_'
 
@@ -249,7 +247,7 @@ Pipeline Creation is to:
 	- i <= len
 	- we meet something that is not  ft_isalnum() || '_'
 
-	
+
 
 ## [Parent level redirection: Here document and pipes]
 
