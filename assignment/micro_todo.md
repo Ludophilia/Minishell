@@ -35,7 +35,7 @@ fresh and cleaned from line to line...
 
 - [ ] Maybe improve here documents?
 	- ^C processing with error message
-	- 
+	- why does readline sometimes add a new line and sometime not (^C)
 
 - [ ] Maybe improve readline behavior
 	- It really struggles with long lines... I don't know why.
