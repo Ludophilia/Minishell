@@ -6,26 +6,27 @@
 /*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 20:31:40 by ntahri            #+#    #+#             */
-/*   Updated: 2025/10/06 20:59:27 by ntahri           ###   ########.fr       */
+/*   Updated: 2025/10/09 04:06:49 by ntahri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// fonction pour obtenir la valeur d'une variable d'environnement
+// Fonction pour obtenir la valeur d'une variable d'environnement
 char *get_env(t_env *env, const char *key)
 {
     if (!env || !key)
         return (NULL);
     while (env)
     {
-        if (ft_strcmp(env->key, key) == 0)
+        if (ft_strncmp(env->key, key, ft_strlen(key) + 1) == 0)
             return (env->value);
         env = env->next;
     }
     return (NULL);
 }
-// fonction pour ajouter un nouveau noeud au début de la liste chaînée
+
+// Fonction pour ajouter un nouveau nœud au début de la liste chaînée
 void add_env_node(t_env **env, const char *key, const char *value)
 {
     t_env *new;
@@ -52,7 +53,8 @@ void add_env_node(t_env **env, const char *key, const char *value)
     new->next = *env;
     *env = new;
 }
-// fonction pour définir ou mettre à jour une variable d'environnement
+
+// Fonction pour définir ou mettre à jour une variable d'environnement
 void set_env(t_env **env, const char *key, const char *value)
 {
     t_env *tmp;
@@ -62,7 +64,7 @@ void set_env(t_env **env, const char *key, const char *value)
     tmp = *env;
     while (tmp)
     {
-        if (ft_strcmp(tmp->key, key) == 0)
+        if (ft_strncmp(tmp->key, key, ft_strlen(key) + 1) == 0)
         {
             free(tmp->value);
             if (value)
@@ -76,7 +78,7 @@ void set_env(t_env **env, const char *key, const char *value)
     add_env_node(env, key, value);
 }
 
-// fonction pour supprimer une variable d'environnement
+// Fonction pour supprimer une variable d'environnement
 void unset_env(t_env **env, const char *key)
 {
     t_env *tmp;
@@ -86,7 +88,7 @@ void unset_env(t_env **env, const char *key)
     tmp = *env;
     while (tmp)
     {
-        if (ft_strcmp(tmp->key, key) == 0)
+        if (ft_strncmp(tmp->key, key, ft_strlen(key) + 1) == 0)
         {
             if (prev)
                 prev->next = tmp->next;

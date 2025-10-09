@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jegerman <marvin@42.fr>                    +#+  +:+       +#+         #
+#    By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/09 12:08:14 by jegerman          #+#    #+#              #
-#    Updated: 2025/10/03 23:28:02 by jegerman         ###   ########.fr        #
+#    Updated: 2025/10/09 02:21:18 by ntahri           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -53,8 +53,15 @@ MAN_SRCS += $(EXEC_DR)/exec.c
 MAN_SRCS += $(EXEC_DR)/exec_path.c
 MAN_SRCS += $(EXEC_DR)/exec_builtins.c
 
-MAN_SRCS += $(BLTN_DR)/builtins.c
-MAN_SRCS += $(SGNL_DR)/signals.c
+
+MAN_SRCS += $(BLTN_DR)/cd.c
+MAN_SRCS += $(BLTN_DR)/echo.c
+MAN_SRCS += $(BLTN_DR)/env.c
+MAN_SRCS += $(BLTN_DR)/env_utils.c
+MAN_SRCS += $(BLTN_DR)/exit.c
+MAN_SRCS += $(BLTN_DR)/export.c
+MAN_SRCS += $(BLTN_DR)/pwd.c
+MAN_SRCS += $(SGNL_DR)/signals_new.c
 
 MAN_OBJS := $(MAN_SRCS:.c=.o)
 

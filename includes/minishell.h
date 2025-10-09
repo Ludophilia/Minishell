@@ -6,7 +6,7 @@
 /*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/08 23:15:04 by ntahri           ###   ########.fr       */
+/*   Updated: 2025/10/09 04:07:06 by ntahri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,13 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/wait.h>
+#include <sys/stat.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <signal.h>
 #include <stdint.h>
-#include <limits.h>
 #include <stdbool.h>
+#include <limits.h>
 
 #define UI_MAGENTA "\033[1;35m"
 #define UI_RESET "\033[0m"
@@ -48,14 +49,6 @@
 #define PATH_MAX 4096
 
 extern uint32_t g_exit_status;
-
-typedef struct sigaction t_sigaction;
-typedef struct s_env
-{
-    char *key;
-    char *value;
-    struct s_env *next;
-} t_env;
 typedef enum e_max
 {
     TOK_MAX = 2048,
@@ -90,42 +83,45 @@ typedef struct s_tok
     char *start;
     int len;
 } t_tok;
-
 typedef struct s_red
 {
     t_tokt type;
     char *word;
-    int fds[PFD_MAX];
 } t_red;
+
+typedef struct s_env
+{
+    char *key;
+    char *value;
+    struct s_env *next;
+} t_env;
 
 typedef struct s_cmd
 {
-    char **argv;
-    pid_t pid;
     t_red reds[RED_MAX];
+    bool xready;
+    // pid_t	pid;
+    // int		is_bltn;
+    char **argv;
     int ifd;
     int ofd;
-    bool xready;
 } t_cmd;
 typedef struct s_core
 {
     t_cmd cmds[CMD_MAX];
-    int cmd_pos;
     int cmd_pmax;
     int cmd_xrdy;
-    uint32_t flags;
+    char **envp;
     uint8_t exitv;
+    uint32_t flags;
     t_env *env;
 } t_core;
 
 int lex_is_quote(int c);
 int lex_is_op(int c);
 int lex_is_sep(int c);
-
 int lex_tokenize_line(char *line, t_tok *toks);
 
-int psr_cleanup_red(t_red *red, int *fds);
-// int psr_cleanup_cmds(t_core *core);
 int psr_cleanup_cmds(t_cflg flags, t_core *core);
 
 int psr_is_ired(t_tok *tok);
@@ -140,16 +136,13 @@ int psr_add_cmd(t_tok *tok, t_cmd *cmd);
 int psr_error_check(t_tok *toks);
 int psr_parse_line(char *line, t_core *core);
 
-int utl_cleanup(t_cflg flags, t_core *core);
-char *utl_shitoa(unsigned int nbr, char *store);
-
 int fmgr_access(char *path, int type);
 int fmgr_open(char *path, int openflags, mode_t openmode);
 int fmgr_pipe(int fds[2]);
 int fmgr_close(int *xfd);
 int fmgr_dup2(int old_fd, int new_fd);
 
-int fmgr_set_hdocs(int *ifds, t_red *red);
+int fmgr.vscode / c_cpp_properties.json_set_hdocs(int *ifds, t_red *red);
 int fmgr_set_pipe(int pos, int pmax, t_cmd *cmd);
 int fmgr_set_red(int *xfd, int openflags, t_red *red);
 int fmgr_set_reds(t_core *core);
@@ -159,11 +152,13 @@ int utl_cleanup(t_cflg flags, t_core *core);
 char *utl_shitoa(unsigned int nbr, char *store);
 int utl_free(void *ptr);
 
-int exc_is_builtin(char *arg);
 int exc_check_path(char **argv, char **envp);
 int exc_exec_cmds(t_core *core);
+int exc_exec_builtin(t_core *core, t_cmd *cmd, int fd);
+int exc_is_builtin(char *arg);
 
-int sig_init_handlers(void);
+void sig_init_prompt(void);
+void sig_init_child(void);
 
 int bi_echo(t_cmd *cmd, int fd);
 int bi_cd(t_core *core, t_cmd *cmd);

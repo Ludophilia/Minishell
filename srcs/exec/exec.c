@@ -6,96 +6,193 @@
 /*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:07:42 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/06 21:56:20 by ntahri           ###   ########.fr       */
+/*   Updated: 2025/10/09 04:07:01 by ntahri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+/*
+// 6/10 = Improve waiting logic so that < /dev/urandom tail does not fail
+// ^C make the child defunct. The SIGINT processing logic need to be
+// implemented.
+static int	exc_wait_cmds(int i)
+{
+    int	wstat;
+    int	cfails;
 
-static int exc_wait_cmds(int i)
+    cfails = 0;
+    while (--i >= 0)
+        if ((waitpid(-1, &wstat, 0) == -1) // the pipe order shld be respected.
+            || WEXITSTATUS(wstat) == EXIT_FAILURE)
+            ++cfails;
+    if (cfails != 0)
+        return (0); // 6/10 = Error code from "waited" command should be here.
+    return (0);
+}
+
+// 7/10 - May have to split it one more time with builtins and stuff...
+static int	exc_exec_cmd(t_cmd *cmd, t_core *core)
+{
+    int	is_bltn;
+    int	chk_rv;
+
+    chk_rv = 0;
+    if ((*cmd->argv == NULL && ft_eprintf(ERR_CMD, NULL))
+        || (**cmd->argv == 0 && ft_eprintf(ERR_ECMD, **cmd->argv)))
+        return (0);
+    if (fmgr_dup2(cmd->ifd, 0) == -1 || fmgr_dup2(cmd->ofd, 1) == -1
+        || psr_cleanup_cmds(FLG_REDS, core) != 1)
+        return (-1);
+    is_bltn = exc_is_builtin(*cmd->argv);
+    if (is_bltn == false)
+        chk_rv = exc_check_path(cmd->argv, core->envp);
+    if (chk_rv == -1
+        || (chk_rv == 1 && execve(*cmd->argv, cmd->argv, core->envp) == -1))
+        return (-1);
+    return (0);
+}
+
+static int	exc_init_subsh(int i, pid_t *pid, t_core *core)
+{
+    int	exit_val;
+    int	exec_rv;
+
+    *pid = fork();
+    if (*pid == -1 && ft_eprintf(ERR_GNR, strerror(errno)))
+        return (-1);
+    if (*pid > 0)
+        return (0);
+    exit_val = EXIT_SUCCESS;
+    exec_rv = exc_exec_cmd(core->cmds + i, core);
+    psr_cleanup_cmds(core->flags, core);
+    if (exec_rv == -1)
+        exit_val = EXIT_FAILURE;
+    exit(exit_val);
+}
+
+int	exc_exec_cmds(t_core *core)
+{
+    pid_t	pid;
+    int		i;
+
+    pid = 0;
+    i = -1;
+    while (++i < (core->cmd_pmax + 1))
+    {
+        if (core->cmds[i].xready == false)
+            continue ;
+        if (exc_init_subsh(i, &pid, core) == -1
+            && exc_wait_cmds(core->cmd_xrdy))
+            return (-1);
+    }
+    if (pid > 0
+        && utl_cleanup((FLG_CMDS | FLG_REDS), core)
+        && exc_wait_cmds(core->cmd_xrdy) == -1)
+        return (-1);
+    return (0);
+}*/
+
+#include "minishell.h"
+
+static int exc_wait_cmds(int count)
 {
     int wstat;
     int cfails;
 
     cfails = 0;
-    while (--i >= 0)
-        if ((waitpid(-1, &wstat, 0) == -1) || WEXITSTATUS(wstat) == EXIT_FAILURE)
-            ++cfails;
-    if (cfails != 0)
-        return (-1);
-    return (0);
+    while (--count >= 0)
+    {
+        if (waitpid(-1, &wstat, 0) == -1)
+            continue;
+        if (WIFEXITED(wstat))
+            g_exit_status = WEXITSTATUS(wstat);
+        else if (WIFSIGNALED(wstat))
+            g_exit_status = 128 + WTERMSIG(wstat);
+        if (g_exit_status != 0)
+            cfails++;
+    }
+    return (cfails != 0);
 }
 
 static int exc_exec_cmd(t_cmd *cmd, t_core *core)
 {
     int is_bltn;
-    int check_rtv;
+    int chk_rv;
 
-    if ((*cmd->argv == NULL && ft_eprintf(ERR_CMD, NULL)) || (**cmd->argv == 0 && ft_eprintf(ERR_ECMD, **cmd->argv)))
+    if (!cmd || !cmd->argv || !*cmd->argv)
+        return (0);
+    if (fmgr_dup2(cmd->ifd, STDIN_FILENO) == -1 || fmgr_dup2(cmd->ofd, STDOUT_FILENO) == -1 || psr_cleanup_cmds(FLG_REDS, core) != 1)
+        return (-1);
+    if (cmd->ifd > 2)
+        fmgr_close(&cmd->ifd);
+    if (cmd->ofd > 2)
+        fmgr_close(&cmd->ofd);
+    is_bltn = exc_is_builtin(cmd->argv[0]);
+    if (is_bltn >= 0)
     {
-        psr_cleanup_cmds(core->flags, core);
-        exit(EXIT_SUCCESS);
+        g_exit_status = exc_exec_builtin(core, cmd, STDOUT_FILENO);
+        return (g_exit_status);
     }
-    if (fmgr_dup2(cmd->ifd, 0) == -1 || fmgr_dup2(cmd->ofd, 1) == -1 || psr_cleanup_cmds(FLG_REDS, core) != 1)
+    chk_rv = exc_check_path(cmd->argv, core->envp);
+    if (chk_rv == -1 || (chk_rv == 1 && execve(cmd->argv[0], cmd->argv, core->envp) == -1))
+    {
+        perror("minishell");
         return (-1);
-    is_bltn = exc_is_builtin(*cmd->argv);
-    // if (is_bltn && exc_builtins(cmd->argv, envp) == -1) // arrays to pointer to funct?
-    // 	return (-1);
-    check_rtv = 0;
-    if (is_bltn == false)
-        check_rtv = exc_check_path(cmd->argv, core->envp);
-    if (check_rtv == -1 || (check_rtv == 1 && execve(*cmd->argv, cmd->argv, core->envp) == -1))
-        return (-1);
+    }
     return (0);
 }
+static int exc_init_subsh(int i, pid_t *pid, t_core *core)
+{
+    int exit_val;
+    int exec_rv;
 
-// static int	exc_spawn_chld(int i, t_cmd *cmd, t_core *core)
-// {
-// 	pid_t	pid;
+    *pid = fork();
+    if (*pid == -1)
+    {
+        ft_eprintf(ERR_GNR, strerror(errno));
+        return (-1);
+    }
+    if (*pid == 0)
+    {
+        sig_init_child();
+        exit_val = EXIT_SUCCESS;
+        exec_rv = exc_exec_cmd(&core->cmds[i], core);
+        psr_cleanup_cmds(core->flags, core);
+        if (exec_rv == -1)
+            exit_val = EXIT_FAILURE;
+        exit(exit_val);
+    }
+    if (core->cmds[i].ifd > 2)
+        fmgr_close(&core->cmds[i].ifd);
+    if (core->cmds[i].ofd > 2)
+        fmgr_close(&core->cmds[i].ofd);
 
-// 	pid = fork();
-// 	if (pid == -1 && ft_eprintf(ERR_GNR, strerror(errno)))
-// 	{
-// 		exc_wait_cmds(i);
-// 		return (-1);
-// 	}
-// 	if (pid == 0 && exc_exec_cmd(cmd, core) == -1)
-// 	{
-// 		psr_cleanup_cmds(core->flags, core);
-// 		printf("Exit failure\n");
-// 		exit(EXIT_FAILURE);
-// 	}
-// 	return (0);
-// }
-
-// 5/10 - The logic is completely faulty
-// = start by testing ""
+    return (0);
+}
 int exc_exec_cmds(t_core *core)
 {
-    t_cmd *cmd;
-    int i;
     pid_t pid;
+    int i;
 
-    i = -1;
     pid = 0;
+    i = -1;
     while (++i < (core->cmd_pmax + 1))
     {
-        cmd = core->cmds + i;
-        if (cmd->xready == false)
+        if (!core->cmds[i].xready)
             continue;
-        pid = fork();
-        if (pid == -1 && ft_eprintf(ERR_GNR, strerror(errno)))
+        if (exc_is_builtin(core->cmds[i].argv[0]) >= 0 && core->cmd_pmax == 0)
         {
-            exc_wait_cmds(core->cmd_xrdy);
+            g_exit_status = exc_exec_builtin(core, &core->cmds[i], core->cmds[i].ofd);
+            continue;
+        }
+        if (exc_init_subsh(i, &pid, core) == -1)
             return (-1);
-        }
-        if (pid == 0 && exc_exec_cmd(cmd, core) == -1)
-        {
-            psr_cleanup_cmds(core->flags, core);
-            exit(EXIT_FAILURE);
-        }
     }
-    if (pid != 0 && utl_cleanup((FLG_CMDS | FLG_REDS), core) && exc_wait_cmds(core->cmd_xrdy) == -1)
-        return (-1);
+    if (pid > 0)
+    {
+        exc_wait_cmds(core->cmd_xrdy);
+        utl_cleanup((FLG_CMDS | FLG_REDS), core);
+    }
+    sig_init_prompt();
     return (0);
 }
