@@ -193,13 +193,26 @@ Pipeline Creation is to:
 	- Remove OUTER quotes, if they exists.
 	- Expand the $ variable.
 
-### Examples (basic, quoted)
+### Examples (basic)
 
 - [x] `echo $USER`
 	-> user_name (jegerman)
 
+- [x] `echo $NOT_DECL_VAR`
+	-> 
+
+- [x] `echo $ USER`
+	-> $ USER
+
 - [x] `echo $USER$SHLVL$LANG`
 	-> jegerman2en_US.UTF-8
+
+- [x] `echo $USER?ORWHAT?`
+	-> jegerman?ORWHAT
+	-> An id is only comprised of letters, numbers, and underscores, 
+	and begins with a letter or underscore.
+
+### Examples (quoted)
 
 - [x] `echo "$USER"`
 	-> user_name (jegerman)
@@ -213,107 +226,84 @@ Pipeline Creation is to:
 - [x] `echo '$USER$SHLVL$LANG'`
 	-> $USER$SHLVL
 
-- [x] `echo $ USER`
-	-> $ USER
-
-### Examples (quoted $ sign)
-
-- [x] `echo '$' USER`
-	-> $ USER
-
-- [ ] `echo "$" USER`
-	-> $ USER (minishell: USER)
-
-- [x] `echo '$'USER`
-	-> $USER
-
-- [ ] `echo "$"USER`
-	-> $USER (minishell: USER)
-
-- [ ] `echo "'$'USER"`
-	-> '$'USER (minishell: ''USER)
-
-- [ ] `echo "\"$\"USER"`
-	-> "$"USER (minishell: out of scope)
-
-- [x] `echo '"$"USER'`
-	-> "$"USER
-
-- [ ] `echo "$"$USER`
-	-> $jegerman (minishell: jegerman)
-
-- [x] `echo '$'$USER$USER$SHLVL`
-	-> $jegermanjegerman2
-
-- [ ] `echo "$"$USER$USER'$'SHLVL`
-	-> $jegermanjegerman$SHLVL (minishell: jegermanjegerman$SHLVL)
-
-- [ ] `echo "$"'_USER'`
-	-> $_USER
-
-### Examples (quotes side by side)
-
-- [x] `echo $`
-	-> $
-
-- [ ] `echo "$"`
-	-> $ (minishell: )
-
-- [ ] `echo '$'`
-	-> '$'
-- [ ] `echo "$""MINI"`
-	- $MINI 
-
-
-### Examples ()
-
-- [x] `echo $%USER`
-	-> $%USER
-
-
-- [ ] `echo "'$USER'"`
+- [x] `echo "'$USER'"`
 	-> 'jegerman'
 
-- [ ] `echo "'123$SHIT'"`
+- [x] `echo '"$USER"'`
+	-> "$USER"
+
+- [x] `echo "'''$USER'''"`
+	-> '''jegerman'''
+
+- [x] `echo '"""$USER"""'`
+	-> """$USER"""
+
+- [x] `echo "'123$SHIT'"`
 	-> '123'
 	-> SHIT is not a defined variable, so it expands to nothing
 	-> equivalent to SHIT=""
 
-### Examples (Id focused)
+### Examples (quoted $ sign)
 
-###
+- [x] `echo $`
+	-> $
 
-- [ ] `<< $USER` `<< '$USER'` `<< $USER`
-	-> Here document will use $USER as their terminator.
+- [x] `echo "$"`
+	-> $
 
-###
+- [x] `echo '$'`
+	-> $
 
-- [ ] `""` `''`
-	-> Results in an empty character string (one NULL in an array of chars).
-	-> Command '' not found
+- [x] `echo '$' USER`
+	-> $ USER
 
-- [ ] `"'''"`
-	-> '''
+- [x] `echo "$" USER`
+	-> $ USER
 
+- [x] `echo '$'USER`
+	-> $USER
 
-### Examples (Not regular parameters)
+- [x] `echo "$"USER`
+	-> $USER
 
-- [ ] `echo $""`
-	-> $ 
-	- WTF? (Not a parameter, locale specific translation)
+- [x] `echo "'$'USER"`
+	-> '$'USER
 
-- [ ] `echo $''`
-	-> 
-	- WTF? (Not a parameter, ANSI-C Quoting)
+- [x] `echo '"$"USER'`
+	-> "$"USER
 
-- [ ] `echo $"MINI"`
-	- MINI (Not a parameter, locale specific translation)
+- [x] `echo "$"$USER`
+	-> $jegerman
 
-- [x] `echo $'USER'`
-	-> USER (Not a parameter, ANSI-C Quoting)
+- [x] `echo '$'$USER$USER$SHLVL`
+	-> $jegermanjegerman2
 
+- [x] `echo "$"$USER$USER'$'SHLVL`
+	-> $jegermanjegerman$SHLVL (minishell: jegermanjegerman$SHLVL)
 
+- [x] `echo "$"'_USER'`
+	-> $_USER
 
+- [x] `echo "$""MINI"`
+	- $MINI 
+
+### Examples (not envv, here docs, out of scope)
+
+- [x] `echo $%USER`
+	-> $%USER
+
+- [x] `<< $USER`
+- [x] `<< '$USER'`
+- [x] `<< "$USER"`
+	-> Here document will use $USER as their terminator, every time.
+
+- [ ] `echo "\"$\"USER"`
+	-> "$"USER (minishell: out of scope)
+
+- [ ] `echo $1USER?`
+	-> USER (minishell: out of scope)
+	-> An id is only comprised of letters, numbers, and underscores, 
+	and begins with a letter or underscore.
 
 ### In which case a variable should be expanded 
 
@@ -324,8 +314,6 @@ Pipeline Creation is to:
 - The variable name stops when:
 	- i <= len
 	- we meet something that is not  ft_isalnum() || '_'
-
-	
 
 ## [Parent level redirection: Here document and pipes]
 

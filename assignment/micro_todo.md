@@ -16,8 +16,8 @@ fresh and cleaned from line to line...
 
 - [x] Restructure parser
 	- [x] especially parser_word.c which is very stuffy or confused
-	- [ ] Improve environment variable expansions
-	- [ ] test it... I hope everything still runs well.
+	- [x] Improve environment variable expansions
+	- [x] test it... I hope everything still runs well.
 
 ### Project Wide Variables
 
@@ -28,3 +28,14 @@ fresh and cleaned from line to line...
 ### Execution
 
 - [o] set EXIT statuses for every situations (reds, signals, execution)
+
+### Builtins
+
+- [ ] increment SHLVL each time you open a minishell.
+
+- [ ] Maybe improve here documents?
+	- ^C processing with error message
+	- 
+
+- [ ] Maybe improve readline behavior
+	- It really struggles with long lines... I don't know why.

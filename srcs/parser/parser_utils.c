@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:24:36 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/07 17:13:46 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/09 14:23:51 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,7 @@ int	psr_is_envv(char *c, int ct, int q)
 		&& ct != TOK_IRED_HD
 		&& q != '\''
 		&& (c[1] == '?'
-			|| psr_is_envv_chr(c[1], 0)
-			|| lex_is_quote(c[1])))
+			|| psr_is_envv_chr(c[1], 0)))
 		return (1);
 	return (0);
 }
