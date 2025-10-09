@@ -6,23 +6,23 @@
 /*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:31:20 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/09 00:40:11 by ntahri           ###   ########.fr       */
+/*   Updated: 2025/10/09 16:09:03 by ntahri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int lex_is_op(int c)
+int	lex_is_op(int c)
 {
-    return (c == '<' || c == '>' || c == '|');
+	return (c == '<' || c == '>' || c == '|');
 }
 
-int lex_is_sep(int c)
+int	lex_is_sep(int c)
 {
-    return (c == ' ');
+	return (c == ' ');
 }
 
-int lex_is_quote(int c)
+int	lex_is_quote(int c)
 {
-    return (c == '\'' || c == '\"');
+	return (c == '\'' || c == '\"');
 }
