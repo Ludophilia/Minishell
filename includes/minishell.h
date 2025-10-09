@@ -6,7 +6,7 @@
 /*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/09 04:07:06 by ntahri           ###   ########.fr       */
+/*   Updated: 2025/10/09 16:22:43 by ntahri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,7 +142,7 @@ int fmgr_pipe(int fds[2]);
 int fmgr_close(int *xfd);
 int fmgr_dup2(int old_fd, int new_fd);
 
-int fmgr.vscode / c_cpp_properties.json_set_hdocs(int *ifds, t_red *red);
+int fmgr_set_hdocs(int *ifds, t_red *red);
 int fmgr_set_pipe(int pos, int pmax, t_cmd *cmd);
 int fmgr_set_red(int *xfd, int openflags, t_red *red);
 int fmgr_set_reds(t_core *core);

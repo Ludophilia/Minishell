@@ -6,7 +6,7 @@
 #    By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/09 12:08:14 by jegerman          #+#    #+#              #
-#    Updated: 2025/10/09 02:21:18 by ntahri           ###   ########.fr        #
+#    Updated: 2025/10/09 16:20:52 by ntahri           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -61,7 +61,7 @@ MAN_SRCS += $(BLTN_DR)/env_utils.c
 MAN_SRCS += $(BLTN_DR)/exit.c
 MAN_SRCS += $(BLTN_DR)/export.c
 MAN_SRCS += $(BLTN_DR)/pwd.c
-MAN_SRCS += $(SGNL_DR)/signals_new.c
+MAN_SRCS += $(SGNL_DR)/signals.c
 
 MAN_OBJS := $(MAN_SRCS:.c=.o)
 
