@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 22:43:08 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/08 19:29:23 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/10 22:05:53 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,13 @@ static int	psr_reset_flgs(t_cflg flags, t_core *core)
 		core->flags |= ~FLG_REDS;
 	if (flags & FLG_CORE)
 		core->flags |= ~FLG_CORE;
+	return (1);
+}
+
+static int	psr_cleanup_core(t_core *core)
+{
+	core->cmd_pmax = 0;
+	core->cmd_xrdy = 0;
 	return (1);
 }
 
@@ -49,13 +56,6 @@ static int	psr_cleanup_red(t_cmd *cmd)
 	}
 	fmgr_close(&cmd->ifd);
 	fmgr_close(&cmd->ofd);
-	return (1);
-}
-
-static int	psr_cleanup_core(t_core *core)
-{
-	core->cmd_pmax = 0;
-	core->cmd_xrdy = 0;
 	return (1);
 }
 

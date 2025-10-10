@@ -19,6 +19,23 @@ fresh and cleaned from line to line...
 	- [x] Improve environment variable expansions
 	- [x] test it... I hope everything still runs well.
 
+### Niz integration
+
+- [ ] Check includes/
+
+- [ ] Better integrate what in core/
+	- [ ] Interface, main, utils
+- [ ] Better integrate what in exec/
+	- [ ] exec, exec_buitins
+
+- [ ] Add signals/ (signals_new)
+	- [ ] signals
+- [ ] Add builtins/ (builtins_new)
+	- [ ] every builtins
+
+- [ ] Remove duplicates (cleanup logic) and integrate the new stuff 
+in signals and builtins
+
 ### Project Wide Variables
 
 - [ ] Think about that global variable. What is its purpose?

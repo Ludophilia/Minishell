@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/08 15:54:15 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/10 21:01:52 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,8 @@
 # define FL_IRED O_RDONLY
 # define FL_ORED (O_CREAT | O_TRUNC | O_WRONLY)
 # define FL_ORED_AP (O_CREAT | O_APPEND | O_WRONLY)
+
+#define PATH_MAX 4096
 
 extern uint32_t	g_exit_status; // signals, please improve this...
 
@@ -87,6 +89,13 @@ typedef struct s_red
 	char	*word;
 }	t_red;
 
+typedef struct s_env
+{
+    char *key;
+    char *value;
+    struct s_env *next;
+}	t_env;
+
 typedef struct s_cmd
 {
 	t_red	reds[RED_MAX];
@@ -106,6 +115,7 @@ typedef struct s_core
 	char		**envp; // provisory
 	uint8_t		exitv; // later in the execution pipeline
 	uint32_t	flags;
+	t_env		*env;
 }	t_core;
 
 int		lex_is_quote(int c);
@@ -145,14 +155,39 @@ int		utl_cleanup(t_cflg flags, t_core *core);
 char	*utl_shitoa(unsigned int nbr, char *store);
 int		utl_free(void *ptr);
 
-int		exc_is_builtin(char *arg);
 int		exc_check_path(char **argv, char **envp);
 int		exc_exec_cmds(t_core *core);
-
-int		sig_init_handlers(void);
-
-int		bi_exit(char *line);
+// int		exc_exec_builtin(t_core *core, t_cmd *cmd, int fd);
+int		exc_is_builtin(char *arg);
 
 int		ui_loop_prompt(t_core *core);
+
+// int		sig_init_handlers(void);
+// int		bi_exit(char *line);
+
+/* Added by Niz */
+
+// void		sig_init_prompt(void);
+// void		sig_init_child(void);
+
+// int		bi_echo(t_cmd *cmd, int fd);
+// int		bi_cd(t_core *core, t_cmd *cmd);
+// int		bi_pwd(int fd);
+// int		bi_env(t_env *env, int fd);
+// int		bi_export(t_cmd *cmd, t_env **env);
+// int		bi_unset(t_cmd *cmd, t_env **env);
+// int		bi_exit(t_core *core, t_cmd *cmd);
+
+// t_env	*env_new(char *key, char *value);
+// void		env_add(t_env **list, t_env *new);
+// t_env	*dup_env(char **envp);
+// char		*get_env(t_env *env, const char *key);
+// void		set_env(t_env **env, const char *key, const char *value);
+// void		unset_env(t_env **env, const char *key);
+// void		free_env(t_env *env);
+// int		is_valid_identifier(const char *str);
+
+// int		ft_atol_safe(const char *str, long *res);
+// void		cleanup_and_exit(t_core *core, int code);
 
 #endif
