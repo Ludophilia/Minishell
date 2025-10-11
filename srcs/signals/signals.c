@@ -5,34 +5,55 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/18 18:59:28 by jgermany          #+#    #+#             */
-/*   Updated: 2025/09/29 20:22:15 by jegerman         ###   ########.fr       */
+/*   Created: 2025/10/01 18:59:28 by ntahri            #+#    #+#             */
+/*   Updated: 2025/10/11 22:21:31 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	sigmgr_gen_handler(int sig_num)
+static void	sig_handler_interactive(int sig)
 {
-	g_exit_status = sig_num + 128;
-	if (sig_num == SIGINT)
+	g_sig = sig;
+	if (sig == SIGINT)
 	{
 		write(1, "\n", 1);
 		rl_on_new_line();
 		rl_replace_line("", 0);
 		rl_redisplay();
+		// g_exit_status = 130; // 128 + 2 or 128 + sig
+	}
+	else if (sig == SIGQUIT)
+	{
+		rl_on_new_line();
+		rl_redisplay();
 	}
 }
 
-int	sig_init_handlers(void)
+int	sig_init_child(void)
 {
-	t_sigaction	gen_sigact;
-	t_sigaction	ign_sigact;
+	struct sigaction	sa;
 
-	ign_sigact = (t_sigaction){.sa_handler = SIG_IGN};
-	gen_sigact = (t_sigaction){.sa_handler = sigmgr_gen_handler};
-	if (sigaction(SIGINT, &gen_sigact, NULL) == -1
-		|| sigaction(SIGQUIT, &ign_sigact, NULL) == -1)
+	if (sigemptyset(&sa.sa_mask) == -1)
+		return (-1);
+	sa.sa_handler = SIG_DFL;
+	sa.sa_flags = 0;
+	if (sigaction(SIGINT, &sa, NULL) == -1
+		|| sigaction(SIGQUIT, &sa, NULL) == -1)
+		return (-1);
+	return (0);
+}
+
+int	sig_init_prompt(void)
+{
+	struct sigaction	sa;
+
+	if (sigemptyset(&sa.sa_mask) == -1)
+		return (-1);
+	sa.sa_handler = sig_handler_interactive;
+	sa.sa_flags = SA_RESTART;
+	if (sigaction(SIGINT, &sa, NULL) == -1
+		|| sigaction(SIGQUIT, &sa, NULL) == -1)
 		return (-1);
 	return (0);
 }

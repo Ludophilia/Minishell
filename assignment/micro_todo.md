@@ -21,26 +21,34 @@ fresh and cleaned from line to line...
 
 ### Niz integration
 
-- [ ] Check includes/
+- [ ] Sync variable logic with those of nezlock in minishell.h
+	especially that environment variables
+
+- [ ] Remove duplicates (cleanup logic) and integrate the new stuff 
+in signals and builtins
+
+- [o] Check includes/
 
 - [ ] Better integrate what in core/
 	- [ ] Interface, main, utils
 - [ ] Better integrate what in exec/
 	- [ ] exec, exec_buitins
 
-- [ ] Add signals/ (signals_new)
-	- [ ] signals
+- [o] Add signals/ (signals_new)
+	- [ ] Core shell need SIGINT (2, ctrl+c) and SIGQUIT (3, ctrl+\) disabled
+	- [ ] Child shell need SIGINT (2, ctrl+c) and SIGQUIT (3, ctrl+\)
+	back to default.
+	- [ ] Heredocs seems to needs signal management as well
+
 - [ ] Add builtins/ (builtins_new)
 	- [ ] every builtins
-
-- [ ] Remove duplicates (cleanup logic) and integrate the new stuff 
-in signals and builtins
 
 ### Project Wide Variables
 
 - [ ] Think about that global variable. What is its purpose?
-- [ ] Sync variable logic with those of nezlock in minishell.h
-	especially that environment variables
+	- [ ] Subject says "Be careful. This global variable must only store the
+	signal number and must not provide any additional information or access to data."
+
 
 ### Execution
 

@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/10 21:01:52 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/11 22:24:58 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,9 @@
 # define FL_ORED (O_CREAT | O_TRUNC | O_WRONLY)
 # define FL_ORED_AP (O_CREAT | O_APPEND | O_WRONLY)
 
-#define PATH_MAX 4096
+extern uint32_t	g_sig;
 
-extern uint32_t	g_exit_status; // signals, please improve this...
-
-typedef struct sigaction	t_sigaction;
+typedef struct sigaction	t_sigact;
 
 typedef enum e_max
 {
@@ -58,6 +56,7 @@ typedef enum e_max
 	RED_MAX = 128,
 	ID_LMAX = 256,
 	EXW_MAX = 16,
+	PATH_MAX = 4096
 }	t_max;
 
 typedef enum e_tokt
@@ -112,9 +111,8 @@ typedef struct s_core
 	t_cmd		cmds[CMD_MAX];
 	int			cmd_pmax;
 	int			cmd_xrdy;
-	char		**envp; // provisory
-	uint8_t		exitv; // later in the execution pipeline
 	uint32_t	flags;
+	uint8_t		exit;
 	t_env		*env;
 }	t_core;
 
@@ -150,11 +148,6 @@ int		fmgr_set_pipe(int pos, int pmax, t_cmd *cmd);
 int		fmgr_set_red(int *xfd, int openflags, t_red *red);
 int		fmgr_set_reds(t_core *core);
 
-int		utl_free_strs(int from_id, char **strs);
-int		utl_cleanup(t_cflg flags, t_core *core);
-char	*utl_shitoa(unsigned int nbr, char *store);
-int		utl_free(void *ptr);
-
 int		exc_check_path(char **argv, char **envp);
 int		exc_exec_cmds(t_core *core);
 // int		exc_exec_builtin(t_core *core, t_cmd *cmd, int fd);
@@ -162,13 +155,13 @@ int		exc_is_builtin(char *arg);
 
 int		ui_loop_prompt(t_core *core);
 
-// int		sig_init_handlers(void);
-// int		bi_exit(char *line);
+int		sig_init_prompt(void);
+int		sig_init_child(void);
 
-/* Added by Niz */
-
-// void		sig_init_prompt(void);
-// void		sig_init_child(void);
+int		utl_free_strs(int from_id, char **strs);
+int		utl_cleanup(t_cflg flags, t_core *core);
+char	*utl_shitoa(unsigned int nbr, char *store);
+int		utl_free(void *ptr);
 
 // int		bi_echo(t_cmd *cmd, int fd);
 // int		bi_cd(t_core *core, t_cmd *cmd);

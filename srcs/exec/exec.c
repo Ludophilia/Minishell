@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:07:42 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/10 21:50:26 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/11 21:16:44 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@
 // 	}
 // 	return (cfails != 0);
 // }
+
 static int	exc_wait_cmds(t_core *core)
 {
 	t_cmd	*cmd;
@@ -48,10 +49,9 @@ static int	exc_wait_cmds(t_core *core)
 		cmd = core->cmds + i;
 		if (cmd->xready == false)
 			continue ;
-		if (waitpid(cmd->pid, &wstat, 0) == -1) // DANGER
+		if (waitpid(cmd->pid, &wstat, 0) == -1) // DANGER?
 			return (-1);
-		core->exitv = WEXITSTATUS(wstat); // One way...
-		g_exit_status = WEXITSTATUS(wstat); // ...or the other.
+		core->exit = WEXITSTATUS(wstat); // One way...
 	}
 	return (0);
 }
