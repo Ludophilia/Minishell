@@ -30,7 +30,7 @@ in signals and builtins
 - [o] Check includes/
 
 - [ ] Better integrate what in core/
-	- [ ] Interface, main, utils
+	- [o] Interface, main, utils
 - [ ] Better integrate what in exec/
 	- [ ] exec, exec_buitins
 
@@ -45,8 +45,8 @@ in signals and builtins
 
 ### Project Wide Variables
 
-- [ ] Think about that global variable. What is its purpose?
-	- [ ] Subject says "Be careful. This global variable must only store the
+- [x] Think about that global variable. What is its purpose?
+	- [x] Subject says "Be careful. This global variable must only store the
 	signal number and must not provide any additional information or access to data."
 
 

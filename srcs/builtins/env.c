@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 20:31:40 by ntahri            #+#    #+#             */
-/*   Updated: 2025/10/09 16:01:13 by ntahri           ###   ########.fr       */
+/*   Updated: 2025/10/12 17:19:59 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,9 +115,10 @@ int	bi_unset(t_cmd *cmd, t_env **env)
 	{
 		if (!is_valid_identifier(arg))
 		{
-			ft_putstr_fd("minishell: unset: `", STDERR_FILENO);
-			ft_putstr_fd(arg, STDERR_FILENO);
-			ft_putendl_fd("': not a valid identifier", STDERR_FILENO);
+			// ft_putstr_fd("minishell: unset: `", STDERR_FILENO);
+			// ft_putstr_fd(arg, STDERR_FILENO);
+			// ft_putendl_fd("': not a valid identifier", STDERR_FILENO);
+			ft_eprintf("minishell: unset: `%s': not a valid identifier\n", arg);
 			g_exit_status = 1;
 		}
 		else

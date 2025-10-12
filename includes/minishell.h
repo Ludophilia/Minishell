@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/11 22:24:58 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/12 21:54:44 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include <sys/wait.h>
+# include <limits.h>
 # include <sys/stat.h>
 # include <fcntl.h>
 # include <errno.h>
@@ -34,11 +35,15 @@
 
 # define ENV_DFLT_PATH "/bin:/usr/bin"
 
+# define ERR_USAGE "usage: ./minishell\n"
 # define ERR_SYNTAX "syntax error near unexpected token `%s'\n"
 # define ERR_GNR "%s\n"
 # define ERR_PTH "%s: %s\n"
 # define ERR_CMD "%s: command not found\n"
 # define ERR_ECMD "'%c': command not found\n"
+
+# define ERR_XNUM "exit: %s: numeric argument required\n"
+# define ERR_XMNY "exit: too many arguments\n"
 
 # define FL_PRMS 00664
 # define FL_IRED O_RDONLY
@@ -100,8 +105,9 @@ typedef struct s_cmd
 	t_red	reds[RED_MAX];
 	bool	xready;
 	pid_t	pid;
-	// int		is_bltn;
+	// int		is_bltn; // ???
 	char	**argv;
+	int		argc;
 	int		ifd;
 	int		ofd;
 }	t_cmd;
@@ -163,24 +169,25 @@ int		utl_cleanup(t_cflg flags, t_core *core);
 char	*utl_shitoa(unsigned int nbr, char *store);
 int		utl_free(void *ptr);
 
-// int		bi_echo(t_cmd *cmd, int fd);
-// int		bi_cd(t_core *core, t_cmd *cmd);
-// int		bi_pwd(int fd);
-// int		bi_env(t_env *env, int fd);
-// int		bi_export(t_cmd *cmd, t_env **env);
-// int		bi_unset(t_cmd *cmd, t_env **env);
-// int		bi_exit(t_core *core, t_cmd *cmd);
+/* Niz */
 
-// t_env	*env_new(char *key, char *value);
-// void		env_add(t_env **list, t_env *new);
-// t_env	*dup_env(char **envp);
-// char		*get_env(t_env *env, const char *key);
-// void		set_env(t_env **env, const char *key, const char *value);
-// void		unset_env(t_env **env, const char *key);
-// void		free_env(t_env *env);
-// int		is_valid_identifier(const char *str);
+int		bi_echo(t_cmd *cmd, int fd);
+int		bi_cd(t_core *core, t_cmd *cmd);
+int		bi_pwd(int fd);
+int		bi_env(t_env *env, int fd);
+int		bi_export(t_cmd *cmd, t_env **env);
+int		bi_unset(t_cmd *cmd, t_env **env);
+int		bi_exit(t_core *core, t_cmd *cmd);
 
-// int		ft_atol_safe(const char *str, long *res);
-// void		cleanup_and_exit(t_core *core, int code);
+t_env		*env_new(char *key, char *value);
+void		env_add(t_env **list, t_env *new);
+t_env		*dup_env(char **envp);
+char		*get_env(t_env *env, const char *key);
+void		set_env(t_env **env, const char *key, const char *value);
+void		unset_env(t_env **env, const char *key);
+int			is_valid_identifier(const char *str);
+
+t_env		*dup_env_fail(char *key, char *val, t_env *list)
+void		free_env(t_env *env);
 
 #endif

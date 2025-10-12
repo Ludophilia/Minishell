@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 22:43:08 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/10 22:05:53 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/12 21:43:06 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ static int	psr_cleanup_core(t_core *core)
 {
 	core->cmd_pmax = 0;
 	core->cmd_xrdy = 0;
+	// env?? // 12/10
 	return (1);
 }
 
@@ -38,6 +39,7 @@ static int	psr_cleanup_cmd(t_cmd *cmd)
 		return (1);
 	utl_free_strs(0, cmd->argv);
 	cmd->argv = NULL;
+	cmd->argc = 0;
 	return (1);
 }
 

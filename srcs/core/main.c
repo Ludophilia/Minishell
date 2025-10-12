@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/14 13:48:39 by jgermany          #+#    #+#             */
-/*   Updated: 2025/10/11 22:07:37 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/12 16:14:06 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,14 +29,15 @@ int	main(int argc, char **argv, char **envp)
 {
 	t_core	core;
 
-	if ((++argv, --argc != 0)
-		|| main_init_core(&core, envp)
-		|| sig_init_prompt() == -1)
+	if ((++argv, --argc != 0) && ft_eprintf(ERR_USAGE))
 		return (1);
+	if (main_init_core(&core, envp)
+		|| sig_init_prompt() == -1)
+		return (2);
 	if (ui_loop_prompt(&core) == -1)
 	{
 		free_env(core.env);
-		return (2);
+		return (3);
 	}
 	free_env(core.env);
 	return (0);
