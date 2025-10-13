@@ -3,31 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 04:06:11 by ntahri            #+#    #+#             */
-/*   Updated: 2025/10/09 16:24:25 by ntahri           ###   ########.fr       */
+/*   Updated: 2025/10/13 22:27:23 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-// vérifie si l'identifiant est valide
-int	is_valid_identifier(const char *str)
-{
-	int	i;
-
-	if (!str || (!ft_isalpha(*str) && *str != '_'))
-		return (0);
-	i = 1;
-	while (str[i] && str[i] != '=')
-	{
-		if (!ft_isalnum(str[i]) && str[i] != '_')
-			return (0);
-		i++;
-	}
-	return (1);
-}
 
 // Affichage de export sans arguments
 static void	print_export(t_env *env)
@@ -56,7 +39,7 @@ static void	handle_export_arg(t_env **env, char *arg)
 {
 	char	*eq;
 
-	if (!is_valid_identifier(arg))
+	if (!env_is_identifier(arg))
 	{
 		ft_putstr_fd("minishell: export: `", STDERR_FILENO);
 		ft_putstr_fd(arg, STDERR_FILENO);
@@ -68,11 +51,11 @@ static void	handle_export_arg(t_env **env, char *arg)
 	if (eq)
 	{
 		*eq = '\0';
-		set_env(env, arg, eq + 1);
+		env_set(env, arg, eq + 1);
 		*eq = '=';
 	}
-	else if (!get_env(*env, arg))
-		set_env(env, arg, NULL);
+	else if (!env_get(*env, arg))
+		env_set(env, arg, NULL);
 }
 
 int	bi_export(t_cmd *cmd, t_env **env)
