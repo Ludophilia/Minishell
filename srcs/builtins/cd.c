@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 04:05:44 by ntahri            #+#    #+#             */
-/*   Updated: 2025/10/09 15:26:00 by ntahri           ###   ########.fr       */
+/*   Updated: 2025/10/13 16:12:21 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,9 @@
 static char	*cd_get_path(t_core *core, char **argv)
 {
 	if (!argv[1])
-		return (get_env(core->env, "HOME"));
+		return (env_get(core->env, "HOME"));
 	if (ft_strncmp(argv[1], "-", 2) == 0)
-		return (get_env(core->env, "OLDPWD"));
+		return (env_get(core->env, "OLDPWD"));
 	return (argv[1]);
 }
 
@@ -30,11 +30,11 @@ static int	cd_update_env(t_core *core, char *oldpwd)
 	if (!getcwd(newpwd, sizeof(newpwd)))
 	{
 		perror("cd: getcwd");
-		g_exit_status = 1;
+		core->exit = 1;
 		return (1);
 	}
-	set_env(&core->env, "OLDPWD", oldpwd);
-	set_env(&core->env, "PWD", newpwd);
+	env_set(&core->env, "OLDPWD", oldpwd);
+	env_set(&core->env, "PWD", newpwd);
 	return (0);
 }
 
@@ -44,16 +44,16 @@ int	bi_cd(t_core *core, t_cmd *cmd)
 	char	*path;
 
 	if (!getcwd(oldpwd, sizeof(oldpwd)))
-		return (perror("cd: getcwd"), g_exit_status = 1, 1);
+		return (perror("cd: getcwd"), core->exit = 1, 1);
 	path = cd_get_path(core, cmd->argv);
 	if (!path)
 	{
 		ft_putendl_fd("minishell: cd: HOME/OLDPWD not set", STDERR_FILENO);
-		return (g_exit_status = 1, 1);
+		return (core->exit = 1, 1);
 	}
 	if (cmd->argv[1] && ft_strncmp(cmd->argv[1], "-", 2) == 0)
 		ft_putendl_fd(path, STDOUT_FILENO);
 	if (chdir(path) == -1)
-		return (perror("minishell: cd"), g_exit_status = 1, 1);
+		return (perror("minishell: cd"), core->exit = 1, 1);
 	return (cd_update_env(core, oldpwd));
 }

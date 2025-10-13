@@ -21,15 +21,15 @@ fresh and cleaned from line to line...
 
 ### Niz integration
 
-- [ ] Sync variable logic with those of nezlock in minishell.h
+- [o] Sync variable logic with those of nezlock in minishell.h
 	especially that environment variables
 
-- [ ] Remove duplicates (cleanup logic) and integrate the new stuff 
+- [o] Remove duplicates (cleanup logic) and integrate the new stuff 
 in signals and builtins
 
 - [o] Check includes/
 
-- [ ] Better integrate what in core/
+- [o] Better integrate what in core/
 	- [o] Interface, main, utils
 - [ ] Better integrate what in exec/
 	- [ ] exec, exec_buitins
