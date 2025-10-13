@@ -6,31 +6,12 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 22:26:53 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/12 21:43:43 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/13 16:53:10 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// 3/10 - Change la logique si tu veux tant que ca fonctionne...
-// Il faut que int	exc_exec_cmd(t_cmd *cmd, t_core *core)
-// Fasse la difference entre une commande standard et un builtin
-// Tout est execute dans enfant, meme les builtins...
-// int	exc_is_builtin(char *arg)
-// {
-// 	char	**builtins;
-// 	int		j;
-
-// 	builtins = (char *[8]){"echo", "cd", "pwd", "export",
-// 		"unset", "env", "exit", 0};
-// 	j = -1;
-// 	while (builtins[++j])
-// 		if (!ft_strncmp(arg, builtins[j], ft_strlen(builtins[j])))
-// 			return (j);
-// 	return (0);
-// }
-
-// 10/10 - Real work begins here
 int	exc_exec_builtin(t_core *core, t_cmd *cmd, int fd)
 {
 	int	id;
@@ -39,7 +20,7 @@ int	exc_exec_builtin(t_core *core, t_cmd *cmd, int fd)
 	if (!cmd || !cmd->argv || !cmd->argv[0])
 		return (1);
 	id = exc_is_builtin(cmd->argv[0]);
-	status = 0;
+	status = 1;
 	if (id == 0)
 		status = bi_echo(cmd, fd);
 	else if (id == 1)
@@ -54,10 +35,7 @@ int	exc_exec_builtin(t_core *core, t_cmd *cmd, int fd)
 		status = bi_env(core->env, fd);
 	else if (id == 6)
 		status = bi_exit(core, cmd);
-	else
-		status = 1;
-	g_exit_status = status;
-	return (status);
+	return (core->exit = status);
 }
 
 int	exc_is_builtin(char *arg)

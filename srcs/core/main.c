@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/14 13:48:39 by jgermany          #+#    #+#             */
-/*   Updated: 2025/10/12 16:14:06 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/13 17:37:21 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static int	main_init_core(t_core *core, char **envp)
 	core->flags = 0;
 	core->cmd_pmax = 0;
 	core->cmd_xrdy = 0;
-	core->env = dup_env(envp);
+	core->env = env_dup(envp);
 	core->exit = 0;
 	ft_bzero(core->cmds, CMD_MAX * sizeof(t_cmd));
 	return (0);
@@ -33,12 +33,11 @@ int	main(int argc, char **argv, char **envp)
 		return (1);
 	if (main_init_core(&core, envp)
 		|| sig_init_prompt() == -1)
-		return (2);
-	if (ui_loop_prompt(&core) == -1)
 	{
-		free_env(core.env);
-		return (3);
+		utl_cleanup(FLG_ENV, &core);
+		return (2);
 	}
-	free_env(core.env);
+	if (loop_prompt(&core) == -1)
+		return (3);
 	return (0);
 }

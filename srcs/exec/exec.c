@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:07:42 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/11 21:16:44 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/13 17:43:44 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ static int	exc_exec_cmd(t_cmd *cmd, t_core *core)
 		return (0);
 
 	if (fmgr_dup2(cmd->ifd, 0) == -1 || fmgr_dup2(cmd->ofd, 1) == -1
-		|| psr_cleanup_cmds(FLG_REDS, core) != 1)
+		|| utl_cleanup(FLG_REDS, core) != 1)
 		return (-1);
 	is_bltn = exc_is_builtin(*cmd->argv);
 	// if (is_bltn >= 0) // 10/10 - Logic seems to have changed
@@ -96,7 +96,7 @@ static int	exc_init_subsh(int i, pid_t *pid, t_core *core)
 	// sig_init_child(); // 10/10
 	exit_val = EXIT_SUCCESS;
 	exec_rv = exc_exec_cmd(core->cmds + i, core);
-	psr_cleanup_cmds(core->flags, core);
+	utl_cleanup(core->flags | FLG_ENV, core);
 	if (exec_rv == -1)
 		exit_val = EXIT_FAILURE;
 	exit(exit_val);
@@ -118,14 +118,14 @@ int	exc_exec_cmds(t_core *core)
 		// {
 		// 	g_exit_status = exc_exec_builtin(core, &core->cmds[i], core->cmds[i].ofd);
 		// 	continue ; // Really? No cleanup?
-		// }	
+		// }
 		if (exc_init_subsh(i, &pid, core) == -1
 			&& utl_cleanup(FLG_REDS, core)
 			&& exc_wait_cmds(core))
 			return (-1);
 	}
 	if (pid > 0
-		&& utl_cleanup((FLG_REDS), core)
+		&& utl_cleanup(FLG_REDS, core)
 		&& exc_wait_cmds(core) == -1)
 		return (-1);
 	// sig_init_prompt(); // 10/10 - What is it? Why?

@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 19:18:23 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/10 21:45:36 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/13 16:48:38 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,10 @@
 
 int	utl_cleanup(t_cflg flags, t_core *core)
 {
-	// 10/10 - We will have to merge the two cleanup system... 
 	if ((flags & FLG_CMDS) || (flags & FLG_REDS))
 		psr_cleanup_cmds(flags, core);
+	if (flags & FLG_ENV)
+		env_free(core->env);
 	return (1);
 }
 
