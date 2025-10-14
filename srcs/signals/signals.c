@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 18:59:28 by ntahri            #+#    #+#             */
-/*   Updated: 2025/10/11 22:21:31 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/14 22:22:50 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ static void	sig_handler_interactive(int sig)
 		rl_on_new_line();
 		rl_replace_line("", 0);
 		rl_redisplay();
+		// 14/10 - Exit status again
 		// g_exit_status = 130; // 128 + 2 or 128 + sig
 	}
 	else if (sig == SIGQUIT)

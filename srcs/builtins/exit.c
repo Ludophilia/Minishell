@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 04:06:14 by ntahri            #+#    #+#             */
-/*   Updated: 2025/10/13 16:36:46 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/14 12:02:51 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int	bi_exit(t_core *core, t_cmd *cmd)
 {
 	long	code;
 
-	ft_printf("exit\n");
+	ft_putendl_fd("exit", STDERR_FILENO);
 	if (cmd->argc < 2)
 	{
 		utl_cleanup(core->flags | FLG_ENV, core);
