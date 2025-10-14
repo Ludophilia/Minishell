@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 22:43:08 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/12 21:43:06 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/14 12:21:41 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ static int	psr_cleanup_core(t_core *core)
 {
 	core->cmd_pmax = 0;
 	core->cmd_xrdy = 0;
-	// env?? // 12/10
 	return (1);
 }
 

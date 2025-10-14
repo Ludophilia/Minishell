@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   envmgr_utils.c                                     :+:      :+:    :+:   */
+/*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 20:29:58 by ntahri            #+#    #+#             */
-/*   Updated: 2025/10/13 23:00:31 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/14 22:11:30 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,26 +43,37 @@ char	*env_get(t_env *env, const char *key)
 	return (NULL);
 }
 
+int	env_upd_value(t_env *tmp, const char *value)
+{
+	if (value && tmp->value)
+	{
+		free(tmp->value);
+		tmp->value = NULL;
+	}
+	if (value)
+	{
+		tmp->value = ft_strdup(value);
+		if (!tmp->value)
+			return (-1);
+	}
+	return (0);
+}
+
 // Fonction pour définir ou mettre à jour une variable d'environnement
-void	env_set(t_env **env, const char *key, const char *value)
+int	env_set(t_env **env, const char *key, const char *value)
 {
 	t_env	*tmp;
 
 	if (!env || !key)
-		return ;
+		return (-1);
 	tmp = *env;
 	while (tmp)
 	{
 		if (ft_strncmp(tmp->key, key, ft_strlen(key) + 1) == 0)
-		{
-			free(tmp->value);
-			if (value)
-				tmp->value = ft_strdup(value);
-			else
-				tmp->value = NULL;
-			return ;
-		}
+			return (env_upd_value(tmp, value));
 		tmp = tmp->next;
 	}
-	env_add_node(env, key, value);
+	if (env_add_start(env, key, value) == -1)
+		return (-1);
+	return (0);
 }

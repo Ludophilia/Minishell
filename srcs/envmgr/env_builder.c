@@ -1,75 +1,81 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   envmgr.c                                           :+:      :+:    :+:   */
+/*   env_builder.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 20:31:40 by ntahri            #+#    #+#             */
-/*   Updated: 2025/10/13 23:00:31 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/14 17:19:18 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 // crée un nouveau noeud d'environnement
-t_env	*env_new(char *key, char *value)
-{
-	t_env	*node;
-
-	node = malloc(sizeof(t_env)); // 13/10 - THey almost do the same thing....
-	if (!node)
-		return (NULL);
-	node->key = key;
-	node->value = value;
-	node->next = NULL;
-	return (node);
-}
-
-// ajoute un noeud à la fin de la liste chaînée
-void	env_add(t_env **list, t_env *new)
-{
-	t_env	*last;
-
-	if (!list || !new)
-		return ;
-	if (!*list)
-	{
-		*list = new;
-		return ;
-	}
-	last = *list;
-	while (last->next)
-		last = last->next;
-	last->next = new;
-}
-
-// Fonction pour ajouter un nouveau nœud au début de la liste chaînée
-void	env_add_node(t_env **env, const char *key, const char *value)
+t_env	*env_new_node(const char *key, const char *value)
 {
 	t_env	*new;
 
-	new = malloc(sizeof(t_env)); // 13/10 - THey almost do the same thing....
+	new = ft_calloc(1, sizeof(t_env));
 	if (!new)
-		return ;
-	new->key = ft_strdup(key);
+		return (NULL);
+	new->key = key && ft_strdup(key);
 	if (!new->key)
 	{
-		free(new);
-		return ;
+		env_free_node(new);
+		return (NULL);
 	}
-	if (value)
-		new->value = ft_strdup(value);
-	else
-		new->value = NULL;
+	new->value = value && ft_strdup(value);
 	if (value && !new->value)
 	{
-		free(new->key);
-		free(new);
-		return ;
+		env_free_node(new);
+		return (NULL);
+	}
+	return (new);
+}
+
+// ajoute un noeud à la fin de la liste chaînée
+int	env_add_end(t_env **env, const char *key, const char *value)
+{
+	t_env	*new;
+	t_env	*last;
+
+	if (!env)
+		return (-1);
+	new = env_new_node(key, value);
+	if (!new)
+		return (-1);
+	if (!*env)
+	{
+		*env = new;
+		return (0);
+	}
+	last = *env;
+	while (last->next)
+		last = last->next;
+	last->next = new;
+	return (0);
+}
+
+// Fonction pour ajouter un nouveau nœud au début de la liste chaînée
+int	env_add_start(t_env **env, const char *key, const char *value)
+{
+	t_env	*new;
+
+	if (!env)
+		return (-1);
+	new = env_new_node(key, value);
+	if (!new)
+		return (-1);
+	if (!*env)
+	{
+		*env = new;
+		return (0);
 	}
 	new->next = *env;
 	*env = new;
+	return (0);
 }
 
 // duplique le tableau envp en une liste chaînée
@@ -78,8 +84,6 @@ t_env	*env_dup(char **envp)
 	t_env	*env_list;
 	t_env	*new;
 	char	*sep;
-	char	*key;
-	char	*val;
 
 	env_list = NULL;
 	while (*envp)
@@ -87,14 +91,12 @@ t_env	*env_dup(char **envp)
 		sep = ft_strchr(*envp, '=');
 		if (sep)
 		{
-			key = ft_substr(*envp, 0, sep - *envp);
-			val = ft_strdup(sep + 1);
-			if (!key || !val)
-				return (env_dup_fail(key, val, env_list));
-			new = env_new(key, val);
-			if (!new)
-				return (env_dup_fail(key, val, env_list));
-			env_add(&env_list, new);
+			*sep = 0;
+			if (env_add_end(&env_list, *envp, sep + 1) == -1)
+			{
+				env_free_all(env_list);
+				return (NULL);
+			}
 		}
 		envp++;
 	}
