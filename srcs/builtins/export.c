@@ -1,79 +1,83 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   export.c                                           :+:      :+:    :+:   */
+/*   (**)export.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 04:06:11 by ntahri            #+#    #+#             */
-/*   Updated: 2025/10/13 22:27:23 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/15 15:35:26 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 // Affichage de export sans arguments
-static void	print_export(t_env *env)
+static void	print_export(t_env *env_list)
 {
-	t_env	*tmp;
+	t_env	*env;
 
-	tmp = env;
-	while (tmp)
+	env = env_list;
+	while (env)
 	{
 		ft_putstr_fd("declare -x ", STDOUT_FILENO);
-		ft_putstr_fd(tmp->key, STDOUT_FILENO);
-		if (tmp->value)
+		ft_putstr_fd(env->key, STDOUT_FILENO);
+		if (env->value)
 		{
 			ft_putstr_fd("=\"", STDOUT_FILENO);
-			ft_putstr_fd(tmp->value, STDOUT_FILENO);
+			ft_putstr_fd(env->value, STDOUT_FILENO);
 			ft_putstr_fd("\"\n", STDOUT_FILENO);
 		}
 		else
 			ft_putstr_fd("\n", STDOUT_FILENO);
-		tmp = tmp->next;
+		env = env->next;
 	}
 }
 
 // gère chaque argument de export
-static void	handle_export_arg(t_env **env, char *arg)
+static int	handle_export_arg(t_env **env_list, char *arg)
 {
 	char	*eq;
 
 	if (!env_is_identifier(arg))
 	{
-		ft_putstr_fd("minishell: export: `", STDERR_FILENO);
-		ft_putstr_fd(arg, STDERR_FILENO);
-		ft_putendl_fd("': not a valid identifier", STDERR_FILENO);
-		g_exit_status = 1;
-		return ;
+		ft_eprintf(ERR_BINV, "export", arg);
+		return (-1);
 	}
-	eq = ft_strchr(arg, '=');
-	if (eq)
+	if (env_get(*env_list, arg))
 	{
-		*eq = '\0';
-		env_set(env, arg, eq + 1);
-		*eq = '=';
+		eq = ft_strchr(arg, '=');
+		if (eq)
+		{
+			*eq = '\0';
+			if (env_set(env_list, arg, eq + 1) == -1)
+				return (-1);
+			*eq = '=';
+		}
+		return (0);
 	}
-	else if (!env_get(*env, arg))
-		env_set(env, arg, NULL);
+	return (env_set(env_list, arg, NULL));
 }
 
-int	bi_export(t_cmd *cmd, t_env **env)
+int	bi_export(t_cmd *cmd, t_env **env_list)
 {
+	int	err_count;
 	int	i;
 
-	if (!cmd || !env)
+	if (!cmd || !env_list)
 		return (1);
-	if (!cmd->argv[1])
+	if (cmd->argc == 1)
 	{
-		print_export(*env);
+		print_export(*env_list);
 		return (0);
 	}
 	i = 1;
+	err_count = 0;
 	while (cmd->argv[i])
 	{
-		handle_export_arg(env, cmd->argv[i]);
+		if (handle_export_arg(env_list, cmd->argv[i]) == -1)
+			err_count++;
 		i++;
 	}
-	return (0);
+	return (err_count && 1);
 }
