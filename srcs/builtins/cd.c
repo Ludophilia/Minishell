@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 04:05:44 by ntahri            #+#    #+#             */
-/*   Updated: 2025/10/13 16:12:21 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/15 18:20:59 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static char	*cd_get_path(t_core *core, char **argv)
 // Met à jour les variables d'environnement PWD et OLDPWD après un cd réussi
 static int	cd_update_env(t_core *core, char *oldpwd)
 {
-	char	newpwd[PATH_MAX];
+	char	newpwd[PTH_MAX];
 
 	if (!getcwd(newpwd, sizeof(newpwd)))
 	{
@@ -40,7 +40,7 @@ static int	cd_update_env(t_core *core, char *oldpwd)
 
 int	bi_cd(t_core *core, t_cmd *cmd)
 {
-	char	oldpwd[PATH_MAX];
+	char	oldpwd[PTH_MAX];
 	char	*path;
 
 	if (!getcwd(oldpwd, sizeof(oldpwd)))
