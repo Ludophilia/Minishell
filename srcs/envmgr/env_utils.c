@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 20:29:58 by ntahri            #+#    #+#             */
-/*   Updated: 2025/10/14 22:11:30 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/15 12:34:29 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,37 +43,37 @@ char	*env_get(t_env *env, const char *key)
 	return (NULL);
 }
 
-int	env_upd_value(t_env *tmp, const char *value)
+int	env_upd_value(t_env *env, const char *value)
 {
-	if (value && tmp->value)
+	if (value && env->value)
 	{
-		free(tmp->value);
-		tmp->value = NULL;
+		free(env->value);
+		env->value = NULL;
 	}
 	if (value)
 	{
-		tmp->value = ft_strdup(value);
-		if (!tmp->value)
+		env->value = ft_strdup(value);
+		if (!env->value)
 			return (-1);
 	}
 	return (0);
 }
 
 // Fonction pour définir ou mettre à jour une variable d'environnement
-int	env_set(t_env **env, const char *key, const char *value)
+int	env_set(t_env **env_list, const char *key, const char *value)
 {
-	t_env	*tmp;
+	t_env	*env;
 
-	if (!env || !key)
+	if (!env_list || !key)
 		return (-1);
-	tmp = *env;
-	while (tmp)
+	env = *env_list;
+	while (env)
 	{
-		if (ft_strncmp(tmp->key, key, ft_strlen(key) + 1) == 0)
-			return (env_upd_value(tmp, value));
-		tmp = tmp->next;
+		if (ft_strncmp(env->key, key, ft_strlen(key) + 1) == 0)
+			return (env_upd_value(env, value));
+		env = env->next;
 	}
-	if (env_add_start(env, key, value) == -1)
+	if (env_add_start(env_list, key, value) == -1)
 		return (-1);
 	return (0);
 }

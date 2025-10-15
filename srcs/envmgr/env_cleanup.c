@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 22:46:09 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/14 22:13:36 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/15 12:34:39 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,26 +23,26 @@ int	env_free_node(t_env *node)
 	return (1);
 }
 
-int	env_del_node(t_env *node, t_env *prev, t_env **head)
+int	env_del_node(t_env *node, t_env *prev, t_env **env_list)
 {
 	if (prev)
 		prev->next = node->next;
 	else
-		*head = node->next;
+		*env_list = node->next;
 	env_free_node(node);
 	return (1);
 }
 
 // libère toute la liste chaînée
-int	env_free_all(t_env *env)
+int	env_free_all(t_env *node)
 {
 	t_env	*tmp;
 
-	while (env)
+	while (node)
 	{
-		tmp = env->next;
-		env_free_node(env);
-		env = tmp;
+		tmp = node->next;
+		env_free_node(node);
+		node = tmp;
 	}
 	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/14 22:14:01 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/15 12:34:55 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,15 +164,15 @@ int		sig_init_prompt(void);
 int		sig_init_child(void);
 
 t_env	*env_new_node(const char *key, const char *value);
-int		env_add_start(t_env **env, const char *key, const char *value);
-int		env_add_end(t_env **env, const char *key, const char *value);
+int		env_add_start(t_env **env_list, const char *key, const char *value);
+int		env_add_end(t_env **env_list, const char *key, const char *value);
 t_env	*env_dup(char **envp);
-int		env_del_node(t_env *node, t_env *prev, t_env **head);
+int		env_del_node(t_env *node, t_env *prev, t_env **env_list);
 int		env_free_node(t_env *node);
-int		env_free_all(t_env *env);
+int		env_free_all(t_env *node);
 char	*env_get(t_env *env, const char *key);
-int		env_upd_value(t_env *tmp, const char *value);
-int		env_set(t_env **env, const char *key, const char *value);
+int		env_upd_value(t_env *env, const char *value);
+int		env_set(t_env **env_list, const char *key, const char *value);
 int		env_is_identifier(const char *str);
 
 int		bi_cd(t_core *core, t_cmd *cmd);

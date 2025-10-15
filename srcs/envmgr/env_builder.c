@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 20:31:40 by ntahri            #+#    #+#             */
-/*   Updated: 2025/10/14 17:19:18 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/15 12:34:07 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,13 @@ t_env	*env_new_node(const char *key, const char *value)
 	new = ft_calloc(1, sizeof(t_env));
 	if (!new)
 		return (NULL);
-	new->key = key && ft_strdup(key);
+	new->key = (key && ft_strdup(key));
 	if (!new->key)
 	{
 		env_free_node(new);
 		return (NULL);
 	}
-	new->value = value && ft_strdup(value);
+	new->value = (value && ft_strdup(value));
 	if (value && !new->value)
 	{
 		env_free_node(new);
@@ -36,22 +36,22 @@ t_env	*env_new_node(const char *key, const char *value)
 }
 
 // ajoute un noeud à la fin de la liste chaînée
-int	env_add_end(t_env **env, const char *key, const char *value)
+int	env_add_end(t_env **env_list, const char *key, const char *value)
 {
 	t_env	*new;
 	t_env	*last;
 
-	if (!env)
+	if (!env_list)
 		return (-1);
 	new = env_new_node(key, value);
 	if (!new)
 		return (-1);
-	if (!*env)
+	if (!*env_list)
 	{
-		*env = new;
+		*env_list = new;
 		return (0);
 	}
-	last = *env;
+	last = *env_list;
 	while (last->next)
 		last = last->next;
 	last->next = new;
@@ -59,22 +59,18 @@ int	env_add_end(t_env **env, const char *key, const char *value)
 }
 
 // Fonction pour ajouter un nouveau nœud au début de la liste chaînée
-int	env_add_start(t_env **env, const char *key, const char *value)
+int	env_add_start(t_env **env_list, const char *key, const char *value)
 {
 	t_env	*new;
 
-	if (!env)
+	if (!env_list)
 		return (-1);
 	new = env_new_node(key, value);
 	if (!new)
 		return (-1);
-	if (!*env)
-	{
-		*env = new;
-		return (0);
-	}
-	new->next = *env;
-	*env = new;
+	if (*env_list)
+		new->next = *env_list;
+	*env_list = new;
 	return (0);
 }
 
