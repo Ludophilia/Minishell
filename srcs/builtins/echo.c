@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   echo.c                                             :+:      :+:    :+:   */
+/*   (**)echo.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 04:05:51 by ntahri            #+#    #+#             */
-/*   Updated: 2025/10/09 15:28:12 by ntahri           ###   ########.fr       */
+/*   Updated: 2025/10/15 18:05:41 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,15 +30,20 @@ static int	is_valid_n_option(const char *str)
 }
 
 // affiche les arguments de echo
-static void	echo_print_args(char **args, int i, int fd)
+static int	echo_print_args(char **args, int i, int fd)
 {
 	while (args[i])
 	{
-		ft_putstr_fd(args[i], fd);
+		if (ft_dprintf(fd, args[i]) == -1)
+			return (-1);
 		if (args[i + 1])
-			ft_putstr_fd(" ", fd);
+		{
+			if (ft_dprintf(fd, " ", fd) == -1)
+				return (-1);
+		}
 		i++;
 	}
+	return (0);
 }
 
 int	bi_echo(t_cmd *cmd, int fd)
@@ -48,7 +53,7 @@ int	bi_echo(t_cmd *cmd, int fd)
 	char	**args;
 
 	if (!cmd || !cmd->argv)
-		return (-1);
+		return (1);
 	args = cmd->argv;
 	i = 1;
 	newline = 1;
@@ -57,8 +62,12 @@ int	bi_echo(t_cmd *cmd, int fd)
 		newline = 0;
 		i++;
 	}
-	echo_print_args(args, i, fd);
-	if (newline)
-		ft_putstr_fd("\n", fd);
+	if (echo_print_args(args, i, fd) == -1)
+		return (1);
+	if (newline == -1)
+	{
+		if (ft_dprintf(fd, "\n") == -1);
+			return (1);
+	}
 	return (0);
 }

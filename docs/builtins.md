@@ -1,5 +1,30 @@
 # Builtins
 
+## Echo
+
+### Examples
+
+- `echo`
+	- (empty line, just a newline)
+	- exit 0
+
+- `echo -n`
+	- (no newline)
+
+- `echo 1 2 3`
+	- 1 2 3
+
+- `echo -n 1 2 3`
+	- 1 2 3 (no newline)
+
+- `echo -nn 123`
+	- 123 (no newline)
+
+- `echo -nnnnnnnnn7 123`
+	- -nnnnnnnnn7 123
+
+- `echo -n -n -n -nnn1 123`
+	- -nnn1 123 (no newline)
 
 ## Export
 
