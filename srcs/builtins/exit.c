@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 04:06:14 by ntahri            #+#    #+#             */
-/*   Updated: 2025/10/14 12:02:51 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/15 13:32:16 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,12 +49,12 @@ int	bi_exit(t_core *core, t_cmd *cmd)
 	}
 	if (cmd->argc > 2)
 	{
-		ft_eprintf(ERR_XMNY);
+		ft_eprintf(ERR_BMNY, "exit");
 		return (core->exit = 1);
 	}
 	if (!ft_atol_safe(cmd->argv[1], &code))
 	{
-		ft_eprintf(ERR_XNUM, cmd->argv[1]);
+		ft_eprintf(ERR_BINV, "exit", cmd->argv[1]);
 		code = 2;
 	}
 	utl_cleanup(core->flags | FLG_ENV, core);

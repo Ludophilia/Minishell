@@ -6,14 +6,14 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 22:31:19 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/14 16:59:30 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/15 12:42:07 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 // Fonction pour supprimer une variable d'environnement
-static void	bi_unset_arg(t_env **env, const char *key)
+static void	unset_arg(t_env **env, const char *key)
 {
 	t_env	*tmp;
 	t_env	*prev;
@@ -41,7 +41,7 @@ int	bi_unset(t_cmd *cmd, t_env **env)
 	arg = cmd->argv[i];
 	while (arg)
 	{
-		bi_unset_arg(env, arg);
+		unset_arg(env, arg);
 		arg = cmd->argv[i++];
 	}
 	return (0);

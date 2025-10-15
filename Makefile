@@ -6,7 +6,7 @@
 #    By: jegerman <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/09 12:08:14 by jegerman          #+#    #+#              #
-#    Updated: 2025/10/13 22:55:13 by jegerman         ###   ########.fr        #
+#    Updated: 2025/10/15 12:47:07 by jegerman         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -66,9 +66,9 @@ MAN_SRCS += $(BLTN_DR)/export.c
 MAN_SRCS += $(BLTN_DR)/pwd.c
 MAN_SRCS += $(BLTN_DR)/unset.c
 
-MAN_SRCS += $(ENVM_DR)/envmgr.c
-MAN_SRCS += $(ENVM_DR)/envmgr_utils.c
-MAN_SRCS += $(ENVM_DR)/envmgr_cleanup.c
+MAN_SRCS += $(ENVM_DR)/env_builder.c
+MAN_SRCS += $(ENVM_DR)/env_utils.c
+MAN_SRCS += $(ENVM_DR)/env_cleanup.c
 
 MAN_SRCS += $(SGNL_DR)/signals.c
 

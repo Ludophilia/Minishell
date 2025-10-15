@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/15 12:34:55 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/15 13:34:55 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include <sys/wait.h>
-# include <limits.h>
 # include <sys/stat.h>
+# include <limits.h>
 # include <fcntl.h>
 # include <errno.h>
 # include <signal.h>
@@ -34,15 +34,16 @@
 # define ENV_DFLT_PATH "/bin:/usr/bin"
 
 # define ERR_USAGE "usage: ./minishell\n"
+
 # define ERR_SYNTAX "syntax error near unexpected token `%s'\n"
 # define ERR_GNR "%s\n"
 # define ERR_PTH "%s: %s\n"
 # define ERR_CMD "%s: command not found\n"
 # define ERR_ECMD "'%c': command not found\n"
 
-# define ERR_XNUM "exit: %s: numeric argument required\n"
-# define ERR_XMNY "exit: too many arguments\n"
-// # define ERR_UINV "unset: `%s': not a valid identifier\n"
+# define ERR_BNUM "%s: %s: numeric argument required\n"
+# define ERR_BMNY "%s: too many arguments\n"
+# define ERR_BINV "%s: `%s': not a valid identifier\n"
 
 extern uint32_t	g_sig;
 
@@ -109,7 +110,6 @@ typedef struct s_cmd
 	t_red			reds[RED_MAX];
 	bool			xready;
 	pid_t			pid;
-	// int		is_bltn; // ???
 	char			**argv;
 	int				argc;
 	int				ifd;
