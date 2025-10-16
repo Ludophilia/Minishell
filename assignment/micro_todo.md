@@ -34,6 +34,10 @@ in signals and builtins
 - [ ] Better integrate what in exec/
 	- [ ] exec, exec_buitins
 
+- [ ] change the way env variables are managed in the project.
+	- [ ] parser_envv.c...
+	- [ ] execve do not take an array of t_env but an array of char *
+
 - [o] Add signals/ (signals_new)
 	- [ ] Core shell need SIGINT (2, ctrl+c) and SIGQUIT (3, ctrl+\) disabled
 	- [ ] Child shell need SIGINT (2, ctrl+c) and SIGQUIT (3, ctrl+\)
@@ -41,14 +45,15 @@ in signals and builtins
 	- [ ] Heredocs seems to needs signal management as well
 
 - [ ] Add builtins/ (builtins_new)
-	- [ ] every builtins
+	- [ ] improve cd
+	- [x] improve the 6 others
+	- [ ] test them...
 
 ### Project Wide Variables
 
 - [x] Think about that global variable. What is its purpose?
 	- [x] Subject says "Be careful. This global variable must only store the
 	signal number and must not provide any additional information or access to data."
-
 
 ### Execution
 
