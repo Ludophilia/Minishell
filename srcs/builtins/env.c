@@ -1,23 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtins.c                                         :+:      :+:    :+:   */
+/*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/18 18:05:43 by jgermany          #+#    #+#             */
-/*   Updated: 2025/10/01 23:58:14 by jegerman         ###   ########.fr       */
+/*   Created: 2025/10/09 04:06:19 by ntahri            #+#    #+#             */
+/*   Updated: 2025/10/13 22:26:03 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	bi_exit(char *line)
+int	bi_env(t_env *env, int fd)
 {
-	printf("exit\n");
-	if (line)
-		free(line);
-	// exit(EXIT_SUCCESS);
-	// utl_cleanup(t_cflg flags, t_core *core);
+	while (env)
+	{
+		if (env->value)
+		{
+			ft_putstr_fd(env->key, fd);
+			ft_putstr_fd("=", fd);
+			ft_putendl_fd(env->value, fd);
+		}
+		env = env->next;
+	}
 	return (0);
 }

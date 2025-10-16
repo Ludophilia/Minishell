@@ -14,7 +14,10 @@
 - `tty`
 - `                          tty`
 	- 1 word.
+
 - `/usr/bin/whoami`
+- `/usr/bin/git`
+- `/`
 
 - `ls -la`
 - `"ls -la"`
@@ -22,7 +25,7 @@
 - `'ls -la'`
 
 - `git log -3 --oneline`
-- `'git log -3' --oneline`
+- `'git log -3' --oneline'`
 
 - `last | head -1`
 - `last|head -1`

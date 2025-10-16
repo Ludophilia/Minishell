@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 18:57:18 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/07 17:20:53 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/16 17:54:18 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,12 @@ static int	psr_count_args(t_tok *tok)
 	return (size);
 }
 
-int	psr_add_cmd(t_tok *tok, t_cmd *cmd)
+int	psr_add_cmd(t_tok *tok, t_cmd *cmd, t_core *core)
 {
-	int		size;
 	int		pos;
 
-	size = psr_count_args(tok);
-	cmd->argv = ft_calloc(size + 1, sizeof(char *));
+	cmd->argc = psr_count_args(tok);
+	cmd->argv = ft_calloc(cmd->argc + 1, sizeof(char *));
 	if (cmd->argv == NULL)
 		return (-1);
 	pos = 0;
@@ -44,7 +43,7 @@ int	psr_add_cmd(t_tok *tok, t_cmd *cmd)
 			tok += 2;
 			continue ;
 		}
-		cmd->argv[pos] = psr_create_word(tok, TOK_WORD);
+		cmd->argv[pos] = psr_create_word(tok, TOK_WORD, core);
 		if (cmd->argv[pos++] == NULL)
 			return (-1);
 		tok++;
