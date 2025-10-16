@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 20:31:40 by ntahri            #+#    #+#             */
-/*   Updated: 2025/10/15 12:34:07 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/16 19:12:43 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,14 @@ t_env	*env_new_node(const char *key, const char *value)
 	new = ft_calloc(1, sizeof(t_env));
 	if (!new)
 		return (NULL);
-	new->key = (key && ft_strdup(key));
+	new->key = ft_strdup(key);
 	if (!new->key)
 	{
 		env_free_node(new);
 		return (NULL);
 	}
-	new->value = (value && ft_strdup(value));
+	if (value)
+		new->value = ft_strdup(value);
 	if (value && !new->value)
 	{
 		env_free_node(new);
@@ -78,7 +79,6 @@ int	env_add_start(t_env **env_list, const char *key, const char *value)
 t_env	*env_dup(char **envp)
 {
 	t_env	*env_list;
-	t_env	*new;
 	char	*sep;
 
 	env_list = NULL;

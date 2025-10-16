@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 18:09:10 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/07 19:18:27 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/16 19:32:56 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,47 +28,59 @@ static int	psr_get_envv_id(char *start, int *envv_len, char *envv_id)
 	return (0);
 }
 
-static char	*psr_get_envv_value(char *start, int *envv_len)
+static char	*psr_get_envv_value(char *start, int *envv_len, t_core *core)
 {
-	static char	exitw[EXW_MAX];
 	char		envv_id[ID_LMAX];
+	static char	exitw[EXW_MAX];
 	char		*envv_val;
 
 	psr_get_envv_id(start, envv_len, envv_id);
-	if (ft_strncmp(envv_id, "?", 2) == 0 && utl_shitoa(g_exit_status, exitw)) // 7/10 - No longer g_exit_status
-		envv_val = exitw;
+	if (!ft_strncmp(envv_id, "?", 2))
+	{
+		utl_itoa(core->exit, exitw);
+		envv_val = ft_strdup(exitw);
+	}
 	else
-		envv_val = getenv(envv_id); // 7/10 - Stick to that env call?
+	{
+		envv_val = env_get(core->env, envv_id);
+		if (envv_val)
+			envv_val = ft_strdup(envv_val);
+	}
 	return (envv_val);
 }
 
-int	psr_envv_value_len(char *start, int *j)
+int	psr_envv_value_len(char *start, int *j, t_core *core)
 {
 	char	*envv_val;
 	int		envv_len;
 	int		len;
 
-	envv_val = psr_get_envv_value(start + 1, &envv_len);
+	envv_val = psr_get_envv_value(start + 1, &envv_len, core);
 	if (envv_val == NULL)
 		len = 0;
 	else
 		len = ft_strlen(envv_val);
 	*j += envv_len;
+	if (envv_val)
+		free(envv_val);
 	return (len);
 }
 
-int	psr_copy_envv_value(char *start, char *word, int *j)
+int	psr_copy_envv_value(char *start, char *word, int *j, t_core *core)
 {
 	char	*envv_val;
 	int		envv_len;
 	int		pos;
+	int		i;
 
-	envv_val = psr_get_envv_value(start + 1, &envv_len);
+	envv_val = psr_get_envv_value(start + 1, &envv_len, core);
 	if (envv_val == NULL)
 		return (envv_len);
 	pos = *j;
-	while (*envv_val)
-		word[pos++] = *envv_val++;
+	i = 0;
+	while (envv_val[i])
+		word[pos++] = envv_val[i++];
 	*j = pos;
+	free(envv_val);
 	return (envv_len);
 }

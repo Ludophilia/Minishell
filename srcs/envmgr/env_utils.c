@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 20:29:58 by ntahri            #+#    #+#             */
-/*   Updated: 2025/10/15 12:34:29 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/16 19:13:09 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,13 @@ int	env_is_identifier(const char *str)
 }
 
 // Fonction pour obtenir la valeur d'une variable d'environnement
-char	*env_get(t_env *env, const char *key)
+char	*env_get(t_env *env_list, const char *key)
 {
-	if (!env || !key)
+	t_env	*env;
+
+	if (!env_list || !key)
 		return (NULL);
+	env = env_list;
 	while (env)
 	{
 		if (ft_strncmp(env->key, key, ft_strlen(key) + 1) == 0)
@@ -43,7 +46,7 @@ char	*env_get(t_env *env, const char *key)
 	return (NULL);
 }
 
-int	env_upd_value(t_env *env, const char *value)
+static int	env_upd_value(t_env *env, const char *value)
 {
 	if (value && env->value)
 	{
