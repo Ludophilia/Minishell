@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:07:42 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/13 17:43:44 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/16 19:08:55 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,47 +44,49 @@ static int	exc_wait_cmds(t_core *core)
 	int		i;
 
 	i = -1;
+	// 16/10 - Signals are still not implemented
 	while (++i < (core->cmd_pmax + 1))
 	{
 		cmd = core->cmds + i;
 		if (cmd->xready == false)
 			continue ;
-		if (waitpid(cmd->pid, &wstat, 0) == -1) // DANGER?
+		if (waitpid(cmd->pid, &wstat, 0) == -1)
 			return (-1);
-		core->exit = WEXITSTATUS(wstat); // One way...
+		core->exit = WEXITSTATUS(wstat);
 	}
 	return (0);
 }
 
-// 7/10 - May have to split it one more time with builtins and stuff...
 static int	exc_exec_cmd(t_cmd *cmd, t_core *core)
 {
-	int	is_bltn;
-	int	chk_rv;
+	char	**envp;
+	int		chkrv;
 
-	chk_rv = 0;
 	if ((*cmd->argv == NULL && ft_eprintf(ERR_CMD, NULL))
-		|| (**cmd->argv == 0 && ft_eprintf(ERR_ECMD, **cmd->argv))) 	// if (!cmd || !cmd->argv || !*cmd->argv) // Why?
+		|| (**cmd->argv == 0 && ft_eprintf(ERR_ECMD, **cmd->argv)))
 		return (0);
-
-	if (fmgr_dup2(cmd->ifd, 0) == -1 || fmgr_dup2(cmd->ofd, 1) == -1
+	if (fmgr_dup2(cmd->ifd, 0) == -1
+		|| fmgr_dup2(cmd->ofd, 1) == -1
 		|| utl_cleanup(FLG_REDS, core) != 1)
 		return (-1);
-	is_bltn = exc_is_builtin(*cmd->argv);
-	// if (is_bltn >= 0) // 10/10 - Logic seems to have changed
-	// 	return (g_exit_status = exc_exec_builtin(core, cmd, STDOUT_FILENO));
-	if (is_bltn == false)
-		chk_rv = exc_check_path(cmd->argv, core->envp);
-	if (chk_rv == -1
-		|| (chk_rv == 1 && execve(*cmd->argv, cmd->argv, core->envp) == -1))
+	if (exc_if_builtin(cmd, core) == true)
+		return (0);
+	envp = env_get_envp(core->env);
+	if (envp == NULL)
 		return (-1);
-	return (0);
+	chkrv = exc_check_path(cmd->argv, envp);
+	if (chkrv == -1
+		|| (chkrv > 0 && execve(*cmd->argv, cmd->argv, envp) == -1))
+	{
+		utl_free_strs(0, envp);
+		return (-1);
+	}
+	return (utl_free_strs(0, envp), 0);
 }
 
 static int	exc_init_subsh(int i, pid_t *pid, t_core *core)
 {
 	t_cmd	*cmd;
-	int		exit_val;
 	int		exec_rv;
 
 	cmd = core->cmds + i;
@@ -93,15 +95,16 @@ static int	exc_init_subsh(int i, pid_t *pid, t_core *core)
 		return (-1);
 	if (*pid > 0)
 		return (cmd->pid = *pid, 0);
-	// sig_init_child(); // 10/10
-	exit_val = EXIT_SUCCESS;
+	if (sig_init_child() == -1 && utl_cleanup(core->flags | FLG_ENV, core))
+		exit(EX_FAIL);
 	exec_rv = exc_exec_cmd(core->cmds + i, core);
 	utl_cleanup(core->flags | FLG_ENV, core);
 	if (exec_rv == -1)
-		exit_val = EXIT_FAILURE;
-	exit(exit_val);
+		exit(EX_FAIL);
+	exit(EX_SUCC);
 }
 
+// 16/10 - Here we are...
 int	exc_exec_cmds(t_core *core)
 {
 	pid_t	pid;
@@ -111,14 +114,9 @@ int	exc_exec_cmds(t_core *core)
 	i = -1;
 	while (++i < (core->cmd_pmax + 1))
 	{
-		if (core->cmds[i].xready == false)
+		if (!core->cmds[i].xready
+			|| (!core->cmd_pmax && exc_if_builtin(core->cmds + i, core) != -1))
 			continue ;
-		// 10/10 - The "outside of a pipeline" builtin case
-		// if (exc_is_builtin(core->cmds[i].argv[0]) >= 0 && core->cmd_pmax == 0)
-		// {
-		// 	g_exit_status = exc_exec_builtin(core, &core->cmds[i], core->cmds[i].ofd);
-		// 	continue ; // Really? No cleanup?
-		// }
 		if (exc_init_subsh(i, &pid, core) == -1
 			&& utl_cleanup(FLG_REDS, core)
 			&& exc_wait_cmds(core))
@@ -128,6 +126,5 @@ int	exc_exec_cmds(t_core *core)
 		&& utl_cleanup(FLG_REDS, core)
 		&& exc_wait_cmds(core) == -1)
 		return (-1);
-	// sig_init_prompt(); // 10/10 - What is it? Why?
 	return (0);
 }

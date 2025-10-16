@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/15 18:20:59 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/16 18:55:37 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,12 @@ typedef enum e_flo
 	FL_ORED = (O_CREAT | O_TRUNC | O_WRONLY),
 	FL_ORED_AP = (O_CREAT | O_APPEND | O_WRONLY)
 }	t_flo;
+
+typedef enum e_exit
+{
+	EX_SUCC = EXIT_SUCCESS,
+	EX_FAIL = EXIT_FAILURE,
+}	t_exit;
 
 typedef enum e_max
 {
@@ -136,12 +142,12 @@ int		psr_is_ored(t_tok *tok);
 int		psr_is_outq(int c, int *q);
 int		psr_is_envv(char *c, int ct, int q);
 int		psr_is_envv_chr(int c, int pos);
-int		psr_envv_value_len(char *start, int *j);
-int		psr_copy_envv_value(char *start, char *word, int *j);
+int		psr_envv_value_len(char *start, int *j, t_core *core);
+int		psr_copy_envv_value(char *start, char *word, int *j, t_core *core);
+char	*psr_create_word(t_tok *tok, t_tokt context, t_core *core);
+int		psr_add_reds(t_tok *tok, t_cmd *cmd, t_core *core);
+int		psr_add_cmd(t_tok *tok, t_cmd *cmd, t_core *core);
 int		psr_cleanup_cmds(t_cflg flags, t_core *core);
-char	*psr_create_word(t_tok *tok, t_tokt context);
-int		psr_add_reds(t_tok *tok, t_cmd *cmd);
-int		psr_add_cmd(t_tok *tok, t_cmd *cmd);
 int		psr_error_check(t_tok *toks);
 int		psr_parse_line(char *line, t_core *core);
 
@@ -157,7 +163,7 @@ int		fmgr_set_reds(t_core *core);
 
 int		utl_free_strs(int from_id, char **strs);
 int		utl_cleanup(t_cflg flags, t_core *core);
-char	*utl_shitoa(unsigned int nbr, char *store);
+char	*utl_itoa(unsigned int nbr, char *store);
 int		utl_free(void *ptr);
 
 int		sig_init_prompt(void);
@@ -170,10 +176,10 @@ t_env	*env_dup(char **envp);
 int		env_del_node(t_env *node, t_env *prev, t_env **env_list);
 int		env_free_node(t_env *node);
 int		env_free_all(t_env *node);
-char	*env_get(t_env *env, const char *key);
-int		env_upd_value(t_env *env, const char *value);
-int		env_set(t_env **env_list, const char *key, const char *value);
 int		env_is_identifier(const char *str);
+char	*env_get(t_env *env_list, const char *key);
+int		env_set(t_env **env_list, const char *key, const char *value);
+char	**env_get_envp(t_env *env_list);
 
 int		bi_cd(t_core *core, t_cmd *cmd);
 int		bi_echo(t_cmd *cmd, int fd);
@@ -185,8 +191,7 @@ int		bi_unset(t_cmd *cmd, t_env **env);
 
 int		exc_check_path(char **argv, char **envp);
 int		exc_exec_cmds(t_core *core);
-int		exc_exec_builtin(t_core *core, t_cmd *cmd, int fd);
-int		exc_is_builtin(char *arg);
+int		exc_if_builtin(t_cmd *cmd, t_core *core);
 
 int		loop_prompt(t_core *core);
 
