@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 21:29:52 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/29 16:53:12 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/17 19:08:35 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int	fmgr_set_hdocs(int *ifd, t_red *red)
 	int		opn;
 	int		fds[2];
 
-	if (ifd == 0)
+	if (ifd == NULL)
 		return (0);
 	if (fmgr_pipe(fds) == -1)
 		return (-1);

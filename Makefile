@@ -6,7 +6,7 @@
 #    By: jegerman <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/09 12:08:14 by jegerman          #+#    #+#              #
-#    Updated: 2025/10/16 17:43:29 by jegerman         ###   ########.fr        #
+#    Updated: 2025/10/17 20:08:48 by jegerman         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,6 +36,7 @@ ENVM_DR := $(SRCS_DR)/envmgr
 
 MAN_SRCS := $(CORE_DR)/main.c
 MAN_SRCS += $(CORE_DR)/loop.c
+MAN_SRCS += $(CORE_DR)/init.c
 MAN_SRCS += $(CORE_DR)/utils.c
 
 MAN_SRCS += $(LEXR_DR)/lexer.c

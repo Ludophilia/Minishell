@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:07:42 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/17 18:30:58 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/17 20:16:52 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,8 +91,8 @@ int	exc_exec_cmds(t_core *core)
 	i = -1;
 	while (++i < (core->cmd_pmax + 1))
 	{
-		if (!core->cmds[i].xready
-			|| (!core->cmd_pmax && exc_if_builtin(core->cmds + i, core)))
+		if (core->cmds[i].xready == false
+			|| (core->cmd_pmax == 0 && exc_if_builtin(core->cmds + i, core)))
 			continue ;
 		if (exc_init_subsh(i, &pid, core) == -1
 			&& utl_cleanup(FLG_REDS, core)
