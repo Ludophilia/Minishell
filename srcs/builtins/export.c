@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   (**)export.c                                       :+:      :+:    :+:   */
+/*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 04:06:11 by ntahri            #+#    #+#             */
-/*   Updated: 2025/10/15 15:35:26 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/17 22:24:22 by ntahri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,19 +44,23 @@ static int	handle_export_arg(t_env **env_list, char *arg)
 		ft_eprintf(ERR_BINV, "export", arg);
 		return (-1);
 	}
-	if (env_get(*env_list, arg))
+	eq = ft_strchr(arg, '=');
+	if (eq)
 	{
-		eq = ft_strchr(arg, '=');
-		if (eq)
+		*eq = '\0';
+		if (env_set(env_list, arg, eq + 1) == -1)
 		{
-			*eq = '\0';
-			if (env_set(env_list, arg, eq + 1) == -1)
-				return (-1);
 			*eq = '=';
+			return (-1);
 		}
-		return (0);
+		*eq = '=';
 	}
-	return (env_set(env_list, arg, NULL));
+	else
+	{
+		if (!env_get(*env_list, arg))
+			env_set(env_list, arg, NULL);
+	}
+	return (0);
 }
 
 int	bi_export(t_cmd *cmd, t_env **env_list)
