@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:07:42 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/17 18:15:12 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/17 18:30:58 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,11 +43,12 @@ static int	exc_exec_cmd(t_cmd *cmd, t_core *core)
 		|| (**cmd->argv == 0 && ft_eprintf(ERR_ECMD, **cmd->argv)))
 		return (0);
 	if (fmgr_dup2(cmd->ifd, 0) == -1
-		|| fmgr_dup2(cmd->ofd, 1) == -1
-		|| utl_cleanup(FLG_REDS, core) != 1)
+		|| fmgr_dup2(cmd->ofd, 1) == -1)
 		return (-1);
 	if (exc_if_builtin(cmd, core) == true)
 		return (0);
+	if (utl_cleanup(FLG_REDS, core) != 1)
+		return (-1);
 	envp = env_get_envp(core->env);
 	if (envp == NULL)
 		return (-1);
