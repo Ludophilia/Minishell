@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 04:05:51 by ntahri            #+#    #+#             */
-/*   Updated: 2025/10/16 19:10:15 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/17 16:04:33 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ int	bi_echo(t_cmd *cmd, int fd)
 	}
 	if (echo_print_args(args, i, fd) == -1)
 		return (1);
-	if (newline == -1)
+	if (newline)
 	{
 		if (ft_dprintf(fd, "\n") == -1)
 			return (1);
