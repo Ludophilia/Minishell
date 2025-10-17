@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   loop.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:18:13 by jgermany          #+#    #+#             */
-/*   Updated: 2025/10/17 15:46:31 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/17 21:06:08 by ntahri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,11 @@ int	loop_prompt(t_core *core)
 		if (sig_init_prompt() == -1)
 			return (-1);
 		line = readline(UI_PROMPT);
+		if (g_sig == SIGINT)
+		{
+			core->exit = 130;
+			g_sig = 0;
+		}
 		if (line == NULL)
 			bi_exit(core, core->cmds);
 		if (*line == 0 && utl_free(line))
