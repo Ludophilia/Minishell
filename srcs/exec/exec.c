@@ -6,36 +6,11 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:07:42 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/16 23:33:30 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/17 18:15:12 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-// 6/10 = Improve waiting logic so that < /dev/urandom tail does not fail
-// ^C make the child defunct. The SIGINT processing logic need to be 
-// implemented.
-
-// 10/10 - Merge the two versions.
-// static int	exc_wait_cmds(int count)
-// {
-// 	int	wstat;
-// 	int	cfails;
-
-// 	cfails = 0;
-// 	while (--count >= 0)
-// 	{
-// 		if (waitpid(-1, &wstat, 0) == -1)
-// 			continue ;
-// 		if (WIFEXITED(wstat))
-// 			g_exit_status = WEXITSTATUS(wstat);
-// 		else if (WIFSIGNALED(wstat))
-// 			g_exit_status = 128 + WTERMSIG(wstat);
-// 		if (g_exit_status != 0)
-// 			cfails++;
-// 	}
-// 	return (cfails != 0);
-// }
 
 static int	exc_wait_cmds(t_core *core)
 {
@@ -44,7 +19,6 @@ static int	exc_wait_cmds(t_core *core)
 	int		i;
 
 	i = -1;
-	// 16/10 - Signals are still not implemented
 	while (++i < (core->cmd_pmax + 1))
 	{
 		cmd = core->cmds + i;
@@ -52,7 +26,10 @@ static int	exc_wait_cmds(t_core *core)
 			continue ;
 		if (waitpid(cmd->pid, &wstat, 0) == -1)
 			return (-1);
-		core->exit = WEXITSTATUS(wstat);
+		if (WIFEXITED(wstat))
+			core->exit = WEXITSTATUS(wstat);
+		else if (WIFSIGNALED(wstat))
+			core->exit = 128 + WTERMSIG(wstat);
 	}
 	return (0);
 }

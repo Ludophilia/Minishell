@@ -10,7 +10,11 @@
 
 - [x] Restructure exec.c
 
-- [o] Improve waiting logic
+- [o] 🔴 Improve waiting logic
+	- [ ] Improve waiting logic so that < /dev/urandom tail does not fail
+	^C make the child defunct. The SIGINT processing logic need to be 
+	implemented.
+		- Managed with signals?
 
 ### Signals
 
@@ -29,7 +33,9 @@
 	- for redirections
 		- especially errors
 			- (< off, no such file or directory -> 1)
-	- for commands (oof: command not found -> 127)
+
+	- 🔴 for commands
+		- [ ] (oof: command not found -> 127)
 
 	- for signals
 
@@ -44,7 +50,7 @@
 
 ### Builtins
 
-- [ ] Repair echo
+- [x] Repair echo
 
 - [ ] Look where the builtins write their data
 
@@ -52,7 +58,7 @@
 
 - [ ] increment SHLVL each time you open a minishell.
 
-- [ ] Repair that faulty test
+- [o] Repair that faulty test
 	- ```
 	echo $PATH
 	export PATH=TEST
