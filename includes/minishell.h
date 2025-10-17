@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/16 18:55:37 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/17 20:08:16 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,6 +131,8 @@ typedef struct s_core
 	uint8_t			exit;
 	t_env			*env;
 }	t_core;
+
+int		init_core(t_core *core, char **envp);
 
 int		lex_is_quote(int c);
 int		lex_is_op(int c);

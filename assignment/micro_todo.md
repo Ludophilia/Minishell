@@ -8,9 +8,9 @@
 
 ## Execution
 
-- [x] Restructure exec.c
+- [ ] 🔴 Restructure exec.c
 
-- [o] 🔴 Improve waiting logic
+- [ ] 🔴 Improve waiting logic
 	- [ ] Improve waiting logic so that < /dev/urandom tail does not fail
 	^C make the child defunct. The SIGINT processing logic need to be 
 	implemented.
@@ -52,13 +52,13 @@
 
 - [x] Repair echo
 
-- [ ] Look where the builtins write their data
+- [x] Look where the builtins write their data
 
 ### Environment
 
 - [ ] increment SHLVL each time you open a minishell.
 
-- [o] Repair that faulty test
+- [ ] Repair that faulty test
 	- ```
 	echo $PATH
 	export PATH=TEST
