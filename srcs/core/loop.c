@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:18:13 by jgermany          #+#    #+#             */
-/*   Updated: 2025/10/16 23:33:02 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/17 15:46:31 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static int	loop_process_line(char *line, t_core *core)
 		|| fmgr_set_reds(core) == -1
 		|| exc_exec_cmds(core) == -1)
 	{
-		utl_cleanup(core->flags | FLG_ENV, core);
+		utl_cleanup(core->flags, core);
 		return (-1);
 	}
 	utl_cleanup(core->flags, core);
