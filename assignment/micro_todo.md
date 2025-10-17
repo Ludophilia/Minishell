@@ -22,11 +22,6 @@
 	- ^C processing with error message
 	- why does readline sometimes add a new line and sometime not (^C)
 
-- [o] Add signals/ (signals_new)
-	- [ ] Core shell need SIGINT (2, ctrl+c) and SIGQUIT (3, ctrl+\) disabled
-	- [ ] Child shell need SIGINT (2, ctrl+c) and SIGQUIT (3, ctrl+\)
-	back to default.
-
 ### Exit status
 
 - [ ] Manage exit status
@@ -58,7 +53,7 @@
 
 - [ ] increment SHLVL each time you open a minishell.
 
-- [ ] Repair that faulty test
+- [x] Repair that faulty test
 	- ```
 	echo $PATH
 	export PATH=TEST
@@ -68,4 +63,5 @@
 ### Extra
 
 - [ ] Maybe improve readline behavior
-	- It really struggles with long lines... I don't know why.
+	- [ ] It really struggles with long lines... I don't know why.
+	- [ ] sleep 15 + SIGINT: 2 prompts?

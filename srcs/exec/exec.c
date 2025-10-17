@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:07:42 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/17 20:16:52 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/18 00:53:24 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,22 +39,29 @@ static int	exc_exec_cmd(t_cmd *cmd, t_core *core)
 	char	**envp;
 	int		chkrv;
 
+	// 18/10 - It's broken.
+	// Break it down properly and... manage those exit status
 	if ((*cmd->argv == NULL && ft_eprintf(ERR_CMD, NULL))
 		|| (**cmd->argv == 0 && ft_eprintf(ERR_ECMD, **cmd->argv)))
+	{
+		core->exit = 127;
 		return (0);
-	if (fmgr_dup2(cmd->ifd, 0) == -1
-		|| fmgr_dup2(cmd->ofd, 1) == -1)
-		return (-1);
+	}
+
+		
 	if (exc_if_builtin(cmd, core) == true)
 		return (0);
-	if (utl_cleanup(FLG_REDS, core) != 1)
+
+	if (fmgr_dup2(cmd->ifd, 0) == -1
+		|| fmgr_dup2(cmd->ofd, 1) == -1
+		|| utl_cleanup(FLG_REDS, core) != 1)
 		return (-1);
+
 	envp = env_get_envp(core->env);
 	if (envp == NULL)
 		return (-1);
 	chkrv = exc_check_path(cmd->argv, envp);
-	if (chkrv == -1
-		|| (chkrv > 0 && execve(*cmd->argv, cmd->argv, envp) == -1))
+	if (chkrv == -1 || (chkrv > 0 && execve(*cmd->argv, cmd->argv, envp) == -1))
 	{
 		utl_free_strs(0, envp);
 		return (-1);
@@ -65,7 +72,7 @@ static int	exc_exec_cmd(t_cmd *cmd, t_core *core)
 static int	exc_init_subsh(int i, pid_t *pid, t_core *core)
 {
 	t_cmd	*cmd;
-	int		exec_rv;
+	int		exec_st;
 
 	cmd = core->cmds + i;
 	*pid = fork();
@@ -73,13 +80,10 @@ static int	exc_init_subsh(int i, pid_t *pid, t_core *core)
 		return (-1);
 	if (*pid > 0)
 		return (cmd->pid = *pid, 0);
-	if (sig_init_child() == -1 && utl_cleanup(core->flags | FLG_ENV, core))
-		exit(EX_FAIL);
-	exec_rv = exc_exec_cmd(core->cmds + i, core);
-	utl_cleanup(core->flags | FLG_ENV, core);
-	if (exec_rv == -1)
-		exit(EX_FAIL);
-	exit(EX_SUCC);
+	if (sig_init_child() == -1)
+		utl_exit(1, core);
+	exec_st = (exc_exec_cmd(core->cmds + i, core) == -1);
+	return (utl_exit(exec_st, core));
 }
 
 int	exc_exec_cmds(t_core *core)

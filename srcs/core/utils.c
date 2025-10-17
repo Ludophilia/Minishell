@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 19:18:23 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/16 22:11:11 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/18 00:30:24 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,13 @@ int	utl_free(void *ptr)
 {
 	free(ptr);
 	return (1);
+}
+
+int utl_exit(int status, t_core *core)
+{
+	utl_cleanup(core->flags | FLG_ENV, core);
+	core->exit = status;
+	exit(status);
 }
 
 char	*utl_itoa(unsigned int nbr, char *store)

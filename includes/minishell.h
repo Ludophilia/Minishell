@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/17 20:08:16 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/18 00:35:28 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,6 +167,7 @@ int		utl_free_strs(int from_id, char **strs);
 int		utl_cleanup(t_cflg flags, t_core *core);
 char	*utl_itoa(unsigned int nbr, char *store);
 int		utl_free(void *ptr);
+int		utl_exit(int status, t_core *core);
 
 int		sig_init_prompt(void);
 int		sig_init_child(void);
