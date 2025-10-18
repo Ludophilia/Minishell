@@ -6,13 +6,13 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 13:37:44 by jegerman          #+#    #+#             */
-/*   Updated: 2025/09/17 20:00:50 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/18 21:11:53 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	psr_optok_check(t_tok *tok, int pos)
+static int	psr_optok_check(t_tok *tok, int pos, t_core *core)
 {
 	char	**tok_chr;
 
@@ -23,12 +23,13 @@ static int	psr_optok_check(t_tok *tok, int pos)
 		|| (pos == 0 && tok->type == TOK_PIPE))
 	{
 		ft_eprintf(ERR_SYNTAX, tok_chr[tok->type - 2]);
+		core->exit = 2;
 		return (-1);
 	}
 	return (0);
 }
 
-static int	psr_wtok_check(t_tok *tok)
+static int	psr_wtok_check(t_tok *tok, t_core *core)
 {
 	int		i;
 	int		quoted;
@@ -45,11 +46,14 @@ static int	psr_wtok_check(t_tok *tok)
 			quoted = 0;
 	}
 	if (quoted != 0 && ft_eprintf(ERR_SYNTAX, "end-of-line"))
+	{
+		core->exit = 2;
 		return (-1);
+	}
 	return (0);
 }
 
-int	psr_error_check(t_tok *toks)
+int	psr_error_check(t_tok *toks, t_core *core)
 {
 	t_tok	*tok;
 	int		i;
@@ -58,8 +62,8 @@ int	psr_error_check(t_tok *toks)
 	tok = toks + i;
 	while (tok->type != TOK_EOL)
 	{
-		if (psr_optok_check(tok, i) == -1
-			|| psr_wtok_check(tok) == -1)
+		if (psr_optok_check(tok, i, core) == -1
+			|| psr_wtok_check(tok, core) == -1)
 			return (-1);
 		tok = toks + ++i;
 	}
