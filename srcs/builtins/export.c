@@ -6,7 +6,7 @@
 /*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 04:06:11 by ntahri            #+#    #+#             */
-/*   Updated: 2025/10/17 22:24:22 by ntahri           ###   ########.fr       */
+/*   Updated: 2025/10/18 11:43:55 by ntahri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ static int	handle_export_arg(t_env **env_list, char *arg)
 	return (0);
 }
 
+// entrée export
 int	bi_export(t_cmd *cmd, t_env **env_list)
 {
 	int	err_count;
