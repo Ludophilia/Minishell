@@ -4,13 +4,11 @@
 
 ### Structure
 
-- [ ] check if most modules are norm compliant
+- [ ] 🔴 check if most modules are norm compliant
 
 ## Main
 
-- [ ] Block that ability to use minishell in non interactiive mode and 
-
-## Execution
+- [ ] 🔴 Block that ability to use minishell in non interactiive mode and 
 
 ### Signals
 
@@ -29,14 +27,7 @@
 		- [x] (oof: command not found -> 127)
 
 	- for signals
-
 		- `g_sig` should be the mechanism used to update signals `exit_status`
-
-### Project Wide Variables
-
-- [x] Think about that global variable. What is its purpose?
-	- [x] Subject says "Be careful. This global variable must only store the
-	signal number and must not provide any additional information or access to data."
 
 ### Builtins
 
