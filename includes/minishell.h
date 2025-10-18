@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/18 19:28:51 by ntahri           ###   ########.fr       */
+/*   Updated: 2025/10/18 22:13:06 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,7 +153,7 @@ char	*psr_create_word(t_tok *tok, t_tokt context, t_core *core);
 int		psr_add_reds(t_tok *tok, t_cmd *cmd, t_core *core);
 int		psr_add_cmd(t_tok *tok, t_cmd *cmd, t_core *core);
 int		psr_cleanup_cmds(t_cflg flags, t_core *core);
-int		psr_error_check(t_tok *toks);
+int		psr_error_check(t_tok *toks, t_core *core);
 int		psr_parse_line(char *line, t_core *core);
 
 int		fmgr_access(char *path, int type);
@@ -161,9 +161,9 @@ int		fmgr_open(char *path, int openflags, mode_t openmode);
 int		fmgr_pipe(int fds[2]);
 int		fmgr_close(int *xfd);
 int		fmgr_dup2(int old_fd, int new_fd);
-int		fmgr_set_hdocs(int *ifds, t_red *red);
+int		fmgr_set_hdocs(int *ifds, t_red *red, t_core *core);
 int		fmgr_set_pipe(int pos, int pmax, t_cmd *cmd);
-int		fmgr_set_red(int *xfd, int openflags, t_red *red);
+int		fmgr_set_red(int *xfd, int openflags, t_red *red, t_core *core);
 int		fmgr_set_reds(t_core *core);
 
 int		utl_free_strs(int from_id, char **strs);
