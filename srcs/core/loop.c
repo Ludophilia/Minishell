@@ -6,7 +6,7 @@
 /*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:18:13 by jgermany          #+#    #+#             */
-/*   Updated: 2025/10/17 21:06:08 by ntahri           ###   ########.fr       */
+/*   Updated: 2025/10/18 23:08:42 by ntahri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,19 @@ static int	loop_process_line(char *line, t_core *core)
 	if (psr_exv == -2)
 		return (-2);
 	if (psr_exv == -1
-		|| fmgr_set_reds(core) == -1
-		|| exc_exec_cmds(core) == -1)
+		|| fmgr_set_reds(core) == -1)
 	{
 		utl_cleanup(core->flags, core);
 		return (-1);
 	}
+	sig_init_exec();
+	if (exc_exec_cmds(core) == -1)
+	{
+		sig_init_prompt();
+		utl_cleanup(core->flags, core);
+		return (-1);
+	}
+	sig_init_prompt();
 	utl_cleanup(core->flags, core);
 	return (0);
 }
