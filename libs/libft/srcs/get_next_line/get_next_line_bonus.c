@@ -6,7 +6,7 @@
 /*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 13:51:33 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/18 14:07:30 by ntahri           ###   ########.fr       */
+/*   Updated: 2025/10/18 14:22:30 by ntahri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ static char	*extract_line(char **stash)
 	line = ft_substr(*stash, 0, nl_pos + 1);
 	if (line == NULL)
 	{
-		free(*stash);
+		free(stash);
 		*stash = NULL;
 		return (NULL);
 	}
