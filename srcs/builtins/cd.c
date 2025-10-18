@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 04:05:44 by ntahri            #+#    #+#             */
-/*   Updated: 2025/10/15 18:20:59 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/18 13:49:23 by ntahri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,11 @@ int	bi_cd(t_core *core, t_cmd *cmd)
 	char	oldpwd[PTH_MAX];
 	char	*path;
 
+	if (cmd->argc > 2)
+	{
+		ft_putendl_fd("minishell: cd: too many arguments", STDERR_FILENO);
+		return (core->exit = 1, 1);
+	}
 	if (!getcwd(oldpwd, sizeof(oldpwd)))
 		return (perror("cd: getcwd"), core->exit = 1, 1);
 	path = cd_get_path(core, cmd->argv);
