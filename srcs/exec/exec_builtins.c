@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 22:26:53 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/16 23:30:58 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/18 19:58:48 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	exc_if_builtin(t_cmd *cmd, t_core *core)
 {
 	char	**bltns;
 	int		i;
-	
+
 	if (*cmd->argv == NULL)
 		return (0);
 	bltns = (char *[]){"echo", "cd", "pwd", "export", "unset", "env",

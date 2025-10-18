@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/18 00:35:28 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/18 18:15:19 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,9 @@ typedef enum e_flo
 
 typedef enum e_exit
 {
-	EX_SUCC = EXIT_SUCCESS,
-	EX_FAIL = EXIT_FAILURE,
+	EX_SUCC = 0,
+	EX_FAIL = 1,
+	EX_CNFD = 127,
 }	t_exit;
 
 typedef enum e_max
@@ -130,9 +131,11 @@ typedef struct s_core
 	uint32_t		flags;
 	uint8_t			exit;
 	t_env			*env;
+	char			**envp;
 }	t_core;
 
 int		init_core(t_core *core, char **envp);
+int		init_cleanup_core(t_core *core);
 
 int		lex_is_quote(int c);
 int		lex_is_op(int c);
@@ -182,7 +185,8 @@ int		env_free_all(t_env *node);
 int		env_is_identifier(const char *str);
 char	*env_get(t_env *env_list, const char *key);
 int		env_set(t_env **env_list, const char *key, const char *value);
-char	**env_get_envp(t_env *env_list);
+char	**env_get_envp(t_env *env_list, t_core *core);
+int		env_cleanup(t_core *core);
 
 int		bi_cd(t_core *core, t_cmd *cmd);
 int		bi_echo(t_cmd *cmd, int fd);

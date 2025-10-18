@@ -6,15 +6,11 @@
 
 - [ ] check if most modules are norm compliant
 
+## Main
+
+- [ ] Block that ability to use minishell in non interactiive mode and 
+
 ## Execution
-
-- [ ] 🔴 Restructure exec.c
-
-- [ ] 🔴 Improve waiting logic
-	- [ ] Improve waiting logic so that < /dev/urandom tail does not fail
-	^C make the child defunct. The SIGINT processing logic need to be 
-	implemented.
-		- Managed with signals?
 
 ### Signals
 
@@ -25,12 +21,12 @@
 ### Exit status
 
 - [ ] Manage exit status
-	- for redirections
+	- 🔴 for redirections
 		- especially errors
 			- (< off, no such file or directory -> 1)
 
 	- 🔴 for commands
-		- [ ] (oof: command not found -> 127)
+		- [x] (oof: command not found -> 127)
 
 	- for signals
 
@@ -42,23 +38,9 @@
 	- [x] Subject says "Be careful. This global variable must only store the
 	signal number and must not provide any additional information or access to data."
 
-
 ### Builtins
 
-- [x] Repair echo
-
-- [x] Look where the builtins write their data
-
-### Environment
-
 - [ ] increment SHLVL each time you open a minishell.
-
-- [x] Repair that faulty test
-	- ```
-	echo $PATH
-	export PATH=TEST
-	echo $PATH
-	```
 
 ### Extra
 
