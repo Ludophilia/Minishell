@@ -49,13 +49,15 @@ static char	*env_to_str(char *key, char *val)
 	return (str);
 }
 
-char	**env_get_envp(t_env *env_list)
+char	**env_get_envp(t_env *env_list, t_core *core)
 {
+	char	**envp;
 	t_env	*env;
 	int		size;
-	char	**envp;
 	int		j;
 
+	if (core->envp && utl_free_strs(0, core->envp))
+		core->envp = NULL;
 	size = env_get_size(env_list);
 	envp = ft_calloc(size + 1, sizeof(char *));
 	if (envp == NULL)
@@ -73,6 +75,6 @@ char	**env_get_envp(t_env *env_list)
 		}
 		env = env->next;
 	}
-	return (envp);
+	return (core->envp = envp);
 }
 

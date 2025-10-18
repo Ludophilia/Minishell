@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:07:42 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/17 23:34:32 by ntahri           ###   ########.fr       */
+/*   Updated: 2025/10/18 19:59:26 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ static int	exc_wait_cmds(t_core *core)
 	int		wstat;
 	int		i;
 
+	utl_cleanup(FLG_REDS, core);
 	i = -1;
 	while (++i < (core->cmd_pmax + 1))
 	{
@@ -34,37 +35,40 @@ static int	exc_wait_cmds(t_core *core)
 	return (0);
 }
 
+static int	exc_exec_prg(t_cmd *cmd, t_core *core)
+{
+	int	chk_val;
+
+	if (fmgr_dup2(cmd->ifd, 0) == -1 || fmgr_dup2(cmd->ofd, 1) == -1
+		|| utl_cleanup(FLG_REDS, core) != 1
+		|| env_get_envp(core->env, core) == NULL)
+		return (-1);
+	chk_val = exc_check_path(cmd->argv, core->envp);
+	if (chk_val == -1)
+		return (-1);
+	if (chk_val == 0 && utl_exit(EX_CNFD, core))
+		return (0);
+	if (chk_val && execve(*cmd->argv, cmd->argv, core->envp) == -1)
+		return (-1);
+	return (0);
+}
+
 static int	exc_exec_cmd(t_cmd *cmd, t_core *core)
 {
-	char	**envp;
-	int		chkrv;
-
-	if ((*cmd->argv == NULL && ft_eprintf(ERR_CMD, NULL))
-		|| (**cmd->argv == 0 && ft_eprintf(ERR_ECMD, **cmd->argv)))
+	if (**cmd->argv == 0
+		&& ft_eprintf(ERR_ECMD, **cmd->argv) && utl_exit(EX_CNFD, core))
 		return (0);
-	if (fmgr_dup2(cmd->ifd, 0) == -1
-		|| fmgr_dup2(cmd->ofd, 1) == -1)
-		return (-1);
-	if (exc_if_builtin(cmd, core) == true)
+	if (exc_if_builtin(cmd, core) && utl_exit(core->exit, core))
 		return (0);
-	if (utl_cleanup(FLG_REDS, core) != 1)
+	if (exc_exec_prg(cmd, core) == -1 && utl_exit(EX_FAIL, core))
 		return (-1);
-	envp = env_get_envp(core->env);
-	if (envp == NULL)
-		return (-1);
-	chkrv = exc_check_path(cmd->argv, envp);
-	if (chkrv == -1
-		|| (chkrv > 0 && execve(*cmd->argv, cmd->argv, envp) == -1))
-		return (utl_free_strs(0, envp), -1);
-	else if (chkrv == -2)
-		(utl_free_strs(0, envp), exit(127));
-	return (utl_free_strs(0, envp), 0);
+	utl_exit(EX_FAIL, core);
+	return (0);
 }
 
 static int	exc_init_subsh(int i, pid_t *pid, t_core *core)
 {
 	t_cmd	*cmd;
-	int		exec_rv;
 
 	cmd = core->cmds + i;
 	*pid = fork();
@@ -72,13 +76,10 @@ static int	exc_init_subsh(int i, pid_t *pid, t_core *core)
 		return (-1);
 	if (*pid > 0)
 		return (cmd->pid = *pid, 0);
-	if (sig_init_child() == -1 && utl_cleanup(core->flags | FLG_ENV, core))
-		exit(EX_FAIL);
-	exec_rv = exc_exec_cmd(core->cmds + i, core);
-	utl_cleanup(core->flags | FLG_ENV, core);
-	if (exec_rv == -1)
-		exit(EX_FAIL);
-	exit(EX_SUCC);
+	if ((sig_init_child() == -1 && utl_exit(EX_FAIL, core))
+		|| exc_exec_cmd(cmd, core) == -1)
+		return (-1);
+	return (0);
 }
 
 int	exc_exec_cmds(t_core *core)
@@ -91,16 +92,14 @@ int	exc_exec_cmds(t_core *core)
 	while (++i < (core->cmd_pmax + 1))
 	{
 		if (core->cmds[i].xready == false
-			|| (core->cmd_pmax == 0 && exc_if_builtin(core->cmds + i, core)))
+			|| (core->cmd_pmax == 0
+				&& exc_if_builtin(core->cmds + i, core)))
 			continue ;
 		if (exc_init_subsh(i, &pid, core) == -1
-			&& utl_cleanup(FLG_REDS, core)
 			&& exc_wait_cmds(core))
 			return (-1);
 	}
-	if (pid > 0
-		&& utl_cleanup(FLG_REDS, core)
-		&& exc_wait_cmds(core) == -1)
+	if (pid > 0 && exc_wait_cmds(core) == -1)
 		return (-1);
 	return (0);
 }

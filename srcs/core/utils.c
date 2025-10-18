@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 19:18:23 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/16 22:11:11 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/18 17:43:00 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,26 @@
 
 int	utl_cleanup(t_cflg flags, t_core *core)
 {
-	if ((flags & FLG_CMDS) || (flags & FLG_REDS) || (flags & FLG_CORE))
+	if ((flags & FLG_CMDS) || (flags & FLG_REDS))
 		psr_cleanup_cmds(flags, core);
+	if (flags & FLG_CORE)
+		init_cleanup_core(core);
 	if (flags & FLG_ENV)
-		env_free_all(core->env);
+		env_cleanup(core);
 	if (flags & FLG_CMDS)
 		core->flags &= ~FLG_CMDS;
 	if (flags & FLG_REDS)
 		core->flags &= ~FLG_REDS;
 	if (flags & FLG_CORE)
 		core->flags &= ~FLG_CORE;
+	return (1);
+}
+
+int	utl_exit(int status, t_core *core)
+{
+	utl_cleanup(core->flags | FLG_ENV, core);
+	core->exit = status;
+	exit(status);
 	return (1);
 }
 
