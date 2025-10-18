@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:07:42 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/18 00:53:24 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/18 12:02:23 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,11 @@ static int	exc_exec_cmd(t_cmd *cmd, t_core *core)
 		utl_free_strs(0, envp);
 		return (-1);
 	}
+	if (chkrv == -1
+		|| (chkrv > 0 && execve(*cmd->argv, cmd->argv, envp) == -1))
+		return (utl_free_strs(0, envp), -1);
+	else if (chkrv == -2)
+		(utl_free_strs(0, envp), exit(127));
 	return (utl_free_strs(0, envp), 0);
 }
 
