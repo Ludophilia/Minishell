@@ -6,7 +6,7 @@
 /*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/18 19:28:51 by ntahri           ###   ########.fr       */
+/*   Updated: 2025/10/18 23:12:13 by ntahri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@
 # define ERR_BMNY "%s: too many arguments\n"
 # define ERR_BINV "%s: `%s': not a valid identifier\n"
 
-extern uint32_t	g_sig;
+extern volatile sig_atomic_t	g_sig;
 
 typedef enum e_flo
 {
@@ -174,6 +174,7 @@ int		utl_exit(int status, t_core *core);
 
 int		sig_init_prompt(void);
 int		sig_init_child(void);
+int		sig_init_exec(void);
 
 t_env	*env_new_node(const char *key, const char *value);
 int		env_add_start(t_env **env_list, const char *key, const char *value);
