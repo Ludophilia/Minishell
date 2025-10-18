@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 04:06:14 by ntahri            #+#    #+#             */
-/*   Updated: 2025/10/15 13:32:16 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/18 00:30:43 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int	bi_exit(t_core *core, t_cmd *cmd)
 		utl_cleanup(core->flags | FLG_ENV, core);
 		exit(core->exit);
 	}
-	if (cmd->argc > 2)
+	if (cmd->argc > 2) // 18/10 - argc == 2? Potential bug out there.
 	{
 		ft_eprintf(ERR_BMNY, "exit");
 		return (core->exit = 1);

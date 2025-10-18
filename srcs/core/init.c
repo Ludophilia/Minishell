@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/17 20:07:06 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/17 20:07:59 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/18 18:42:27 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,15 @@ int	init_core(t_core *core, char **envp)
 	core->env = env_dup(envp);
 	if (core->env == NULL)
 		return (-1);
+	core->envp = NULL;
 	core->exit = 0;
 	init_cmds(core->cmds);
 	return (0);
+}
+
+int	init_cleanup_core(t_core *core)
+{
+	core->cmd_pmax = 0;
+	core->cmd_xrdy = 0;
+	return (1);
 }

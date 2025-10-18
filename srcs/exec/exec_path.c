@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_path.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:18:44 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/18 12:13:32 by ntahri           ###   ########.fr       */
+/*   Updated: 2025/10/18 18:27:55 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ int	exc_check_path(char **argv, char **envp)
 	if (paths == NULL)
 	{
 		ft_eprintf(ERR_CMD, *argv);
-		return (-2);
+		return (0);
 	}
 	i = -1;
 	while (paths[++i])
@@ -112,5 +112,5 @@ int	exc_check_path(char **argv, char **envp)
 	}
 	ft_eprintf(ERR_CMD, *argv);
 	utl_free_strs(0, paths);
-	return (-2);
+	return (0);
 }
