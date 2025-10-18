@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:07:42 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/17 20:16:52 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/17 23:34:32 by ntahri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,10 +55,9 @@ static int	exc_exec_cmd(t_cmd *cmd, t_core *core)
 	chkrv = exc_check_path(cmd->argv, envp);
 	if (chkrv == -1
 		|| (chkrv > 0 && execve(*cmd->argv, cmd->argv, envp) == -1))
-	{
-		utl_free_strs(0, envp);
-		return (-1);
-	}
+		return (utl_free_strs(0, envp), -1);
+	else if (chkrv == -2)
+		(utl_free_strs(0, envp), exit(127));
 	return (utl_free_strs(0, envp), 0);
 }
 
