@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   libft_core.h                                       :+:      :+:    :+:   */
+/*   libft_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 16:49:27 by jegerman          #+#    #+#             */
-/*   Updated: 2025/02/11 15:12:30 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/19 02:40:29 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LIBFT_CORE_H
+#ifndef LIBFT_BONUS_H
 
-# define LIBFT_CORE_H
+# define LIBFT_BONUS_H
 
 # include <stddef.h>
 # include <stdlib.h>
