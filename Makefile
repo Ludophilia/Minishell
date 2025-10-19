@@ -6,14 +6,14 @@
 #    By: jegerman <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/09 12:08:14 by jegerman          #+#    #+#              #
-#    Updated: 2025/10/19 15:59:06 by jegerman         ###   ########.fr        #
+#    Updated: 2025/10/19 16:39:01 by jegerman         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME := minishell
 
 CC := cc
-CFLAGS := -Wall -Wextra -Werror -g3
+CFLAGS := -Wall -Wextra -Werror
 
 LIBS_DR := libs
 LIBFT_DR := $(LIBS_DR)/libft
