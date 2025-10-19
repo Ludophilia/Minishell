@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:31:20 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/07 17:12:15 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/19 13:18:14 by ntahri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	lex_is_op(int c)
 
 int	lex_is_sep(int c)
 {
-	return (c == ' ');
+	return (c == ' ' || c == '\t');
 }
 
 int	lex_is_quote(int c)
