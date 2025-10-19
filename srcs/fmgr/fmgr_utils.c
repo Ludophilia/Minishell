@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fmgr_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:05:19 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/07 17:11:59 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/19 14:19:20 by ntahri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,11 @@ int	fmgr_access(char *path, int type)
 {
 	if (access(path, type) == -1)
 	{
+		if (errno == EACCES || errno == EISDIR)
+		{
+			ft_eprintf(ERR_PTH, path, strerror(errno));
+			return (-2);
+		}
 		ft_eprintf(ERR_PTH, path, strerror(errno));
 		return (-1);
 	}
