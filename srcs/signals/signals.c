@@ -6,7 +6,7 @@
 /*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 18:59:28 by ntahri            #+#    #+#             */
-/*   Updated: 2025/10/18 23:16:54 by ntahri           ###   ########.fr       */
+/*   Updated: 2025/10/19 01:04:26 by ntahri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,17 +37,21 @@ static void	sig_handler_exec(int sig)
 
 int	sig_init_child(void)
 {
-	struct sigaction	sa;
+	struct sigaction sa;
 
 	if (sigemptyset(&sa.sa_mask) == -1)
 		return (-1);
 	sa.sa_handler = SIG_DFL;
 	sa.sa_flags = 0;
-	if (sigaction(SIGINT, &sa, NULL) == -1
-		|| sigaction(SIGQUIT, &sa, NULL) == -1)
+	if (sigaction(SIGINT, &sa, NULL) == -1)
 		return (-1);
+	sa.sa_handler = SIG_IGN;
+	if (sigaction(SIGQUIT, &sa, NULL) == -1)
+		return (-1);
+
 	return (0);
 }
+
 
 // Handler prompt interactif
 int	sig_init_prompt(void)
