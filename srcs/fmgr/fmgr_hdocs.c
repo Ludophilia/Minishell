@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fmgr_hdocs.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 22:23:23 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/19 03:48:36 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/19 12:26:35 by ntahri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ static int	fmgr_subsh_hdocs(int *pid, int *fds, t_red *red, t_core *core)
 		(close(fds[0]), close(fds[1]));
 		return (utl_exit(EX_FAIL, core));
 	}
+	signal(SIGQUIT, SIG_IGN);
 	opn = true;
 	while (opn)
 		if (fmgr_get_user_input(&opn, red) == -1)
