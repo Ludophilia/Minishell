@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 04:06:14 by ntahri            #+#    #+#             */
-/*   Updated: 2025/10/19 03:09:47 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/19 02:40:34 by ntahri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,3 +64,4 @@ int	bi_exit(t_core *core, t_cmd *cmd)
 	utl_cleanup(core->flags | FLG_ENV, core);
 	exit(core->exit = (unsigned char)code);
 }
+
