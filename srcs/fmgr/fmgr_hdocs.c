@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   fmgr_hdocs.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 22:23:23 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/19 03:13:08 by ntahri           ###   ########.fr       */
+/*   Updated: 2025/10/19 03:48:36 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	fmgr_get_user_input(int *opn, int *fds, t_red *red)
+static int	fmgr_get_user_input(int *opn, t_red *red)
 {
 	char	*uinp;
 	char	*lim;
@@ -23,8 +23,7 @@ static int	fmgr_get_user_input(int *opn, int *fds, t_red *red)
 	lim = red->word;
 	if (!ft_strncmp(uinp, lim, ft_strlen(lim)))
 		return ((*opn)--, free(uinp), 0);
-	if (write(fds[1], uinp, ft_strlen(uinp)) == -1
-		|| write(fds[1], "\n", 1) == -1)
+	if (write(2, uinp, ft_strlen(uinp)) == -1 || write(2, "\n", 1) == -1)
 		return (free(uinp), -1);
 	return (free(uinp), 0);
 }
@@ -38,19 +37,16 @@ static int	fmgr_subsh_hdocs(int *pid, int *fds, t_red *red, t_core *core)
 		return (-1);
 	if (*pid > 0)
 		return (0);
-	printf("[%i] In child\n", getpid());
-	if (sig_init_child() == -1 || signal(SIGQUIT, SIG_IGN) == SIG_ERR
-		|| close(fds[0]) == -1)
+	if (sig_init_child() == -1 || close(fds[0]) == -1
+		|| dup2(fds[1], 2) == -1 || close(fds[1]) == -1) //  || signal(SIGQUIT, SIG_IGN) == SIG_ERR
 	{
 		(close(fds[0]), close(fds[1]));
 		return (utl_exit(EX_FAIL, core));
 	}
 	opn = true;
 	while (opn)
-		if (fmgr_get_user_input(&opn, fds, red) == -1)
-			return (close(fds[1]), utl_exit(EX_FAIL, core));
-	if (close(fds[1]) == -1)
-		return (utl_exit(EX_FAIL, core));
+		if (fmgr_get_user_input(&opn, red) == -1)
+			return (utl_exit(EX_FAIL, core));
 	return (utl_exit(0, core), 0);
 }
 
@@ -62,27 +58,17 @@ int	fmgr_set_hdocs(int *ifd, t_red *red, t_core *core)
 
 	if (ifd == NULL)
 		return (0);
-	// printf("[%i] Start hdocs...\n", getpid());
 	if (fmgr_pipe(fds) == -1)
 		return (-1);
-	if (fmgr_subsh_hdocs(&pid, fds, red, core) == -1)
-		return (close(fds[0]), close(fds[1]), -1);
-
-	// printf("[%i] Waiting... pid: %i\n", getpid(), pid);
-
-	// 19/10 - Un peu casse la....
-
-	if (waitpid(pid, &wstat, 0) == -1)
+	if (fmgr_subsh_hdocs(&pid, fds, red, core) == -1
+		|| waitpid(pid, &wstat, 0) == -1)
 		return (close(fds[0]), close(fds[1]), -1);
 	if (WIFEXITED(wstat))
 		core->exit = WEXITSTATUS(wstat);
 	else if (WIFSIGNALED(wstat))
 		core->exit = 128 + WTERMSIG(wstat);
-
-	if (fmgr_close(fds + 1) == -1 || (fmgr_close(ifd) == -1))
+	if (fmgr_close(fds + 1) == -1 || fmgr_close(ifd) == -1)
 		return (close(fds[0]), -1);
 	*ifd = fds[0];
-	// core->exit = 0;
-	// sig_init_prompt();
 	return (0);
 }
