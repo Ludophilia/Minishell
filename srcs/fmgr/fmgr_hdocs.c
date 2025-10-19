@@ -6,7 +6,7 @@
 /*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 22:23:23 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/19 00:40:19 by ntahri           ###   ########.fr       */
+/*   Updated: 2025/10/19 03:13:08 by ntahri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,8 @@ static int	fmgr_subsh_hdocs(int *pid, int *fds, t_red *red, t_core *core)
 	if (*pid > 0)
 		return (0);
 	printf("[%i] In child\n", getpid());
-	if (sig_init_child() == -1 || close(fds[0]) == -1)
+	if (sig_init_child() == -1 || signal(SIGQUIT, SIG_IGN) == SIG_ERR
+		|| close(fds[0]) == -1)
 	{
 		(close(fds[0]), close(fds[1]));
 		return (utl_exit(EX_FAIL, core));

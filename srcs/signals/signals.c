@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 18:59:28 by ntahri            #+#    #+#             */
-/*   Updated: 2025/10/19 02:36:06 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/19 03:04:25 by ntahri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ int	sig_init_child(void)
 	sa.sa_flags = 0;
 	if (sigaction(SIGINT, &sa, NULL) == -1)
 		return (-1);
-	sa.sa_handler = SIG_IGN;
+	sa.sa_handler = SIG_DFL;
 	if (sigaction(SIGQUIT, &sa, NULL) == -1)
 		return (-1);
 	return (0);
