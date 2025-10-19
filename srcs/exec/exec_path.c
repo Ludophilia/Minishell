@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_path.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:18:44 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/18 18:27:55 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/19 14:15:34 by ntahri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,8 @@ static int	exc_check_access(char *path)
 		return (0);
 	if (acc_ex == 0 && S_ISREG(statb.st_mode))
 		return (1);
+	if (acc_ex == -2)
+		return (-2);
 	ft_eprintf(ERR_PTH, path, "Is not a file");
 	return (0);
 }

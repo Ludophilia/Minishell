@@ -6,7 +6,7 @@
 /*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:07:42 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/18 23:52:17 by ntahri           ###   ########.fr       */
+/*   Updated: 2025/10/19 14:17:37 by ntahri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,8 @@ static int	exc_exec_prg(t_cmd *cmd, t_core *core)
 		|| env_get_envp(core->env, core) == NULL)
 		return (-1);
 	chk_val = exc_check_path(cmd->argv, core->envp);
+	if (chk_val == -2 && utl_exit(126, core))
+		return (0);
 	if (chk_val == -1)
 		return (-1);
 	if (chk_val == 0 && utl_exit(EX_CNFD, core))
