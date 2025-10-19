@@ -6,11 +6,16 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 13:37:44 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/18 21:11:53 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/19 15:32:15 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+static int	psr_is_redtok(t_tok *tok)
+{
+	return (tok->type >= 3 && tok->type <= 6);
+}
 
 static int	psr_optok_check(t_tok *tok, int pos, t_core *core)
 {
@@ -19,7 +24,9 @@ static int	psr_optok_check(t_tok *tok, int pos, t_core *core)
 	if (tok->type == TOK_WORD)
 		return (0);
 	tok_chr = (char *[]){"|", "<", "<<", ">", ">>", 0};
-	if (tok[1].type == TOK_EOL || tok[1].type == tok->type
+	if (tok[1].type == TOK_EOL
+		|| (psr_is_redtok(tok) && (tok[1].type != TOK_WORD))
+		|| (tok->type != TOK_WORD && (tok->type == tok[1].type))
 		|| (pos == 0 && tok->type == TOK_PIPE))
 	{
 		ft_eprintf(ERR_SYNTAX, tok_chr[tok->type - 2]);

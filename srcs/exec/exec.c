@@ -3,43 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:07:42 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/19 14:17:37 by ntahri           ###   ########.fr       */
+/*   Updated: 2025/10/19 16:04:55 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-static int	exc_wait_cmds(t_core *core)
-{
-	t_cmd	*cmd;
-	int		wstat;
-	int		i;
-	int		sig;
-
-	utl_cleanup(FLG_REDS, core);
-	i = -1;
-	while (++i < (core->cmd_pmax + 1))
-	{
-		cmd = core->cmds + i;
-		if (cmd->xready == false)
-			continue ;
-		if (waitpid(cmd->pid, &wstat, 0) == -1)
-			return (-1);
-		if (WIFEXITED(wstat))
-			core->exit = WEXITSTATUS(wstat);
-		else if (WIFSIGNALED(wstat))
-		{
-			sig = WTERMSIG(wstat);
-			if (sig == SIGQUIT)
-				write(STDOUT_FILENO, "\n", 1);
-			core->exit = 128 + sig;
-		}
-	}
-	return (0);
-}
 
 static int	exc_exec_prg(t_cmd *cmd, t_core *core)
 {

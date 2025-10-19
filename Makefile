@@ -6,7 +6,7 @@
 #    By: jegerman <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/09 12:08:14 by jegerman          #+#    #+#              #
-#    Updated: 2025/10/18 22:24:50 by jegerman         ###   ########.fr        #
+#    Updated: 2025/10/19 15:59:06 by jegerman         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -59,6 +59,7 @@ MAN_SRCS += $(FMGR_DR)/fmgr_hdocs.c
 MAN_SRCS += $(EXEC_DR)/exec.c
 MAN_SRCS += $(EXEC_DR)/exec_path.c
 MAN_SRCS += $(EXEC_DR)/exec_builtins.c
+MAN_SRCS += $(EXEC_DR)/exec_waiter.c
 
 MAN_SRCS += $(BLTN_DR)/cd.c
 MAN_SRCS += $(BLTN_DR)/echo.c
