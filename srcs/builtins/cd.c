@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 04:05:44 by ntahri            #+#    #+#             */
-/*   Updated: 2025/10/18 20:35:46 by ntahri           ###   ########.fr       */
+/*   Updated: 2025/10/19 02:05:09 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,8 +80,9 @@ int	bi_cd(t_core *core, t_cmd *cmd)
 		cd_handle_path_error(core, cmd);
 		return (core->exit);
 	}
-	if (cmd->argv[1] && ft_strncmp(cmd->argv[1], "-", 2) == 0 &&
-		ft_strlen(cmd->argv[1]) == 1)
+	if (cmd->argv[1]
+		&& ft_strncmp(cmd->argv[1], "-", 2) == 0
+		&& ft_strlen(cmd->argv[1]) == 1)
 		ft_putendl_fd(path, STDOUT_FILENO);
 	if (chdir(path) == -1)
 	{

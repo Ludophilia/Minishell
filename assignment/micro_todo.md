@@ -6,10 +6,6 @@
 
 - [ ] 🔴 check if most modules are norm compliant
 
-## Main
-
-- [ ] 🔴 Block that ability to use minishell in non interactiive mode and 
-
 ### Signals
 
 - [ ] Maybe improve here documents?
@@ -37,4 +33,3 @@
 
 - [ ] Maybe improve readline behavior
 	- [ ] It really struggles with long lines... I don't know why.
-	- [ ] sleep 15 + SIGINT: 2 prompts?
