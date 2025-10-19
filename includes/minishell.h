@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/18 22:13:06 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/19 01:48:23 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,6 +136,7 @@ typedef struct s_core
 
 int		init_core(t_core *core, char **envp);
 int		init_cleanup_core(t_core *core);
+int		init_isatty(void);
 
 int		lex_is_quote(int c);
 int		lex_is_op(int c);

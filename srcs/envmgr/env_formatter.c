@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_formatter.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 15:10:32 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/18 20:55:17 by ntahri           ###   ########.fr       */
+/*   Updated: 2025/10/19 02:19:23 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,4 +77,3 @@ char	**env_get_envp(t_env *env_list, t_core *core)
 	}
 	return (core->envp = envp);
 }
-
