@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/19 01:48:23 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/19 15:59:20 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,12 +75,12 @@ typedef enum e_max
 typedef enum e_tokt
 {
 	TOK_EOL = 0,
-	TOK_WORD,
-	TOK_PIPE,
-	TOK_IRED,
-	TOK_IRED_HD,
-	TOK_ORED,
-	TOK_ORED_AP
+	TOK_WORD = 1,
+	TOK_PIPE = 2,
+	TOK_IRED = 3,
+	TOK_IRED_HD = 4,
+	TOK_ORED = 5,
+	TOK_ORED_AP = 6
 }	t_tokt;
 
 typedef enum e_cflg
@@ -199,6 +199,7 @@ int		bi_pwd(int fd);
 int		bi_unset(t_cmd *cmd, t_env **env);
 
 int		exc_check_path(char **argv, char **envp);
+int		exc_wait_cmds(t_core *core);
 int		exc_exec_cmds(t_core *core);
 int		exc_if_builtin(t_cmd *cmd, t_core *core);
 
