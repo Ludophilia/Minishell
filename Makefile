@@ -6,7 +6,7 @@
 #    By: jegerman <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/09 12:08:14 by jegerman          #+#    #+#              #
-#    Updated: 2025/10/16 17:43:29 by jegerman         ###   ########.fr        #
+#    Updated: 2025/10/19 15:59:06 by jegerman         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,6 +36,7 @@ ENVM_DR := $(SRCS_DR)/envmgr
 
 MAN_SRCS := $(CORE_DR)/main.c
 MAN_SRCS += $(CORE_DR)/loop.c
+MAN_SRCS += $(CORE_DR)/init.c
 MAN_SRCS += $(CORE_DR)/utils.c
 
 MAN_SRCS += $(LEXR_DR)/lexer.c
@@ -53,10 +54,12 @@ MAN_SRCS += $(PRSR_DR)/parser_cleanup.c
 MAN_SRCS += $(FMGR_DR)/fmgr.c
 MAN_SRCS += $(FMGR_DR)/fmgr_reds.c
 MAN_SRCS += $(FMGR_DR)/fmgr_utils.c
+MAN_SRCS += $(FMGR_DR)/fmgr_hdocs.c
 
 MAN_SRCS += $(EXEC_DR)/exec.c
 MAN_SRCS += $(EXEC_DR)/exec_path.c
 MAN_SRCS += $(EXEC_DR)/exec_builtins.c
+MAN_SRCS += $(EXEC_DR)/exec_waiter.c
 
 MAN_SRCS += $(BLTN_DR)/cd.c
 MAN_SRCS += $(BLTN_DR)/echo.c

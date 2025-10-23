@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 15:10:32 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/16 17:05:52 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/19 02:19:23 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,16 +20,22 @@ static int	env_get_size(t_env *env_list)
 	size = 0;
 	env = env_list;
 	while (env)
-		env = (size++, env->next);
+	{
+		if (env->value)
+			size++;
+		env = env->next;
+	}
 	return (size);
 }
 
-static char	*env_to_str(char *key, char *val, char **envp, int j)
+static char	*env_to_str(char *key, char *val)
 {
 	char	*str;
 	int		size;
 	int		i;
 
+	if (!key || !val)
+		return (NULL);
 	size = ft_strlen(key) + 1 + ft_strlen(val);
 	str = ft_calloc(size + 1, sizeof(char));
 	if (str == NULL)
@@ -40,17 +46,18 @@ static char	*env_to_str(char *key, char *val, char **envp, int j)
 	str[i++] = '=';
 	while (*val)
 		str[i++] = *val++;
-	envp[j] = str;
 	return (str);
 }
 
-char	**env_get_envp(t_env *env_list)
+char	**env_get_envp(t_env *env_list, t_core *core)
 {
+	char	**envp;
 	t_env	*env;
 	int		size;
-	char	**envp;
 	int		j;
 
+	if (core->envp && utl_free_strs(0, core->envp))
+		core->envp = NULL;
 	size = env_get_size(env_list);
 	envp = ft_calloc(size + 1, sizeof(char *));
 	if (envp == NULL)
@@ -59,12 +66,14 @@ char	**env_get_envp(t_env *env_list)
 	j = 0;
 	while (env)
 	{
-		if (!env_to_str(env->key, env->value, envp, j++))
+		if (env->value)
 		{
-			utl_free_strs(0, envp);
-			return (NULL);
+			envp[j] = env_to_str(env->key, env->value);
+			if (!envp[j])
+				return (utl_free_strs(0, envp), NULL);
+			j++;
 		}
 		env = env->next;
 	}
-	return (envp);
+	return (core->envp = envp);
 }

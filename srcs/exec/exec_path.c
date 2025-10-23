@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_path.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:18:44 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/07 17:10:57 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/19 14:15:34 by ntahri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static char	**exc_load_paths(char **envp)
 		if (ft_strnstr(envp[i], "PATH", 4) && is_dflt--)
 			break ;
 	if (is_dflt)
-		paths = ft_split(ENV_DFLT_PATH, ':');
+		paths = NULL;
 	else
 		paths = ft_split(envp[i] + 5, ':');
 	return (paths);
@@ -66,6 +66,8 @@ static int	exc_check_access(char *path)
 		return (0);
 	if (acc_ex == 0 && S_ISREG(statb.st_mode))
 		return (1);
+	if (acc_ex == -2)
+		return (-2);
 	ft_eprintf(ERR_PTH, path, "Is not a file");
 	return (0);
 }
@@ -97,7 +99,10 @@ int	exc_check_path(char **argv, char **envp)
 		return (exc_check_access(*argv));
 	paths = exc_load_paths(envp);
 	if (paths == NULL)
-		return (-1);
+	{
+		ft_eprintf(ERR_CMD, *argv);
+		return (0);
+	}
 	i = -1;
 	while (paths[++i])
 	{
@@ -109,5 +114,5 @@ int	exc_check_path(char **argv, char **envp)
 	}
 	ft_eprintf(ERR_CMD, *argv);
 	utl_free_strs(0, paths);
-	return (-2);
+	return (0);
 }

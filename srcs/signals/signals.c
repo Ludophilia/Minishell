@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 18:59:28 by ntahri            #+#    #+#             */
-/*   Updated: 2025/10/14 22:22:50 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/19 03:04:25 by ntahri           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+// Handler prompt interactif
 static void	sig_handler_interactive(int sig)
 {
 	g_sig = sig;
@@ -21,13 +22,16 @@ static void	sig_handler_interactive(int sig)
 		rl_on_new_line();
 		rl_replace_line("", 0);
 		rl_redisplay();
-		// 14/10 - Exit status again
-		// g_exit_status = 130; // 128 + 2 or 128 + sig
 	}
-	else if (sig == SIGQUIT)
+}
+
+// Handler exécution
+static void	sig_handler_exec(int sig)
+{
+	g_sig = sig;
+	if (sig == SIGINT)
 	{
-		rl_on_new_line();
-		rl_redisplay();
+		write(1, "\n", 1);
 	}
 }
 
@@ -39,12 +43,15 @@ int	sig_init_child(void)
 		return (-1);
 	sa.sa_handler = SIG_DFL;
 	sa.sa_flags = 0;
-	if (sigaction(SIGINT, &sa, NULL) == -1
-		|| sigaction(SIGQUIT, &sa, NULL) == -1)
+	if (sigaction(SIGINT, &sa, NULL) == -1)
+		return (-1);
+	sa.sa_handler = SIG_DFL;
+	if (sigaction(SIGQUIT, &sa, NULL) == -1)
 		return (-1);
 	return (0);
 }
 
+// Handler prompt interactif
 int	sig_init_prompt(void)
 {
 	struct sigaction	sa;
@@ -53,8 +60,27 @@ int	sig_init_prompt(void)
 		return (-1);
 	sa.sa_handler = sig_handler_interactive;
 	sa.sa_flags = SA_RESTART;
-	if (sigaction(SIGINT, &sa, NULL) == -1
-		|| sigaction(SIGQUIT, &sa, NULL) == -1)
+	if (sigaction(SIGINT, &sa, NULL) == -1)
+		return (-1);
+	sa.sa_handler = SIG_IGN;
+	if (sigaction(SIGQUIT, &sa, NULL) == -1)
+		return (-1);
+	return (0);
+}
+
+// Handler exécution
+int	sig_init_exec(void)
+{
+	struct sigaction	sa;
+
+	if (sigemptyset(&sa.sa_mask) == -1)
+		return (-1);
+	sa.sa_handler = sig_handler_exec;
+	sa.sa_flags = SA_RESTART;
+	if (sigaction(SIGINT, &sa, NULL) == -1)
+		return (-1);
+	sa.sa_handler = SIG_IGN;
+	if (sigaction(SIGQUIT, &sa, NULL) == -1)
 		return (-1);
 	return (0);
 }

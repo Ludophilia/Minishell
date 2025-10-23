@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 04:05:51 by ntahri            #+#    #+#             */
-/*   Updated: 2025/10/16 19:10:15 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/17 20:12:30 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,11 @@ static int	echo_print_args(char **args, int i, int fd)
 {
 	while (args[i])
 	{
-		if (ft_dprintf(fd, args[i]) == -1)
+		if (ft_dprintf(fd, "%s", args[i]) == -1)
 			return (-1);
 		if (args[i + 1])
 		{
-			if (ft_dprintf(fd, " ", fd) == -1)
+			if (ft_dprintf(fd, " ") == -1)
 				return (-1);
 		}
 		i++;
@@ -64,7 +64,7 @@ int	bi_echo(t_cmd *cmd, int fd)
 	}
 	if (echo_print_args(args, i, fd) == -1)
 		return (1);
-	if (newline == -1)
+	if (newline)
 	{
 		if (ft_dprintf(fd, "\n") == -1)
 			return (1);

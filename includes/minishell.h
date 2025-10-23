@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/16 18:55:37 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/10/19 15:59:20 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@
 # define ERR_BMNY "%s: too many arguments\n"
 # define ERR_BINV "%s: `%s': not a valid identifier\n"
 
-extern uint32_t	g_sig;
+extern volatile sig_atomic_t	g_sig;
 
 typedef enum e_flo
 {
@@ -57,8 +57,9 @@ typedef enum e_flo
 
 typedef enum e_exit
 {
-	EX_SUCC = EXIT_SUCCESS,
-	EX_FAIL = EXIT_FAILURE,
+	EX_SUCC = 0,
+	EX_FAIL = 1,
+	EX_CNFD = 127,
 }	t_exit;
 
 typedef enum e_max
@@ -74,12 +75,12 @@ typedef enum e_max
 typedef enum e_tokt
 {
 	TOK_EOL = 0,
-	TOK_WORD,
-	TOK_PIPE,
-	TOK_IRED,
-	TOK_IRED_HD,
-	TOK_ORED,
-	TOK_ORED_AP
+	TOK_WORD = 1,
+	TOK_PIPE = 2,
+	TOK_IRED = 3,
+	TOK_IRED_HD = 4,
+	TOK_ORED = 5,
+	TOK_ORED_AP = 6
 }	t_tokt;
 
 typedef enum e_cflg
@@ -130,7 +131,12 @@ typedef struct s_core
 	uint32_t		flags;
 	uint8_t			exit;
 	t_env			*env;
+	char			**envp;
 }	t_core;
+
+int		init_core(t_core *core, char **envp);
+int		init_cleanup_core(t_core *core);
+int		init_isatty(void);
 
 int		lex_is_quote(int c);
 int		lex_is_op(int c);
@@ -148,7 +154,7 @@ char	*psr_create_word(t_tok *tok, t_tokt context, t_core *core);
 int		psr_add_reds(t_tok *tok, t_cmd *cmd, t_core *core);
 int		psr_add_cmd(t_tok *tok, t_cmd *cmd, t_core *core);
 int		psr_cleanup_cmds(t_cflg flags, t_core *core);
-int		psr_error_check(t_tok *toks);
+int		psr_error_check(t_tok *toks, t_core *core);
 int		psr_parse_line(char *line, t_core *core);
 
 int		fmgr_access(char *path, int type);
@@ -156,18 +162,20 @@ int		fmgr_open(char *path, int openflags, mode_t openmode);
 int		fmgr_pipe(int fds[2]);
 int		fmgr_close(int *xfd);
 int		fmgr_dup2(int old_fd, int new_fd);
-int		fmgr_set_hdocs(int *ifds, t_red *red);
+int		fmgr_set_hdocs(int *ifds, t_red *red, t_core *core);
 int		fmgr_set_pipe(int pos, int pmax, t_cmd *cmd);
-int		fmgr_set_red(int *xfd, int openflags, t_red *red);
+int		fmgr_set_red(int *xfd, int openflags, t_red *red, t_core *core);
 int		fmgr_set_reds(t_core *core);
 
 int		utl_free_strs(int from_id, char **strs);
 int		utl_cleanup(t_cflg flags, t_core *core);
 char	*utl_itoa(unsigned int nbr, char *store);
 int		utl_free(void *ptr);
+int		utl_exit(int status, t_core *core);
 
 int		sig_init_prompt(void);
 int		sig_init_child(void);
+int		sig_init_exec(void);
 
 t_env	*env_new_node(const char *key, const char *value);
 int		env_add_start(t_env **env_list, const char *key, const char *value);
@@ -179,7 +187,8 @@ int		env_free_all(t_env *node);
 int		env_is_identifier(const char *str);
 char	*env_get(t_env *env_list, const char *key);
 int		env_set(t_env **env_list, const char *key, const char *value);
-char	**env_get_envp(t_env *env_list);
+char	**env_get_envp(t_env *env_list, t_core *core);
+int		env_cleanup(t_core *core);
 
 int		bi_cd(t_core *core, t_cmd *cmd);
 int		bi_echo(t_cmd *cmd, int fd);
@@ -190,6 +199,7 @@ int		bi_pwd(int fd);
 int		bi_unset(t_cmd *cmd, t_env **env);
 
 int		exc_check_path(char **argv, char **envp);
+int		exc_wait_cmds(t_core *core);
 int		exc_exec_cmds(t_core *core);
 int		exc_if_builtin(t_cmd *cmd, t_core *core);
 
