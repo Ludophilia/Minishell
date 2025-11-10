@@ -1,0 +1,9 @@
+# \#ASSIGNMENT
+# \#TESTS
+*.o
+*.a
+x??
+.vscode
+libftTester
+francinette
+Libft_tester
