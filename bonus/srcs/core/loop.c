@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   loop.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:18:13 by jgermany          #+#    #+#             */
-/*   Updated: 2025/10/18 23:08:42 by ntahri           ###   ########.fr       */
+/*   Updated: 2025/11/10 16:25:15 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ static int	loop_process_line(char *line, t_core *core)
 	int		psr_exv;
 
 	add_history(line);
+	// 10/11 - Time to improve that one more time...
 	psr_exv = psr_parse_line(line, core);
 	if (psr_exv == -2)
 		return (-2);
@@ -57,6 +58,8 @@ int	loop_prompt(t_core *core)
 			bi_exit(core, core->cmds);
 		if (*line == 0 && utl_free(line))
 			continue ;
+
+		// 10/11 - Here we go again... 
 		proc_exv = loop_process_line(line, core);
 		if (proc_exv == -1 && utl_free(line))
 			return (-1);

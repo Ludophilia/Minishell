@@ -67,12 +67,19 @@ Upgrade your mandatory Minishell into a bonus-compliant shell handling:
 - [ ] Handle operator precedence correctly: parentheses > pipes > logical operators
 - [ ] Add syntax validation for invalid sequences and unclosed parentheses
 
+## 🌳 Phase 2 — Create the AST
+
 ### Parser
-- [ ] Update recursive grammar rules to support `&&`, `||`, and `()`
+- [ ] Update recursive grammar rules to support `&&`, `||`, and `()`.
+	- [ ] Grammar rules in Bnf notation:
+		line          ::= and_or
+		and_or        ::= pipeline ( ('&&' | '||') pipeline )*
+		pipeline      ::= command ( '|' command )*
+		command       ::= simple_command | subshell
+		subshell      ::= '(' line ')'
+
 - [ ] Adapt parser functions to produce new AST node types (`AND`, `OR`, `SUBSHELL`)
 - [ ] Ensure parentheses create proper subtree isolation
-
-## 🌳 Phase 2 — Refactor the AST
 
 ### Data Structures
 - [ ] Extend `t_node_type` enum with `NODE_AND`, `NODE_OR`, `NODE_SUBSHELL`
@@ -128,6 +135,26 @@ Upgrade your mandatory Minishell into a bonus-compliant shell handling:
 - [ ] Sort wildcard expansions for consistent output
 - [ ] Compare behavior with Bash for compliance
 - [ ] Maintain consistent naming and code organization
+
+## Phase 8 - Extra Polish
+
+### Signals
+
+- [ ] Maybe improve here documents?
+	- ^C processing with error message
+	- Improve memory management on exit with SIGINT (rl_done as a signal to
+	trigger readline internal cleaning?)
+	- why does readline sometimes add a new line and sometime not (^C)
+
+### Builtins
+
+- [ ] increment SHLVL each time you open a minishell.
+
+### Readline
+
+- [ ] Maybe improve readline behavior
+	- [ ] It really struggles with long lines... I don't know why.
+
 
 ## 🧠 Bonus Tips
 
