@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:18:13 by jgermany          #+#    #+#             */
-/*   Updated: 2025/11/10 16:25:15 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/11/11 09:27:06 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,9 @@ static int	loop_process_line(char *line, t_core *core)
 	int		psr_exv;
 
 	add_history(line);
-	// 10/11 - Time to improve that one more time...
+
+
+	// 10/11 - Time to improve the lexer and parser for the bonus part.
 	psr_exv = psr_parse_line(line, core);
 	if (psr_exv == -2)
 		return (-2);
@@ -27,14 +29,17 @@ static int	loop_process_line(char *line, t_core *core)
 		utl_cleanup(core->flags, core);
 		return (-1);
 	}
-	sig_init_exec();
-	if (exc_exec_cmds(core) == -1)
-	{
-		sig_init_prompt();
-		utl_cleanup(core->flags, core);
-		return (-1);
-	}
-	sig_init_prompt();
+
+
+	// 11/10 - Execution Part...
+	// sig_init_exec();
+	// if (exc_exec_cmds(core) == -1)
+	// {
+	// 	sig_init_prompt();
+	// 	utl_cleanup(core->flags, core);
+	// 	return (-1);
+	// }
+	// sig_init_prompt();
 	utl_cleanup(core->flags, core);
 	return (0);
 }
@@ -59,7 +64,7 @@ int	loop_prompt(t_core *core)
 		if (*line == 0 && utl_free(line))
 			continue ;
 
-		// 10/11 - Here we go again... 
+		// 10/11 - Here we go again... Bonus part.
 		proc_exv = loop_process_line(line, core);
 		if (proc_exv == -1 && utl_free(line))
 			return (-1);

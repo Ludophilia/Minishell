@@ -1,5 +1,7 @@
 # Lexer
 
+# Mandatory
+
 ## What should be done?
 
 - Emit tokens as you scan a command line.
@@ -208,5 +210,81 @@ that would only contain only them anyway.
 - PIPE_OP, (|)
 - EOL
 
-- BONUS:
-	- Later...
+# Bonus
+
+## Which tokens for the bonus part?
+
+- WORD,
+- IRED_OP, (<)
+- IRED_HD_OP, (<<)
+- ORED_OP, (>)
+- ORED_AP_OP, (>>)
+- PIPE_OP, (|)
+- EOL
+
+## What's lacking?
+
+- TOK_ANDL (`&&` management)
+- TOK_ORL (`||` management)
+
+- `()` management
+	- TOK_SUBO '(' - notifies parser that a subshell is needed
+	- TOK_SUBC ')' - notifies the end of the grouping, which is useful
+	for: 
+		- limiting what should be executed in a subshell
+		- detecting errors (unclosed parentheses, closing par not followed
+		by OP)
+
+## Conclusion
+
+- TOK_WORD,
+
+- TOK_IRED,
+- TOK_IRED_HD,
+- TOK_ORED,
+- TOK_ORED_AP,
+
+- TOK_PIPE,
+- TOK_EOL
+- TOK_ANDL 
+- TOK_ORL
+- TOK_SUBO
+- TOK_SUBC
+
+## Normal case
+
+- `echo a && echo b`
+- `echo a || echo b`
+
+- `(exit 142) || echo exited with $? code.`
+- `(exit 142) && echo exited with $? code.`
+
+- `((sleep 1) && (echo lol))`
+- `((sleep 1 && echo a) && (sleep 1 && echo b))`
+
+- `((sleep 100 && echo a) | (sleep 100 && echo b))`
+
+- `(((sleep 20 | sleep 20) && echo a) | ((sleep 20 | sleep 20) && echo b))`
+
+## Error case
+
+- `&`
+	- Will be treated as a WORD, not an error.
+	- TOK_ANDL is emitted only when both `&` are present.
+- `&&`
+- `pwd &&` (minishell exclusive)
+- `&& pwd`
+
+- `|`
+	- Will be treated as a WORD, not an error.
+	- TOK_ORL is emitted only when both `|` are present.
+- `||`
+- `pwd ||` (minishell exclusive)
+- `|| pwd`
+
+- `(` (minishell exclusive)
+- `)` (minishell exclusive)
+- `(()` (Any form of unbalanced parentheses is an error case here)
+
+- `()`
+- `(echo a) (echo b)` (two or more subshells without an operator)
