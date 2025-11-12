@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 19:46:25 by jegerman          #+#    #+#             */
-/*   Updated: 2025/11/11 11:28:31 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/11/12 14:29:02 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,11 @@ static int	lex_emit_optoken(char *line, t_tok *tok)
 
 // 11/11 - What's needed to change?
 
-// ==
-// == 
+/*- TOK_AND
+- TOK_OR
+- TOK_SUBO
+- TOK_SUBC*/
+
 int	lex_tokenize_line(char *line, t_tok *toks)
 {
 	int		tpos;

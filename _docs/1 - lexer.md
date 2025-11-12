@@ -246,7 +246,7 @@ that would only contain only them anyway.
 
 - TOK_PIPE,
 - TOK_EOL
-- TOK_ANDL 
+- TOK_ANDL
 - TOK_ORL
 - TOK_SUBO
 - TOK_SUBC

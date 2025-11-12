@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/19 15:59:20 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/11/12 14:28:56 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,11 @@ typedef enum e_tokt
 	TOK_IRED = 3,
 	TOK_IRED_HD = 4,
 	TOK_ORED = 5,
-	TOK_ORED_AP = 6
+	TOK_ORED_AP = 6,
+	TOK_AND = 7,
+	TOK_OR = 8,
+	TOK_SUBO = 9,
+	TOK_SUBC = 10
 }	t_tokt;
 
 typedef enum e_cflg
