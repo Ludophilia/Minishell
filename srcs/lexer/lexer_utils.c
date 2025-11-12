@@ -3,26 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:31:20 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/19 13:18:14 by ntahri           ###   ########.fr       */
+/*   Updated: 2025/11/12 19:04:31 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	lex_is_op(int c)
+int	lex_is_op(char *c)
 {
-	return (c == '<' || c == '>' || c == '|');
+	return (c[0] == '|'
+		|| c[0] == '<' || c[0] == '>'
+		|| c[0] == '(' || c[0] == ')'
+		|| (c[0] == '&' && c[1] == '&'));
 }
 
-int	lex_is_sep(int c)
+int	lex_is_sep(char *c)
 {
-	return (c == ' ' || c == '\t');
+	return (c[0] == ' ' || c[0] == '\t');
 }
 
-int	lex_is_quote(int c)
+int	lex_is_quote(char *c)
 {
-	return (c == '\'' || c == '\"');
+	return (c[0] == '\'' || c[0] == '\"');
 }

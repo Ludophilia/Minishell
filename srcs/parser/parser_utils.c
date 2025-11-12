@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:24:36 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/09 14:23:51 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/11/12 18:17:07 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	psr_is_ored(t_tok *tok)
 
 int	psr_is_outq(int c, int *q)
 {
-	if ((*q == 0 && lex_is_quote(c))
+	if ((*q == 0 && lex_is_quote((char *)&c))
 		|| (*q != 0 && *q == c))
 		return ((*q == 0 && (*q = c)) || !(*q = 0));
 	return (0);

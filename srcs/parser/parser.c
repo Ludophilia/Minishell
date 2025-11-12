@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:16:27 by jegerman          #+#    #+#             */
-/*   Updated: 2025/11/11 11:24:47 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/11/12 19:09:42 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,14 @@ static int	lex_print_tokens(t_tok *tokens)
 			write(1, token->start, token->len);
 			write(1, "\n", 1);
 		}
+		else if (token->type == TOK_AND)
+			printf("\tTOK_AND\n");
+		else if (token->type == TOK_OR)
+			printf("\tTOK_OR\n");
+		else if (token->type == TOK_SUBO)
+			printf("\tTOK_SUBO\n");
+		else if (token->type == TOK_SUBC)
+			printf("\tTOK_SUBC\n");
 		else if (token->type == TOK_IRED)
 			printf("\tTOK_IRED\n");
 		else if (token->type == TOK_IRED_HD)
@@ -47,7 +55,8 @@ int	psr_parse_line(char *line, t_core *core)
 	t_tok	*tok;
 	t_cmd	*cmd;
 
-	if (lex_tokenize_line(line, toks) || psr_error_check(toks, core) == -1)
+	// 13/11 - psr_error_check;
+	if (lex_tokenize_line(line, toks))// || psr_error_check(toks, core) == -1)
 		return (-2);
 
 	lex_print_tokens(toks);

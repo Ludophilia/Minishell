@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/11/12 14:28:56 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/11/12 18:15:35 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,9 +142,9 @@ int		init_core(t_core *core, char **envp);
 int		init_cleanup_core(t_core *core);
 int		init_isatty(void);
 
-int		lex_is_quote(int c);
-int		lex_is_op(int c);
-int		lex_is_sep(int c);
+int		lex_is_quote(char *c);
+int		lex_is_op(char *c);
+int		lex_is_sep(char *c);
 int		lex_tokenize_line(char *line, t_tok *toks);
 
 int		psr_is_ired(t_tok *tok);

@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 13:37:44 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/19 15:32:15 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/11/12 16:27:11 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ static int	psr_wtok_check(t_tok *tok, t_core *core)
 	quoted = 0;
 	while (++i < tok->len)
 	{
-		if (!quoted && lex_is_quote(tok->start[i]))
+		if (!quoted && lex_is_quote(tok->start + i))
 			quoted = tok->start[i];
 		else if (quoted && tok->start[i] == quoted)
 			quoted = 0;
