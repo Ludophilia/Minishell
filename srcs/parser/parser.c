@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:16:27 by jegerman          #+#    #+#             */
-/*   Updated: 2025/11/12 19:09:42 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/11/13 19:06:07 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,11 +55,12 @@ int	psr_parse_line(char *line, t_core *core)
 	t_tok	*tok;
 	t_cmd	*cmd;
 
-	// 13/11 - psr_error_check;
-	if (lex_tokenize_line(line, toks))// || psr_error_check(toks, core) == -1)
+	if (lex_tokenize_line(line, toks) || psr_error_check(toks, core) == -1)
+	{
+		lex_print_tokens(toks);
 		return (-2);
+	}
 
-	lex_print_tokens(toks);
 	(void)tok;
 	(void)cmd;
 
