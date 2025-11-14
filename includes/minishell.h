@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/11/12 18:15:35 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/11/14 21:49:26 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,6 +146,10 @@ int		lex_is_quote(char *c);
 int		lex_is_op(char *c);
 int		lex_is_sep(char *c);
 int		lex_tokenize_line(char *line, t_tok *toks);
+
+int		psr_redtok_check(t_tok *tok);
+int		psr_duplop_check(t_tok *tok);
+int		psr_binaop_check(int pos, t_tok *tok);
 
 int		psr_is_ired(t_tok *tok);
 int		psr_is_ored(t_tok *tok);
