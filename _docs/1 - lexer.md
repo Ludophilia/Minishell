@@ -268,23 +268,78 @@ that would only contain only them anyway.
 
 ## Error case
 
+// 16/11 - OK OK. Nice beginnings, BUT what I've done is SHIT.
+// BACK TO THE DRAWING BOARD...
+
+### AND Lists
+
 - `&`
 	- Will be treated as a WORD, not an error.
 	- TOK_ANDL is emitted only when both `&` are present.
-- `&&`
-- `pwd &&` (minishell exclusive)
-- `&& pwd`
 
-- `|`
-	- Will be treated as a WORD, not an error.
-	- TOK_ORL is emitted only when both `|` are present.
+#### At the beginning
+
+- `&&`
+- `&& pwd`
+	- `bash: syntax error near unexpected token `&&`
+	- expected at pos == 0: '(', WORD, not OPERATORS
+
+####  After the '&&'
+
+- `pwd &&` (minishell exclusive)
+	- `bash: syntax error near unexpected token `end-of-line`
+	- expected after `&&`: '(', WORD
+
+### OR Lists
+
+#### At the beginning
+
 - `||`
-- `pwd ||` (minishell exclusive)
 - `|| pwd`
+	- `bash: syntax error near unexpected token `||'`
+	- expected at pos == 0, '(', WORD, not OPERATORS
+
+#### After the '||'
+
+- `pwd ||` (minishell exclusive)
+	- `bash: syntax error near unexpected token `end-of-line'`
+	- expected after `||`:
+
+### Subshells
+
+#### At the beginning
+
+- `)`
+	- `bash: syntax error near unexpected token `)`
+	- expected at pos == 0 or when parcred is bal: WORD, '('... not `)`.
+
+#### Unclosed parentheses
 
 - `(` (minishell exclusive)
-- `)` (minishell exclusive)
-- `(()` (Any form of unbalanced parentheses is an error case here)
+- `((word)`
+	- `bash: syntax error near unexpected token `end-of-line'`
+	- expected after '(': WORD or '('... not EOL.
+	- the token is EOL, not `(`. That just shows I understood SHIT.
+
+#### After a '('
 
 - `()`
-- `(echo a) (echo b)` (two or more subshells without an operator)
+- `(()`
+- `()()`
+- `()()()`
+	- `bash: syntax error near unexpected token `)'`
+	- expected after '(': WORD or '(', not `)`
+
+- `(&&)` 
+- `(|)`
+- `(||)`
+	- `bash: syntax error near unexpected token `&&'`
+	- expected after '(': WORD or '(', not OPERATOR (`&&`, `|`, `||`)
+
+#### After a ')'
+
+- `(echo a) (echo b)`
+- `(echo a) )echo b)`
+- `(echo a) james echo b)`
+	- `bash: syntax error near unexpected token `('`
+	- expected after ')': OPERATOR or EOL, not `(`,  `)` or WORD `james`
