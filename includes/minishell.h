@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/11/16 20:19:57 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/11/17 20:39:55 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,23 +147,23 @@ int		lex_is_op(char *c);
 int		lex_is_sep(char *c);
 int		lex_tokenize_line(char *line, t_tok *toks);
 
+int		psr_istok(t_tokt type, t_tok *tok);
+int		psr_isop(t_tok *tok);
 int		psr_synterr(t_tok *tok);
-int		psr_redtok_check(t_tok *tok);
-int		psr_duplop_check(t_tok *tok);
-int		psr_binaop_check(int pos, t_tok *tok);
+int		psr_error_check(t_tok *toks, t_core *core);
+int		psr_isired(t_tok *tok);
+int		psr_isored(t_tok *tok);
 
-int		psr_is_ired(t_tok *tok);
-int		psr_is_ored(t_tok *tok);
 int		psr_is_outq(int c, int *q);
 int		psr_is_envv(char *c, int ct, int q);
 int		psr_is_envv_chr(int c, int pos);
+
 int		psr_envv_value_len(char *start, int *j, t_core *core);
 int		psr_copy_envv_value(char *start, char *word, int *j, t_core *core);
 char	*psr_create_word(t_tok *tok, t_tokt context, t_core *core);
 int		psr_add_reds(t_tok *tok, t_cmd *cmd, t_core *core);
 int		psr_add_cmd(t_tok *tok, t_cmd *cmd, t_core *core);
 int		psr_cleanup_cmds(t_cflg flags, t_core *core);
-int		psr_error_check(t_tok *toks, t_core *core);
 int		psr_parse_line(char *line, t_core *core);
 
 int		fmgr_access(char *path, int type);

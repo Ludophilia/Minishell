@@ -6,23 +6,11 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 20:24:36 by jegerman          #+#    #+#             */
-/*   Updated: 2025/11/12 18:17:07 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/11/17 20:30:21 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-int	psr_is_ired(t_tok *tok)
-{
-	return (tok->type == TOK_IRED
-		|| tok->type == TOK_IRED_HD);
-}
-
-int	psr_is_ored(t_tok *tok)
-{
-	return (tok->type == TOK_ORED
-		|| tok->type == TOK_ORED_AP);
-}
 
 int	psr_is_outq(int c, int *q)
 {

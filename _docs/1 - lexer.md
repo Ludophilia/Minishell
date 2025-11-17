@@ -288,7 +288,7 @@ that would only contain only them anyway.
 
 - `pwd &&` (minishell exclusive)
 	- `bash: syntax error near unexpected token `end-of-line`
-	- expected after `&&`: '(', WORD
+	- expected after `&&`: WORD, 4 REDS, SUBO
 
 ### OR Lists
 
@@ -302,8 +302,9 @@ that would only contain only them anyway.
 #### After the '||'
 
 - `pwd ||` (minishell exclusive)
+- `word || &&`
 	- `bash: syntax error near unexpected token `end-of-line'`
-	- expected after `||`:
+	- expected after `||`: WORD, 4 REDS, SUBO
 
 ### Subshells
 
@@ -329,6 +330,9 @@ that would only contain only them anyway.
 - `()()()`
 	- `bash: syntax error near unexpected token `)'`
 	- expected after '(': WORD or '(', not `)`
+
+- `(())` (error 2)
+	- Works, but error code 2 (as the others)
 
 - `(&&)` 
 - `(|)`

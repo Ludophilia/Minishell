@@ -6,59 +6,44 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/14 14:02:46 by jegerman          #+#    #+#             */
-/*   Updated: 2025/11/16 20:22:40 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/11/17 20:52:15 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	psr_redtok_check(t_tok *tok)
+int	psr_isop(t_tok *tok)
 {
-	if (tok->type < TOK_IRED || tok->type > TOK_ORED_AP)
-		return (0);
-	if (tok[1].type != TOK_WORD)
-	{
-		psr_synterr(tok + 1);
-		return (-1);
-	}
-	return (0);
+	return (tok->type == TOK_PIPE
+			|| tok->type == TOK_AND
+			|| tok->type == TOK_OR);
 }
 
-int	psr_duplop_check(t_tok *tok)
+int	psr_isired(t_tok *tok)
 {
-	return (tok[1].type >= TOK_PIPE && tok[1].type <= TOK_OR);
+	return (tok->type == TOK_IRED
+		|| tok->type == TOK_IRED_HD);
 }
 
-int	psr_binaop_check(int pos, t_tok *tok)
+int	psr_isored(t_tok *tok)
 {
-	t_tokt	type;
+	return (tok->type == TOK_ORED
+		|| tok->type == TOK_ORED_AP);
+}
 
-	type = tok->type;
-	if (type != TOK_PIPE && type != TOK_AND && type != TOK_OR)
-		return (0);
+int	psr_istok(t_tokt type, t_tok *tok)
+{
+	return (tok->type == type);
+}
 
-	// 16/11 - Correct cases...
+int	psr_synterr(t_tok *tok)
+{
+	char	str[128];
 
-	// (()) (not a syntax error)
-	// ((())) (syntax error but another operator, so leave it)
-
-	
-	// 16/11 - Faulty cases...
-	
-	// 		()
-
-	// 		( && )
-	// 		( | )
-	// 		( || )
-
-	//		()()
-	//		()()()
-
-	// There must be something between pars
-	//	- Another par
-	//	- 
-
-
-	
-	return (pos == 0 || tok[1].type == TOK_EOL);
+	if (tok->type != TOK_EOL)
+		ft_strlcpy(str, tok->start, tok->len + 1);
+	else
+		ft_strlcpy(str, "end-of-line", 12);
+	ft_eprintf(ERR_SYNTAX, str);
+	return (1);
 }

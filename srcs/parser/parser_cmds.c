@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 18:57:18 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/19 15:01:09 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/11/17 20:33:51 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static int	psr_count_args(t_tok *tok)
 	size = 0;
 	while (tok->type != TOK_PIPE && tok->type != TOK_EOL)
 	{
-		if (psr_is_ored(tok) || psr_is_ired(tok))
+		if (psr_isored(tok) || psr_isired(tok))
 			tok += 2;
 		else
 			(void)(size++, tok++);
@@ -50,7 +50,7 @@ int	psr_add_cmd(t_tok *tok, t_cmd *cmd, t_core *core)
 	pos = 0;
 	while (tok->type != TOK_PIPE && tok->type != TOK_EOL)
 	{
-		if (psr_is_ored(tok) || psr_is_ired(tok))
+		if (psr_isored(tok) || psr_isired(tok))
 			tok += 2;
 		else
 		{
