@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 13:37:44 by jegerman          #+#    #+#             */
-/*   Updated: 2025/11/17 21:03:18 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/11/18 21:54:52 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static int	psr_redtok_check(t_tok *tok)
 {
-	if (psr_isored(tok) == false && psr_isired(tok) == false)
+	if (psr_isored(tok) != true && psr_isired(tok) != true)
 		return (0);
 	if (psr_istok(TOK_WORD, tok + 1) == false)
 	{
@@ -48,7 +48,7 @@ static int	psr_wtok_check(t_tok *tok)
 	int		i;
 	int		quoted;
 
-	if (psr_istok(TOK_WORD, tok) == false)
+	if (psr_istok(TOK_WORD, tok) != true)
 		return (0);
 	i = -1;
 	quoted = 0;
@@ -68,23 +68,45 @@ static int	psr_wtok_check(t_tok *tok)
 // It's all about finding the EXPECTED tokens after these ones.
 static int	psr_subtok_check(int *opn, t_tok *tok)
 {
-	if (tok->type != TOK_SUBO && tok->type != TOK_SUBC)
+	if (psr_istok(TOK_SUBO, tok) != true && tpsr_istok(TOK_SUBC, tok) != true)
 		return (0);
 
-	if (tok->type == TOK_SUBO)
+
+
+	if (psr_istok(TOK_SUBO, tok))
 		(*opn)++;
-	else if (tok->type == TOK_SUBC)
+	else if (psr_istok(TOK_SUBC, tok))
 		(*opn)--;
 
+
+	// 18//11 - What should be done?
+	// After a '('
+	//  - [OK] WORD or '(', '<', '<<', '>', '>>'
+	//  - [KO] EOL, PIPE, AND, OR, ')' (if ((opn == 1))
+	
+	// if ()
+	
+	if (psr_isop(tok + 1)
+		|| (psr_istok(TOK_SUBC, tok + 1) && )
+		|| (psr_istok(TOK_EOL, tok + 1) && *opn > 0))
+	{
+		psr_synterr(tok + 1);
+		return (-1);
+	}
 
 	// if opn == 0, last is ')'
 		// but
 
+	// Maybe play with the level a bit?
 
-	// New system for printing ERR_SYNTAX with the right token?
-	if ((tok->type == TOK_SUBC && *opn < 0 && psr_synterr(tok))
-		|| (tok[1].type == TOK_EOL && *opn > 0 && psr_synterr(tok + 1)))
+
+	// After a ')'
+	if ((psr_istok(TOK_SUBC, tok) && *opn < 0 && psr_synterr(tok))
+		|| )
 		return (-1);
+
+	
+		
 	return (0);
 }
 
