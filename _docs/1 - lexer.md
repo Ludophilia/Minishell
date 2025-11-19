@@ -317,7 +317,7 @@ that would only contain only them anyway.
 #### Unclosed parentheses
 
 - `(` (minishell exclusive)
-- `((word)`
+- `((word)` [KO]
 	- `bash: syntax error near unexpected token `end-of-line'`
 	- expected after '(': WORD or '('... not EOL.
 	- the token is EOL, not `(`. That just shows I understood SHIT.
@@ -325,14 +325,12 @@ that would only contain only them anyway.
 #### After a '('
 
 - `()`
+- `((`
 - `(()`
 - `()()`
 - `()()()`
 	- `bash: syntax error near unexpected token `)'`
 	- expected after '(': WORD or '(', not `)`
-
-- `(())` (error 2)
-	- Works, but error code 2 (as the others)
 
 - `(&&)` 
 - `(|)`
@@ -347,3 +345,11 @@ that would only contain only them anyway.
 - `(echo a) james echo b)`
 	- `bash: syntax error near unexpected token `('`
 	- expected after ')': OPERATOR or EOL, not `(`,  `)` or WORD `james`
+
+
+#### OUT OF SCOPE
+
+- `(())` (error 2) 
+	- Works, but error code 2 (as the others)
+	- Outside Minishell context: its an arithmetic evaluator, not
+	a subshell. So we will just trigger the poor 

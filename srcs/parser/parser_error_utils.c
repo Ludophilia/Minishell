@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/14 14:02:46 by jegerman          #+#    #+#             */
-/*   Updated: 2025/11/17 20:52:15 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/11/20 00:12:38 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 int	psr_isop(t_tok *tok)
 {
 	return (tok->type == TOK_PIPE
-			|| tok->type == TOK_AND
-			|| tok->type == TOK_OR);
+		|| tok->type == TOK_AND
+		|| tok->type == TOK_OR);
 }
 
 int	psr_isired(t_tok *tok)
