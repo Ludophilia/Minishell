@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:16:27 by jegerman          #+#    #+#             */
-/*   Updated: 2025/11/13 19:06:07 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/11/20 15:07:35 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,13 +56,23 @@ int	psr_parse_line(char *line, t_core *core)
 	t_cmd	*cmd;
 
 	if (lex_tokenize_line(line, toks) || psr_error_check(toks, core) == -1)
-	{
-		lex_print_tokens(toks);
 		return (-2);
-	}
 
 	(void)tok;
 	(void)cmd;
+	lex_print_tokens(toks);
+
+	// 20/11 - OK. What should be done now?
+	// Parsing.
+	// Creating the AST from the tokens... The meat of the subject bonus.
+
+	// 
+
+	// How does this work?
+
+	
+	
+
 
 	// 11/10 - First improve the lexer...
 	// cmd = core->cmds + core->cmd_pmax;

@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/11/20 12:29:58 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/11/20 14:23:07 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ typedef enum e_max
 {
 	TOK_MAX = 2048,
 	CMD_MAX = 128,
-	RED_MAX = 128,
+	RED_MAX = 64,
 	ID_LMAX = 256,
 	EXW_MAX = 16,
 	PTH_MAX = 4096
@@ -132,6 +132,8 @@ typedef struct s_core
 	t_cmd			cmds[CMD_MAX];
 	int				cmd_pmax;
 	int				cmd_xrdy;
+
+
 	uint32_t		flags;
 	uint8_t			exit;
 	t_env			*env;
@@ -150,9 +152,9 @@ int		lex_tokenize_line(char *line, t_tok *toks);
 int		psr_istok(t_tokt type, t_tok *tok);
 int		psr_isop(t_tok *tok);
 int		psr_synterr(t_tokt type, t_tok *tok);
-int		psr_error_check(t_tok *toks, t_core *core);
 int		psr_isired(t_tok *tok);
 int		psr_isored(t_tok *tok);
+int		psr_error_check(t_tok *toks, t_core *core);
 
 int		psr_is_outq(int c, int *q);
 int		psr_is_envv(char *c, int ct, int q);

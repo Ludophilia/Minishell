@@ -42,6 +42,16 @@
                                             /    \
                                            b      c
 
+	- Tree for `(a && b) || c` (on the other hand):
+
+                                          OR
+                                         /   \
+                                      SUBSH   c
+					  					|    
+									   AND    
+                                     /    \
+                                    a      b
+
 ### List AND-OR `&&`, `||`
 
 - Implement AND list or OR list management.
@@ -77,10 +87,23 @@
                                       /    \
                                      PIPE   d
                                     /    \
-                                  AND     c
+                                  AND    c
                                  /   \
                                 a     b
  
+	- Another one for the...
+
+                                           OR
+                                         /    \
+                                       PIPE    e
+                                      /    \
+                                     PIPE   d
+                                    /    \
+                                  AND    AND
+                                 /   \  /   \
+                                a     b c    e
+
+
 ### Glob character `*`
 
 - Implement the glob character 

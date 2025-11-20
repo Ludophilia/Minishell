@@ -318,3 +318,63 @@ Pipeline Creation is to:
 ## [Parent level redirection: Here document and pipes]
 
 - Should we proceed here? YES <NO>
+
+## BONUS
+
+The parser now should be able to manage (), &&, ||.
+
+We've seen that earlier, but what of the best ways to handle that is
+building an AST as binary tree out of the token list.
+
+How to handle this however?
+
+### Examples of AST
+
+`echo a && echo b`
+`[WORD WORD] AND [WORD WORD]`
+
+       AND
+	/	   \
+echo a	  echo b
+
+
+`echo a && echo b`
+
+What does structure the AST?
+	- What does it mean?
+		- How does the tree build "itself" programmatically.
+
+		- We start from an array of tokens. How do we build a tree from this,
+		programmatically?
+
+`echo a && echo b`
+- Create a command via the tokens, create a node (CMD) out of it. That's the 
+root node?
+- && operator: Create a new node (&&), associate left part to last CMD token,
+(right part with already taken)
+
+
+
+
+line        ::= and_or
+and_or      ::= pipeline ( ('&&' | '||') pipeline )*
+pipeline    ::= command ( '|' command )*
+command     ::= simple_command | subshell
+subshell    ::= '(' line ')'
+
+
+
+### What is the purpose of that AST?
+
+	- Make the expr execution easier.
+		- [But why?]
+		- Binary branches match binary operations and help implement them.
+			- AND: if left branch return 0, we can safely explore the right 
+			one.
+			- OR: if left branch return 0, we don't have to explore the right
+			branch.
+		- Parentheses are backed in the structure. Nodes with parentheses
+		will be grouped. It's better to add a SUBSHELL node to make tree traversal and subshell mode easier to execute.
+
+
+### 
