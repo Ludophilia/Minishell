@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 13:37:44 by jegerman          #+#    #+#             */
-/*   Updated: 2025/11/20 00:07:32 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/11/20 12:49:41 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ static int	psr_redtok_check(t_tok *tok, t_tok *next)
 		return (0);
 	if (next->type == TOK_WORD)
 	{
-		psr_synterr(next);
+		psr_synterr(next->type, next);
 		return (-1);
 	}
 	return (0);
@@ -30,14 +30,14 @@ static int	psr_binaop_check(int pos, t_tok *tok, t_tok *next)
 		return (0);
 	if (pos == 0)
 	{
-		psr_synterr(tok);
+		psr_synterr(tok->type, tok);
 		return (-1);
 	}
 	if (psr_isop(next)
 		|| next->type == TOK_EOL
 		|| next->type == TOK_SUBC)
 	{
-		psr_synterr(next);
+		psr_synterr(next->type, next);
 		return (-1);
 	}
 	return (0);
@@ -59,7 +59,7 @@ static int	psr_wtok_check(t_tok *tok)
 		else if (quoted && tok->start[i] == quoted)
 			quoted = 0;
 	}
-	if (quoted != 0 && psr_synterr(&(t_tok){TOK_EOL}))
+	if (quoted != 0 && psr_synterr(TOK_EOL, NULL))
 		return (-1);
 	return (0);
 }
@@ -70,19 +70,19 @@ static int	psr_subtok_check(int pos, int *opn, t_tok *tok, t_tok *next)
 		return (0);
 	if (tok->type == TOK_SUBO)
 		(*opn)++;
-	if (tok->type == TOK_SUBC)
+	else
 		(*opn)--;
 	if (tok->type == TOK_SUBC && (pos == 0 || *opn < 0))
 	{
-		psr_synterr(tok);
+		psr_synterr(tok->type, tok);
 		return (-1);
 	}
-	if ((tok->type == TOK_SUBC
-			&& (psr_isop(next) || next->type == TOK_SUBC))
+	if ((tok->type == TOK_SUBO
+			&& (next->type == TOK_SUBC || psr_isop(next)))
 		|| (tok->type == TOK_SUBC
 			&& (next->type == TOK_WORD || next->type == TOK_SUBO)))
 	{
-		psr_synterr(next);
+		psr_synterr(next->type, next);
 		return (-1);
 	}
 	return (0);
@@ -107,6 +107,6 @@ int	psr_error_check(t_tok *toks, t_core *core)
 		tok = toks + ++i;
 	}
 	if (opn != 0)
-		return (core->exit = 2, psr_synterr(tok), -1);
+		return (core->exit = 2, psr_synterr(tok->type, tok), -1);
 	return (0);
 }

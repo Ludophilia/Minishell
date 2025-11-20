@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/14 14:02:46 by jegerman          #+#    #+#             */
-/*   Updated: 2025/11/20 00:12:38 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/11/20 12:28:29 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,14 +36,14 @@ int	psr_istok(t_tokt type, t_tok *tok)
 	return (tok->type == type);
 }
 
-int	psr_synterr(t_tok *tok)
+int	psr_synterr(t_tokt type, t_tok *tok)
 {
 	char	str[128];
 
-	if (tok->type != TOK_EOL)
-		ft_strlcpy(str, tok->start, tok->len + 1);
-	else
+	if (type == TOK_EOL)
 		ft_strlcpy(str, "end-of-line", 12);
+	else
+		ft_strlcpy(str, tok->start, tok->len + 1);
 	ft_eprintf(ERR_SYNTAX, str);
 	return (1);
 }
