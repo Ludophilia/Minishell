@@ -348,21 +348,31 @@ What does structure the AST?
 		programmatically?
 
 `echo a && echo b`
-- Create a command via the tokens, create a node (CMD) out of it. That's the 
-root node?
-- && operator: Create a new node (&&), associate left part to last CMD token,
-(right part with already taken)
+	- Create a command via the tokens, create a node (CMD) out of it. That's the 
+	root node?
+	- && operator: Create a new node (&&), associate left part to last CMD token,
+	(right part with already taken)
 
 
+21/11 - Ahahaha... Still struggling on that shi.
+
+RULES:
+
+- line        ::= and_or
+- and_or      ::= pipeline ( ('&&' | '||') pipeline )*
+- pipeline    ::= command ( '|' command )*
+- command     ::= simple_command | subshell
+- subshell    ::= '(' line ')'
+
+APPLICATION:
+
+- a && (b || c) 
+	- and_or
+	- pipeline && (b || c) 
 
 
-line        ::= and_or
-and_or      ::= pipeline ( ('&&' | '||') pipeline )*
-pipeline    ::= command ( '|' command )*
-command     ::= simple_command | subshell
-subshell    ::= '(' line ')'
-
-
+	- (command && subshell)
+	- (simple_command && subshell)
 
 ### What is the purpose of that AST?
 
