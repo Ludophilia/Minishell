@@ -334,7 +334,11 @@ How to handle this however?
 `[WORD WORD] AND [WORD WORD]`
 
        AND
-	/	   \
+	/      \
+  PIPE	   PIPE
+   |        |
+  CMD      CMD
+   |        |
 echo a	  echo b
 
 
@@ -358,21 +362,72 @@ What does structure the AST?
 
 RULES:
 
-- line        ::= and_or
-- and_or      ::= pipeline ( ('&&' | '||') pipeline )*
-- pipeline    ::= command ( '|' command )*
-- command     ::= simple_command | subshell
-- subshell    ::= '(' line ')'
+- line				::= and_or
+- and_or			::= pipeline ( ('&&' | '||') pipeline )*
+- pipeline			::= command ( '|' command )*
+- command			::= simple_command | subshell
+- subshell			::= '(' line ')'
+- simple_command	::= word ( word | redirection )*
+- redirection		::= ('<' | '>' | '<<' | '>>') word
+- word				::= TOKEN
 
 APPLICATION:
 
-- a && (b || c) 
-	- and_or
-	- pipeline && (b || c) 
+// 22/11 - Every top node type at least (and_or, pipeline, commands....) should
+be represented in the Abtrasct parser tree, even if they don't . Why?
+// ==  AST should match the grammar production rules
+// ==  Being close to production rules make it more efficient to traverse, less branching...
+// == Easier to debug, consistency makes it simpler...
+// == That's how bash does it anyway.
 
+SO PLEASE CORRECT WHAT'S BELOW, WE'RE GETTING CLOSE...
 
-	- (command && subshell)
-	- (simple_command && subshell)
+- a && (b || c)
+
+	- root and_or node created via parse_line(`a && (b || c)`) (as a token)
+		- grammar rules:
+			- and_or (matches: `a && (b || c)`)
+
+		- [I] Starting iteration on the token list -> `a`
+
+		- left: parse_line(`a`) (as a token)
+
+			- parse_line(`a`) calls parse_and_or, parse_pipeline... and each
+			will end up returning the correct node.
+
+				- grammar rules application:
+					- and_or (matches: `a`)
+					- pipeline (matches: `a`)
+					- command (matches: `a`)
+					- simple_command (matches: `a`)
+					- word (matches: `a`)
+					- TOKEN (matches: `a`)
+
+		
+		- [II] Moving to the next token `&&`
+			- In an and-or node, the token TOK_AND is stored as the operator...
+
+		- [III] Moving to the next token `(`
+		
+		- right: it's a '(' TOKEN so it will trigger:
+			- parse_subshell() 
+
+			- grammar rules application:
+				- subshell		::= '(' line ')'
+				- line    		::= and_or
+					- create subshell node
+					- 
+
+		- [IV] Moving to the next token `b`
+
+				- parse_line(`b || c)`)
+				- parse_and_or(`b || c)`)
+
+					- grammar rules application:
+						- line        ::= and_or
+						- and_or      ::= pipeline ( ('&&' | '||') pipeline )*
+						- pipeline    ::= command ( '|' command )*
+						- command     ::= simple_command | subshell
 
 ### What is the purpose of that AST?
 
