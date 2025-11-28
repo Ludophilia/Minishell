@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:16:27 by jegerman          #+#    #+#             */
-/*   Updated: 2025/11/20 15:07:35 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/11/28 19:30:10 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,16 +62,30 @@ int	psr_parse_line(char *line, t_core *core)
 	(void)cmd;
 	lex_print_tokens(toks);
 
-	// 20/11 - OK. What should be done now?
-	// Parsing.
-	// Creating the AST from the tokens... The meat of the subject bonus.
+	// 20/11, 28/11 - OK. What should be done now?
+		// - Parsing.
+		// 		- Creating the AST from the tokens... 
+		//		The meat of the subject bonus.
 
-	// 
 
-	// How does this work?
+	// How do I create it?
 
+	// - 0. Create the AST
+	// - -- 1. Identity and add the different possibles nodes in minishell.h
+
+	// - 2. Write the Recursive Descent Parser logic.
+	//	- Those multiple functions... one for each non terminal, starting
+	//   from top level, where the AST is building itself bottom-up and where
+	//   the input should be visible from the leaves of the AST while using 
 	
-	
+	// - 3. Find a way to test it.
+	// - 
+
+
+
+
+
+
 
 
 	// 11/10 - First improve the lexer...

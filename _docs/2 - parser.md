@@ -333,13 +333,13 @@ How to handle this however?
 `echo a && echo b`
 `[WORD WORD] AND [WORD WORD]`
 
-       AND
-	/      \
-  PIPE	   PIPE
-   |        |
-  CMD      CMD
-   |        |
-echo a	  echo b
+								       AND
+									/      \
+								  PIPE	   PIPE
+								   |        |
+								  CMD      CMD
+								   |        |
+								echo a	  echo b
 
 
 `echo a && echo b`
