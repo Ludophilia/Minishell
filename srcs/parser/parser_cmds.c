@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 18:57:18 by jegerman          #+#    #+#             */
-/*   Updated: 2025/11/17 20:33:51 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/11/29 16:50:18 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,7 @@ int	psr_add_cmd(t_tok *tok, t_cmd *cmd, t_core *core)
 	int		pos;
 	char	*word;
 
-	cmd->argc = psr_count_args(tok);
-	cmd->argv = ft_calloc(cmd->argc + 1, sizeof(char *));
+	cmd->argv = ft_calloc(psr_count_args(tok) + 1, sizeof(char *));
 	if (!cmd->argv)
 		return (-1);
 	pos = 0;

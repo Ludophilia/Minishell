@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:16:27 by jegerman          #+#    #+#             */
-/*   Updated: 2025/11/28 19:30:10 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/11/29 19:49:25 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,45 +48,96 @@ static int	lex_print_tokens(t_tok *tokens)
 	return (0);
 }
 
-// 11/10 - RIP...
+// Which nodes (look at the grammar node)
+// = (AND / OR) node
+// = PIPELINE node
+// = COMMAND node
+// = SUBSHELL node (?, COMMAND node)
+// = REDIRECTION node (too much, that's command context...)
+
+//RULES:
+
+// - line				::= and_or
+// - and_or				::= pipeline ( ('&&' | '||') pipeline )*
+// - pipeline			::= command ( '|' command )*
+// - command			::= simple_command | subshell
+// - subshell			::= '(' line ')'
+// - simple_command		::= word ( word | redirection )*
+// - redirection		::= ('<' | '>' | '<<' | '>>') word
+// - word				::= TOKEN
+
+// 29/11 - Let's try to write a recursive decent parser.
+// == LL(1), TOP DOWN, one procedure per non-terminal
+
+t_logn	*psr_rdp_andor(t_tok *toks)
+{
+	// 29/11 - What should be done...
+
+	// This is where the real work begin.
+	// Iterate on token, LL(1) style
+
+	// WORD WORD AND WORD WORD (echo a && echo b)
+
+	// - We need to allocate memory (t_logn	*)
+
+	// - 
+
+	return ();
+}
+
+t_logn	*psr_rdp_line(t_tok *toks)
+{
+	// 29/11 - What should be done?
+	// A line is replaced by an and/or. So return the and/or node. 
+	return (psr_rdp_andor(toks));
+}
+
+int	psr_build_ast(t_tok *toks, t_core *core)
+{
+	// 29/11 - Code so small that it could sent back to the calling function...
+	core->ast = psr_rdp_line(toks);
+	if (core->ast == NULL)
+		return (-1);
+	return (0);
+}
+
+
 int	psr_parse_line(char *line, t_core *core)
 {
 	t_tok	toks[TOK_MAX];
-	t_tok	*tok;
-	t_cmd	*cmd;
+	// t_tok	*tok;
+	// t_cmd	*cmd;
 
 	if (lex_tokenize_line(line, toks) || psr_error_check(toks, core) == -1)
 		return (-2);
 
-	(void)tok;
-	(void)cmd;
 	lex_print_tokens(toks);
+
+
 
 	// 20/11, 28/11 - OK. What should be done now?
 		// - Parsing.
 		// 		- Creating the AST from the tokens... 
 		//		The meat of the subject bonus.
 
+	psr_build_ast(toks, core);
 
 	// How do I create it?
 
 	// - 0. Create the AST
-	// - -- 1. Identity and add the different possibles nodes in minishell.h
+	// - -- [x] 1. Identity and add the different possibles nodes in minishell.h
 
-	// - 2. Write the Recursive Descent Parser logic.
+	// - [o] 2. Write the Recursive Descent Parser logic.
 	//	- Those multiple functions... one for each non terminal, starting
 	//   from top level, where the AST is building itself bottom-up and where
-	//   the input should be visible from the leaves of the AST while using 
-	
-	// - 3. Find a way to test it.
+	//   the input should be visible from the leaves of the AST while using
+	//	 
+
+	// - [ ] 3. Find a way to test it.
 	// - 
 
-
-
-
-
-
-
+	// (void)tok;
+	// (void)cmd;
 
 	// 11/10 - First improve the lexer...
 	// cmd = core->cmds + core->cmd_pmax;

@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/11/20 14:23:07 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/11/29 17:44:55 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,14 +127,38 @@ typedef struct s_cmd
 	int				ofd;
 }	t_cmd;
 
+typedef struct s_cmdn
+{
+	bool			is_sub;
+	t_cmd			*cmd;
+}	t_cmdn;
+
+typedef struct s_pipn
+{
+	t_cmdn			*left;
+	t_cmdn			*right;
+}	t_pipn;
+
+typedef struct s_logn
+{
+	t_tokt			op;
+	t_pipn			*left;
+	t_pipn			*right;
+}	t_logn;
+
 typedef struct s_core
 {
-	t_cmd			cmds[CMD_MAX];
+	t_cmd			cmds[CMD_MAX]; // 29/11, maybe it will disappear
+									// and be replaced by the ast...
+
+	t_logn			*ast; // AST here?
+	
 	int				cmd_pmax;
 	int				cmd_xrdy;
 
 
-	uint32_t		flags;
+
+	uint32_t		flags;	// 29/11, those things 
 	uint8_t			exit;
 	t_env			*env;
 	char			**envp;
