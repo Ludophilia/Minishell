@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/11/29 17:44:55 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/02 20:04:09 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,6 +130,7 @@ typedef struct s_cmd
 typedef struct s_cmdn
 {
 	bool			is_sub;
+	t_logn			*sub;
 	t_cmd			*cmd;
 }	t_cmdn;
 

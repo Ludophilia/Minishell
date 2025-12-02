@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:16:27 by jegerman          #+#    #+#             */
-/*   Updated: 2025/11/29 19:49:25 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/02 21:42:11 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,47 +66,130 @@ static int	lex_print_tokens(t_tok *tokens)
 // - redirection		::= ('<' | '>' | '<<' | '>>') word
 // - word				::= TOKEN
 
+// ============================================
+
 // 29/11 - Let's try to write a recursive decent parser.
 // == LL(1), TOP DOWN, one procedure per non-terminal
 
-t_logn	*psr_rdp_andor(t_tok *toks)
+// ============================================
+
+// 29/11 - What should be done...
+
+// This is where the real work begin.
+// ITERATE on TOKENS, LL(1) style
+
+// WORD WORD AND WORD WORD (echo a && echo b)
+
+// ============================================
+
+t_cmd	*psr_rdp_cmd(int *i, t_tok *toks)
 {
-	// 29/11 - What should be done...
+	t_tok	*tok;
+	t_cmd	*cmd;
 
-	// This is where the real work begin.
-	// Iterate on token, LL(1) style
+	// 2/12 - OK, here we are...
+	// So how to change that logic so that we can integrate it into
+	// the AST?
 
-	// WORD WORD AND WORD WORD (echo a && echo b)
-
-	// - We need to allocate memory (t_logn	*)
-
-	// - 
-
+	cmd = core->cmds + core->cmd_pmax;
+	tok = toks;
+	while (tok->type != TOK_EOL)
+	{
+		if (psr_add_cmd(tok, cmd, core) == -1
+			|| psr_add_reds(tok, cmd, core) == -1)
+		{
+			core->flags |= FLG_ALL;
+			return (-1);
+		}
+		while (tok->type != TOK_PIPE && tok->type != TOK_EOL)
+			tok++;
+		if (tok->type == TOK_PIPE)
+			cmd = (++tok, core->cmds + ++core->cmd_pmax);
+	}
 	return ();
 }
 
-t_logn	*psr_rdp_line(t_tok *toks)
+
+t_cmdn	*psr_rdp_cmdn(int *i, t_tok *toks)
 {
-	// 29/11 - What should be done?
-	// A line is replaced by an and/or. So return the and/or node. 
-	return (psr_rdp_andor(toks));
+	t_cmdn	*cmdn;
+
+	cmdn = ft_calloc(1, sizeof(t_cmdn));
+	if (cmdn == NULL)
+		return (NULL);
+	if (toks[*i].type == TOK_SUBO)
+	{
+		(*i)++;
+		cmdn->is_sub = 1;
+		cmdn->sub = psr_rdp_line(i, toks);
+		if (toks[*i].type == TOK_SUBC)
+			(*i)++;
+	}
+	else if (toks[*i].type != TOK_EOL)
+		cmdn->cmd = ; // >???
+	return (cmdn);
 }
 
+t_pipn	*psr_rdp_pipeline(int *i, t_tok *toks)
+{
+	t_pipn	*pi_node;
+
+	pi_node = ft_calloc(1, sizeof(t_pipn));
+	if (pi_node == NULL)
+		return (NULL);
+	if (toks[*i].type != TOK_EOL)
+		pi_node->left = psr_rdp_cmdn(&i, toks);
+	if (toks[*i].type != TOK_EOL)
+		pi_node->right = psr_rdp_cmdn(&i, toks);
+	return (pi_node);
+}
+
+t_logn	*psr_rdp_andor(int *i, t_tok *toks)
+{
+	t_logn	*aon;
+
+	aon = ft_calloc(1, sizeof(t_logn));
+	if (aon == NULL)
+		return (NULL);
+	if (toks[*i].type != TOK_EOL)
+		aon->left = psr_rdp_pipeline(i, toks);
+	if (toks[*i].type == TOK_AND || toks[*i].type == TOK_OR)
+		aon->op = toks[(*i)++].type;
+	if (toks[*i].type != TOK_EOL)
+		aon->right = psr_rdp_pipeline(i, toks);
+	return (aon);
+}
+
+// 29/11 - What should be done?
+// A line is replaced by an and/or. So return the and/or node.
+t_logn	*psr_rdp_line(int *i, t_tok *toks)
+{
+	t_logn	*ao_node;
+
+	if (toks->type == TOK_EOL);
+		return (NULL);
+	ao_node = psr_rdp_andor(i, toks);
+	return (ao_node);
+}
+
+// 29/11 - Code so small that it could sent back to the calling function...
 int	psr_build_ast(t_tok *toks, t_core *core)
 {
-	// 29/11 - Code so small that it could sent back to the calling function...
-	core->ast = psr_rdp_line(toks);
+	int	i;
+
+	i = 0;
+	core->ast = psr_rdp_line(&i, toks);
 	if (core->ast == NULL)
 		return (-1);
 	return (0);
 }
 
+// ########################################################################
 
 int	psr_parse_line(char *line, t_core *core)
 {
 	t_tok	toks[TOK_MAX];
-	// t_tok	*tok;
-	// t_cmd	*cmd;
+
 
 	if (lex_tokenize_line(line, toks) || psr_error_check(toks, core) == -1)
 		return (-2);
@@ -120,6 +203,7 @@ int	psr_parse_line(char *line, t_core *core)
 		// 		- Creating the AST from the tokens... 
 		//		The meat of the subject bonus.
 
+	
 	psr_build_ast(toks, core);
 
 	// How do I create it?
@@ -139,22 +223,6 @@ int	psr_parse_line(char *line, t_core *core)
 	// (void)tok;
 	// (void)cmd;
 
-	// 11/10 - First improve the lexer...
-	// cmd = core->cmds + core->cmd_pmax;
-	// tok = toks;
-	// while (tok->type != TOK_EOL)
-	// {
-	// 	if (psr_add_cmd(tok, cmd, core) == -1
-	// 		|| psr_add_reds(tok, cmd, core) == -1)
-	// 	{
-	// 		core->flags |= FLG_ALL;
-	// 		return (-1);
-	// 	}
-	// 	while (tok->type != TOK_PIPE && tok->type != TOK_EOL)
-	// 		tok++;
-	// 	if (tok->type == TOK_PIPE)
-	// 		cmd = (++tok, core->cmds + ++core->cmd_pmax);
-	// }
 
 
 	core->flags |= FLG_ALL;
