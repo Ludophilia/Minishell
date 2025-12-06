@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:16:27 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/02 21:42:11 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/05 21:30:46 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,103 +82,108 @@ static int	lex_print_tokens(t_tok *tokens)
 
 // ============================================
 
-t_cmd	*psr_rdp_cmd(int *i, t_tok *toks)
+// 2/12 - OK, here we are...
+// So how to change that logic so that we can integrate it into
+// the AST?
+
+// 4/12 - What should be done?
+// == Fill the command node with the correct information pulled from TOKS
+// == == Fill the t_cmd (argv, reds)...
+// == == 
+t_cmd	*psr_rdp_cmd(t_astc *c, t_tok *toks)
 {
 	t_tok	*tok;
 	t_cmd	*cmd;
 
-	// 2/12 - OK, here we are...
-	// So how to change that logic so that we can integrate it into
-	// the AST?
+	cmd = ft_calloc(1, sizeof(t_cmd));
+	if (cmd == NULL)
+		return (NULL);
+	tok = toks + c->i;
 
-	cmd = core->cmds + core->cmd_pmax;
-	tok = toks;
-	while (tok->type != TOK_EOL)
+	while (tok->type != TOK_PIPE && tok->type != TOK_EOL)
 	{
 		if (psr_add_cmd(tok, cmd, core) == -1
 			|| psr_add_reds(tok, cmd, core) == -1)
 		{
-			core->flags |= FLG_ALL;
-			return (-1);
+			free(cmd);
+			return (NULL);
 		}
-		while (tok->type != TOK_PIPE && tok->type != TOK_EOL)
-			tok++;
-		if (tok->type == TOK_PIPE)
-			cmd = (++tok, core->cmds + ++core->cmd_pmax);
+		tok++;
 	}
-	return ();
+	return (cmd);
 }
 
-
-t_cmdn	*psr_rdp_cmdn(int *i, t_tok *toks)
+t_cmdn	*psr_rdp_cmdnode(t_astc *c, t_tok *toks)
 {
 	t_cmdn	*cmdn;
 
 	cmdn = ft_calloc(1, sizeof(t_cmdn));
 	if (cmdn == NULL)
 		return (NULL);
-	if (toks[*i].type == TOK_SUBO)
+	if (toks[c->i].type == TOK_SUBO)
 	{
-		(*i)++;
+		c->i++;
 		cmdn->is_sub = 1;
-		cmdn->sub = psr_rdp_line(i, toks);
-		if (toks[*i].type == TOK_SUBC)
-			(*i)++;
+		cmdn->sub = psr_rdp_line(c, toks);
+		if (toks[c->i].type == TOK_SUBC) // Will we really get to that token "naturally"?
+			c->i++;
 	}
-	else if (toks[*i].type != TOK_EOL)
-		cmdn->cmd = ; // >???
+	else if (toks[c->i].type != TOK_EOL)
+		cmdn->cmd = psr_rdp_cmd(c, toks);
 	return (cmdn);
 }
 
-t_pipn	*psr_rdp_pipeline(int *i, t_tok *toks)
+t_pipn	*psr_rdp_pipeline(t_astc *c, t_tok *toks)
 {
 	t_pipn	*pi_node;
 
 	pi_node = ft_calloc(1, sizeof(t_pipn));
 	if (pi_node == NULL)
 		return (NULL);
-	if (toks[*i].type != TOK_EOL)
-		pi_node->left = psr_rdp_cmdn(&i, toks);
-	if (toks[*i].type != TOK_EOL)
-		pi_node->right = psr_rdp_cmdn(&i, toks);
+	if (toks[c->i].type != TOK_EOL)
+		pi_node->left = psr_rdp_cmdnode(i, toks);
+	if (toks[c->i].type != TOK_EOL)
+		pi_node->right = psr_rdp_cmdnode(i, toks);
 	return (pi_node);
 }
 
-t_logn	*psr_rdp_andor(int *i, t_tok *toks)
+t_logn	*psr_rdp_andor(t_astc *c, t_tok *toks)
 {
 	t_logn	*aon;
 
 	aon = ft_calloc(1, sizeof(t_logn));
 	if (aon == NULL)
 		return (NULL);
-	if (toks[*i].type != TOK_EOL)
-		aon->left = psr_rdp_pipeline(i, toks);
-	if (toks[*i].type == TOK_AND || toks[*i].type == TOK_OR)
-		aon->op = toks[(*i)++].type;
-	if (toks[*i].type != TOK_EOL)
-		aon->right = psr_rdp_pipeline(i, toks);
+	if (toks[c->i].type != TOK_EOL)
+		aon->left = psr_rdp_pipeline(c, toks);
+	if (toks[c->i].type == TOK_AND || toks[c->i].type == TOK_OR)
+		aon->op = toks[c->i++].type;
+	if (toks[c->i].type != TOK_EOL)
+		aon->right = psr_rdp_pipeline(c, toks);
 	return (aon);
 }
 
 // 29/11 - What should be done?
 // A line is replaced by an and/or. So return the and/or node.
-t_logn	*psr_rdp_line(int *i, t_tok *toks)
+t_logn	*psr_rdp_line(t_astc *c, t_tok *toks)
 {
 	t_logn	*ao_node;
 
 	if (toks->type == TOK_EOL);
 		return (NULL);
-	ao_node = psr_rdp_andor(i, toks);
+	ao_node = psr_rdp_andor(c, toks);
 	return (ao_node);
 }
 
 // 29/11 - Code so small that it could sent back to the calling function...
 int	psr_build_ast(t_tok *toks, t_core *core)
 {
-	int	i;
+	t_astc	c;
 
-	i = 0;
-	core->ast = psr_rdp_line(&i, toks);
+	c.i = 0;
+	c.fails = 0;
+	// 4/12 - Keep going from there.
+	core->ast = psr_rdp_line(&c, toks);
 	if (core->ast == NULL)
 		return (-1);
 	return (0);
@@ -203,8 +208,9 @@ int	psr_parse_line(char *line, t_core *core)
 		// 		- Creating the AST from the tokens... 
 		//		The meat of the subject bonus.
 
-	
 	psr_build_ast(toks, core);
+
+	// core->flags |= FLG_ALL;
 
 	// How do I create it?
 
@@ -215,15 +221,8 @@ int	psr_parse_line(char *line, t_core *core)
 	//	- Those multiple functions... one for each non terminal, starting
 	//   from top level, where the AST is building itself bottom-up and where
 	//   the input should be visible from the leaves of the AST while using
-	//	 
 
 	// - [ ] 3. Find a way to test it.
-	// - 
-
-	// (void)tok;
-	// (void)cmd;
-
-
 
 	core->flags |= FLG_ALL;
 	return (0);

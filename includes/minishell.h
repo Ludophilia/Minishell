@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/02 20:04:09 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/04 22:02:38 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,12 @@ typedef struct s_tok
 	char			*start;
 	int				len;
 }	t_tok;
+
+typedef struct s_astc
+{
+	int		fails;
+	int		i;
+}	t_astc;
 
 typedef struct s_red
 {
