@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 13:37:44 by jegerman          #+#    #+#             */
-/*   Updated: 2025/11/20 14:46:18 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/06 20:11:58 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static int	psr_redtok_check(t_tok *tok, t_tok *next)
 {
-	if (psr_isored(tok) != true && psr_isired(tok) != true)
+	if (psr_isred(tok) != true)
 		return (0);
 	if (next->type != TOK_WORD)
 	{

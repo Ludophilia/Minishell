@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/04 22:02:38 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/06 20:13:53 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,11 +103,13 @@ typedef struct s_tok
 	int				len;
 }	t_tok;
 
-typedef struct s_astc
+typedef struct s_count
 {
-	int		fails;
+	int		f;
 	int		i;
-}	t_astc;
+	int		j;
+	int		k;
+}	t_cnt;
 
 typedef struct s_red
 {
@@ -135,7 +137,6 @@ typedef struct s_cmd
 
 typedef struct s_cmdn
 {
-	bool			is_sub;
 	t_logn			*sub;
 	t_cmd			*cmd;
 }	t_cmdn;
@@ -155,7 +156,7 @@ typedef struct s_logn
 
 typedef struct s_core
 {
-	t_cmd			cmds[CMD_MAX]; // 29/11, maybe it will disappear
+	// t_cmd			cmds[CMD_MAX]; // 29/11, maybe it will disappear
 									// and be replaced by the ast...
 
 	t_logn			*ast; // AST here?
@@ -180,11 +181,10 @@ int		lex_is_op(char *c);
 int		lex_is_sep(char *c);
 int		lex_tokenize_line(char *line, t_tok *toks);
 
+int		psr_isred(t_tok *tok);
 int		psr_istok(t_tokt type, t_tok *tok);
 int		psr_isop(t_tok *tok);
 int		psr_synterr(t_tokt type, t_tok *tok);
-int		psr_isired(t_tok *tok);
-int		psr_isored(t_tok *tok);
 int		psr_error_check(t_tok *toks, t_core *core);
 
 int		psr_is_outq(int c, int *q);

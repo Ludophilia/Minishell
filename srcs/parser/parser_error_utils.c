@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/14 14:02:46 by jegerman          #+#    #+#             */
-/*   Updated: 2025/11/20 12:28:29 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/06 20:13:32 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,15 +19,11 @@ int	psr_isop(t_tok *tok)
 		|| tok->type == TOK_OR);
 }
 
-int	psr_isired(t_tok *tok)
+int	psr_isred(t_tok *tok)
 {
 	return (tok->type == TOK_IRED
-		|| tok->type == TOK_IRED_HD);
-}
-
-int	psr_isored(t_tok *tok)
-{
-	return (tok->type == TOK_ORED
+		|| tok->type == TOK_IRED_HD
+		|| tok->type == TOK_ORED
 		|| tok->type == TOK_ORED_AP);
 }
 

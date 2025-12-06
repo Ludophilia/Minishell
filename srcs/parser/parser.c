@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:16:27 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/05 21:30:46 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/06 20:15:22 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,42 +90,43 @@ static int	lex_print_tokens(t_tok *tokens)
 // == Fill the command node with the correct information pulled from TOKS
 // == == Fill the t_cmd (argv, reds)...
 // == == 
-t_cmd	*psr_rdp_cmd(t_astc *c, t_tok *toks)
+t_cmd	*psr_rdp_cmd(t_cnt *c, t_tok *toks)
 {
 	t_tok	*tok;
 	t_cmd	*cmd;
 
 	cmd = ft_calloc(1, sizeof(t_cmd));
 	if (cmd == NULL)
-		return (NULL);
-	tok = toks + c->i;
+		return (c->f++, NULL);
 
+
+	tok = toks + c->i;
+	// 6/12 - As long we're on WORDS or REDS
 	while (tok->type != TOK_PIPE && tok->type != TOK_EOL)
 	{
 		if (psr_add_cmd(tok, cmd, core) == -1
 			|| psr_add_reds(tok, cmd, core) == -1)
 		{
 			free(cmd);
-			return (NULL);
+			return (c->f++, NULL);
 		}
 		tok++;
 	}
 	return (cmd);
 }
 
-t_cmdn	*psr_rdp_cmdnode(t_astc *c, t_tok *toks)
+t_cmdn	*psr_rdp_cmdnode(t_cnt *c, t_tok *toks)
 {
 	t_cmdn	*cmdn;
 
 	cmdn = ft_calloc(1, sizeof(t_cmdn));
 	if (cmdn == NULL)
-		return (NULL);
+		return (c->f++, NULL);
 	if (toks[c->i].type == TOK_SUBO)
 	{
 		c->i++;
-		cmdn->is_sub = 1;
 		cmdn->sub = psr_rdp_line(c, toks);
-		if (toks[c->i].type == TOK_SUBC) // Will we really get to that token "naturally"?
+		if (toks[c->i].type == TOK_SUBC) // Will we really get to TOK_SUBC "naturally"? // DON'T KNOW, we will see...
 			c->i++;
 	}
 	else if (toks[c->i].type != TOK_EOL)
@@ -133,58 +134,66 @@ t_cmdn	*psr_rdp_cmdnode(t_astc *c, t_tok *toks)
 	return (cmdn);
 }
 
-t_pipn	*psr_rdp_pipeline(t_astc *c, t_tok *toks)
+t_pipn	*psr_rdp_pipeline(t_cnt *c, t_tok *toks)
 {
 	t_pipn	*pi_node;
 
 	pi_node = ft_calloc(1, sizeof(t_pipn));
 	if (pi_node == NULL)
-		return (NULL);
+		return (c->f++, NULL);
+	// ===
 	if (toks[c->i].type != TOK_EOL)
-		pi_node->left = psr_rdp_cmdnode(i, toks);
+		pi_node->left = psr_rdp_cmdnode(c, toks);
+	// ====
 	if (toks[c->i].type != TOK_EOL)
-		pi_node->right = psr_rdp_cmdnode(i, toks);
+		pi_node->right = psr_rdp_cmdnode(c, toks);
 	return (pi_node);
 }
 
-t_logn	*psr_rdp_andor(t_astc *c, t_tok *toks)
+t_logn	*psr_rdp_andor(t_cnt *c, t_tok *toks)
 {
 	t_logn	*aon;
 
 	aon = ft_calloc(1, sizeof(t_logn));
 	if (aon == NULL)
-		return (NULL);
-	if (toks[c->i].type != TOK_EOL)
+		return (c->f++, NULL);
+	if (toks[c->i].type != TOK_EOL) // if EOL -> NULL
 		aon->left = psr_rdp_pipeline(c, toks);
+	// We're supposing that the right OPTOK if exists, will come once pipeline
+	// is processed.
 	if (toks[c->i].type == TOK_AND || toks[c->i].type == TOK_OR)
 		aon->op = toks[c->i++].type;
-	if (toks[c->i].type != TOK_EOL)
+	if (toks[c->i].type != TOK_EOL) // if EOL -> NULL
 		aon->right = psr_rdp_pipeline(c, toks);
 	return (aon);
 }
 
 // 29/11 - What should be done?
 // A line is replaced by an and/or. So return the and/or node.
-t_logn	*psr_rdp_line(t_astc *c, t_tok *toks)
+t_logn	*psr_rdp_line(t_cnt *c, t_tok *toks)
 {
 	t_logn	*ao_node;
 
-	if (toks->type == TOK_EOL);
-		return (NULL);
+	if (toks->type == TOK_EOL)
+		return (c->f++, NULL);
 	ao_node = psr_rdp_andor(c, toks);
 	return (ao_node);
 }
 
-// 29/11 - Code so small that it could sent back to the calling function...
+// 29/11 - Here we are pals.
 int	psr_build_ast(t_tok *toks, t_core *core)
 {
-	t_astc	c;
+	t_cnt	c;
 
-	c.i = 0;
-	c.fails = 0;
+	// c.i = 0;
+	// c.f = 0;
+	c = (t_cnt){.f = 0, .i = 0}; // May not work work work/
+
 	// 4/12 - Keep going from there.
 	core->ast = psr_rdp_line(&c, toks);
-	if (core->ast == NULL)
+	
+	// 6/12 - Ahahahaha. PLEASE implement NOT_IMPL_DESTROY_AST asap
+	if (core->ast == NULL || (c.f > 0 && NOT_IMPL_DESTROY_AST(core)))
 		return (-1);
 	return (0);
 }
