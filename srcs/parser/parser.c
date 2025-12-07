@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:16:27 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/06 20:15:22 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/07 22:26:33 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,32 +90,22 @@ static int	lex_print_tokens(t_tok *tokens)
 // == Fill the command node with the correct information pulled from TOKS
 // == == Fill the t_cmd (argv, reds)...
 // == == 
-t_cmd	*psr_rdp_cmd(t_cnt *c, t_tok *toks)
+t_cmd	*psr_rdp_cmd(t_cnt *c, t_tok *toks, t_core *core)
 {
-	t_tok	*tok;
 	t_cmd	*cmd;
 
 	cmd = ft_calloc(1, sizeof(t_cmd));
 	if (cmd == NULL)
 		return (c->f++, NULL);
-
-
-	tok = toks + c->i;
-	// 6/12 - As long we're on WORDS or REDS
-	while (tok->type != TOK_PIPE && tok->type != TOK_EOL)
+	if (psr_add_cmd(c, toks, cmd, core) == -1)
 	{
-		if (psr_add_cmd(tok, cmd, core) == -1
-			|| psr_add_reds(tok, cmd, core) == -1)
-		{
-			free(cmd);
-			return (c->f++, NULL);
-		}
-		tok++;
+		free(cmd);
+		return (c->f++, NULL);
 	}
 	return (cmd);
 }
 
-t_cmdn	*psr_rdp_cmdnode(t_cnt *c, t_tok *toks)
+t_cmdn	*psr_rdp_cmdnode(t_cnt *c, t_tok *toks, t_core *core)
 {
 	t_cmdn	*cmdn;
 
@@ -125,32 +115,30 @@ t_cmdn	*psr_rdp_cmdnode(t_cnt *c, t_tok *toks)
 	if (toks[c->i].type == TOK_SUBO)
 	{
 		c->i++;
-		cmdn->sub = psr_rdp_line(c, toks);
+		cmdn->sub = psr_rdp_line(c, toks, core);
 		if (toks[c->i].type == TOK_SUBC) // Will we really get to TOK_SUBC "naturally"? // DON'T KNOW, we will see...
 			c->i++;
 	}
 	else if (toks[c->i].type != TOK_EOL)
-		cmdn->cmd = psr_rdp_cmd(c, toks);
+		cmdn->cmd = psr_rdp_cmd(c, toks, core);
 	return (cmdn);
 }
 
-t_pipn	*psr_rdp_pipeline(t_cnt *c, t_tok *toks)
+t_pipn	*psr_rdp_pipeline(t_cnt *c, t_tok *toks, t_core *core)
 {
 	t_pipn	*pi_node;
 
 	pi_node = ft_calloc(1, sizeof(t_pipn));
 	if (pi_node == NULL)
 		return (c->f++, NULL);
-	// ===
 	if (toks[c->i].type != TOK_EOL)
-		pi_node->left = psr_rdp_cmdnode(c, toks);
-	// ====
+		pi_node->left = psr_rdp_cmdnode(c, toks, core);
 	if (toks[c->i].type != TOK_EOL)
-		pi_node->right = psr_rdp_cmdnode(c, toks);
+		pi_node->right = psr_rdp_cmdnode(c, toks, core);
 	return (pi_node);
 }
 
-t_logn	*psr_rdp_andor(t_cnt *c, t_tok *toks)
+t_logn	*psr_rdp_andor(t_cnt *c, t_tok *toks, t_core *core)
 {
 	t_logn	*aon;
 
@@ -158,25 +146,25 @@ t_logn	*psr_rdp_andor(t_cnt *c, t_tok *toks)
 	if (aon == NULL)
 		return (c->f++, NULL);
 	if (toks[c->i].type != TOK_EOL) // if EOL -> NULL
-		aon->left = psr_rdp_pipeline(c, toks);
+		aon->left = psr_rdp_pipeline(c, toks, core);
 	// We're supposing that the right OPTOK if exists, will come once pipeline
 	// is processed.
 	if (toks[c->i].type == TOK_AND || toks[c->i].type == TOK_OR)
 		aon->op = toks[c->i++].type;
 	if (toks[c->i].type != TOK_EOL) // if EOL -> NULL
-		aon->right = psr_rdp_pipeline(c, toks);
+		aon->right = psr_rdp_pipeline(c, toks, core);
 	return (aon);
 }
 
 // 29/11 - What should be done?
 // A line is replaced by an and/or. So return the and/or node.
-t_logn	*psr_rdp_line(t_cnt *c, t_tok *toks)
+t_logn	*psr_rdp_line(t_cnt *c, t_tok *toks, t_core *core)
 {
 	t_logn	*ao_node;
 
 	if (toks->type == TOK_EOL)
 		return (c->f++, NULL);
-	ao_node = psr_rdp_andor(c, toks);
+	ao_node = psr_rdp_andor(c, toks, core);
 	return (ao_node);
 }
 
@@ -190,7 +178,7 @@ int	psr_build_ast(t_tok *toks, t_core *core)
 	c = (t_cnt){.f = 0, .i = 0}; // May not work work work/
 
 	// 4/12 - Keep going from there.
-	core->ast = psr_rdp_line(&c, toks);
+	core->ast = psr_rdp_line(&c, toks, core);
 	
 	// 6/12 - Ahahahaha. PLEASE implement NOT_IMPL_DESTROY_AST asap
 	if (core->ast == NULL || (c.f > 0 && NOT_IMPL_DESTROY_AST(core)))
