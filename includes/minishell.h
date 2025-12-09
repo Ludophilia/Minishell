@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/07 22:43:06 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/09 19:39:44 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,7 @@ typedef struct s_env
 typedef struct s_cmd
 {
 	t_red			reds[RED_MAX];
+	int				red_pmax;
 	bool			xready;
 	pid_t			pid;
 	char			**argv;
@@ -137,13 +138,14 @@ typedef struct s_cmd
 
 typedef struct s_cmdn
 {
-	t_logn			*sub;
+	struct s_logn	*sub;
 	t_cmd			*cmd;
 }	t_cmdn;
 
 typedef struct s_pipn
 {
 	t_cmdn			*left;
+	t_tokt			op;	
 	t_cmdn			*right;
 }	t_pipn;
 
@@ -157,6 +159,7 @@ typedef struct s_logn
 typedef struct s_core
 {
 	t_logn			*ast;
+	int				cmd_pmax; // 9/12 - Broken
 	
 	int				cmd_xrdy; // Nbrs of xready cmds?
 
@@ -188,7 +191,7 @@ int		psr_is_envv_chr(int c, int pos);
 int		psr_envv_value_len(char *start, int *j, t_core *core);
 int		psr_copy_envv_value(char *start, char *word, int *j, t_core *core);
 char	*psr_create_word(t_tok *tok, t_tokt context, t_core *core);
-int		psr_add_cmd(t_cnt *c, t_tok *toks, t_cmd *cmd, t_core *core);
+int		psr_fill_cmd(t_cnt *c, t_tok *toks, t_core *core, t_cmd *cmd);
 int		psr_cleanup_cmds(t_cflg flags, t_core *core);
 int		psr_parse_line(char *line, t_core *core);
 
