@@ -90,6 +90,13 @@
                                   AND    c
                                  /   \
                                 a     b
+
+								AND
+							   /   \
+							  a     b
+							  		 
+							        PIPE
+
  
 	- Another one for the...
 
