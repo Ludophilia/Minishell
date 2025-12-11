@@ -31,27 +31,6 @@
 		- affect control flow of commands execution and pipelines and tree 
 		design in the process.
 
-	- Tree for `a && (b || c)`:
-		- *letter* represent a command.
-
-                                          AND
-                                         /    \
-                                        a    SUBSH
-											   |    
-										      OR    
-                                            /    \
-                                           b      c
-
-	- Tree for `(a && b) || c` (on the other hand):
-
-                                          OR
-                                         /   \
-                                      SUBSH   c
-					  					|    
-									   AND    
-                                     /    \
-                                    a      b
-
 ### List AND-OR `&&`, `||`
 
 - Implement AND list or OR list management.
@@ -74,6 +53,101 @@
 		- quotes `'`, `"` deactivate `&&` and `||`, so beware with your lexer
 		- parser will have to be reimplemented as an AST, preferrably a binary
 		tree. (fits binary operations, short circuit evaluation)...
+
+
+### Some tree examples
+
+	- Tree for `a && (b || c)`:
+		- *letter* represent a command.
+
+											 AND
+											/   \
+										   a	SUB
+										   		 |
+												 OR
+												/  \
+											   b	c
+									     
+									   AO(AND)
+								        /   \
+									  PI(N) PI(N)
+									  /     /
+								   CMD(a)  SUB
+								            |
+                                           AO(OR)
+                                          /   \
+										PI(N)  PI(N)
+									     /      /
+									  CMD(b)  CMD(c)
+
+	- Tree for `(a && b) || c`:
+
+                                           OR
+                                         /   \
+                                      SUBSH   c
+					  					|    
+									   AND    
+                                     /    \
+                                    a      b
+
+								   AO(OR)
+							       /   \
+								 PI(N)  PI(N)
+								 /     /  
+							   SUB   CMD(c)
+								|
+							  AO(AND)
+							  /   \
+						  CMD(a) CMD(b)
+
+
+	- Tree for `a | b | c`: (op repeating itself)
+
+							       AO(N)
+								   /
+				  [loop(1): | c] PI(Y) 
+								/    \
+	         [loop(0): a | b] PI(Y)  CMD(c)
+							 /   \  
+						  CMD(a) CMD(b)    
+
+
+	- Tree for `a | b | c | d`: (op repeating itself)
+
+							       AO(N)
+								   /
+                  [loop(2): | d] PI(Y) [last one is associated with the AO node
+				  where looping is happenning. So we're creating a chain of pipe nodes where the last one will be assigned to the AO node]
+								 /   \
+				[loop(1): | c] PI(Y) CMD(d)
+							    /    \
+	         [loop(0): a | b] PI(Y)  CMD(c)
+							 /   \  
+						  CMD(a) CMD(b)    
+						  
+
+	- Tree for `a && b && c && d`: (op repeating itself)
+
+				[Chain 1: && d]    AO(AND)
+				                  /       \
+			  [Chain 1: && c]	 AO(AND)   PI(N)
+								/       \     \
+		[Chain 0: a && b]     AO(AND)   PI(N)  CMD(d)
+							  /    \	   \
+						  PI(N)   PI(N)   CMD(c)
+							/       \
+						 CMD(a)     CMD(b)
+
+				                   AO(AND)
+				                  /       \
+			                	 AO(AND)   PI(N)
+								/       \     /
+		                     AO(AND)   PI(N)  CMD(d)
+							  /    \	  /
+						  PI(N)   PI(N) CMD(c)
+							/        \
+						 CMD(a)     CMD(b)
+
 
 	- Tree for `a && b | c | d || e`:
 		- *letter* represent a command,
@@ -109,6 +183,9 @@
                                   AND    AND
                                  /   \  /   \
                                 a     b c    e
+
+
+
 
 
 ### Glob character `*`
