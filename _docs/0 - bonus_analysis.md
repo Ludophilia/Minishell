@@ -59,14 +59,6 @@
 
 	- Tree for `a && (b || c)`:
 		- *letter* represent a command.
-
-											 AND
-											/   \
-										   a	SUB
-										   		 |
-												 OR
-												/  \
-											   b	c
 									     
 									   AO(AND)
 								        /   \
@@ -81,14 +73,6 @@
 									  CMD(b)  CMD(c)
 
 	- Tree for `(a && b) || c`:
-
-                                           OR
-                                         /   \
-                                      SUBSH   c
-					  					|    
-									   AND    
-                                     /    \
-                                    a      b
 
 								   AO(OR)
 							       /   \
@@ -124,65 +108,48 @@
 	         [loop(0): a | b] PI(Y)  CMD(c)
 							 /   \  
 						  CMD(a) CMD(b)    
+
+							         AO(N)
+								    /
+                                  PI(Y)
+								 /     \
+				               PI(Y)  CMD(d)
+							   /    \
+	                         PI(Y)  CMD(c)
+							 /   \  
+						  CMD(a) CMD(b)    
 						  
 
 	- Tree for `a && b && c && d`: (op repeating itself)
 
-				[Chain 1: && d]    AO(AND)
-				                  /       \
-			  [Chain 1: && c]	 AO(AND)   PI(N)
-								/       \     \
-		[Chain 0: a && b]     AO(AND)   PI(N)  CMD(d)
-							  /    \	   \
-						  PI(N)   PI(N)   CMD(c)
-							/       \
-						 CMD(a)     CMD(b)
-
-				                   AO(AND)
-				                  /       \
-			                	 AO(AND)   PI(N)
-								/       \     /
-		                     AO(AND)   PI(N)  CMD(d)
-							  /    \	  /
-						  PI(N)   PI(N) CMD(c)
-							/        \
-						 CMD(a)     CMD(b)
+                                       AO(&&)
+									  /     \ 
+								   AO(&&)    PI()
+                                  /      \      \
+                               AO(&&)    PI()   CMD(d)
+							   /     \       \
+							  /       \      CMD(c)
+                            PI()      PI()
+						   /            \
+					    CMD(a)        CMD(b)
 
 
 	- Tree for `a && b | c | d || e`:
 		- *letter* represent a command,
-		- roughly equivalent to `(((a && b) | c) | d) || e)`. Parentheses are
+		- roughly equivalent to `((((a && b) | c) | d) || e)`. Parentheses are
 		backed into the structure as a node.
 		- Don't hesitate to flatten the structure for pipe execution.
 
-                                           OR
-                                         /    \
-                                       PIPE    e
-                                      /    \
-                                     PIPE   d
-                                    /    \
-                                  AND    c
-                                 /   \
-                                a     b
-
-								AND
-							   /   \
-							  a     b
-							  		 
-							        PIPE
-
- 
-	- Another one for the...
-
-                                           OR
-                                         /    \
-                                       PIPE    e
-                                      /    \
-                                     PIPE   d
-                                    /    \
-                                  AND    AND
-                                 /   \  /   \
-                                a     b c    e
+                                      AO(||)
+									 /      \
+                                    /        \
+								  AO(&&)      PI(N)
+                                /       \       \
+						       /	    PI(|)    CMD(e)
+						      /         /   \
+					       PI(N)     PI(|)  CMD(d)
+					       /        /   \
+				       CMD(a)   CMD(b)  CMD(c)
 
 
 

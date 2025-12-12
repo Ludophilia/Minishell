@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/09 19:39:44 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/12 16:56:45 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,11 +124,27 @@ typedef struct s_env
 	struct s_env	*next;
 }	t_env;
 
+typedef enum e_astt
+{
+	AST_AO = 1,
+	AST_PI,
+	AST_SUB,
+	AST_CMD
+}	t_astt;
+
+typedef struct s_astn
+{
+	t_astt				type;
+	t_tokt				op;
+	void				*left; // 12/12 - void *?
+	void				*right;
+}	t_astn;
+
 typedef struct s_cmd
 {
 	t_red			reds[RED_MAX];
 	int				red_pmax;
-	bool			xready;
+	bool			xready; // 12/12 - Useless?
 	pid_t			pid;
 	char			**argv;
 	int				argc;
@@ -136,29 +152,30 @@ typedef struct s_cmd
 	int				ofd;
 }	t_cmd;
 
-typedef struct s_cmdn
-{
-	struct s_logn	*sub;
-	t_cmd			*cmd;
-}	t_cmdn;
 
-typedef struct s_pipn
-{
-	t_cmdn			*left;
-	t_tokt			op;	
-	t_cmdn			*right;
-}	t_pipn;
+// typedef struct s_cmdn
+// {
+// 	struct s_logn	*sub;
+// 	t_cmd			*cmd;
+// }	t_cmdn;
 
-typedef struct s_logn
-{
-	t_tokt			op;
-	t_pipn			*left;
-	t_pipn			*right;
-}	t_logn;
+// typedef struct s_pipn
+// {
+// 	t_tokt			op;	
+// 	t_cmdn			*left;
+// 	t_cmdn			*right;
+// }	t_pipn;
+
+// typedef struct s_logn
+// {
+// 	t_tokt			op;
+// 	t_pipn			*left;
+// 	t_pipn			*right;
+// }	t_logn;
 
 typedef struct s_core
 {
-	t_logn			*ast;
+	t_astn			*ast;
 	int				cmd_pmax; // 9/12 - Broken
 	
 	int				cmd_xrdy; // Nbrs of xready cmds?

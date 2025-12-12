@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/09 17:20:26 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/11 18:41:21 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/12 19:35:13 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,33 +62,44 @@ static t_pipn	*psr_rdp_pipeline(t_cnt *c, t_tok *toks, t_core *core)
 	return (pi_node);
 }
 
-static t_logn	*psr_rdp_andor(t_cnt *c, t_tok *toks, t_core *core)
-{
-	t_logn	*aon;
+// 13/12 = UP UP UP
 
-	aon = ft_calloc(1, sizeof(t_logn));
-	if (aon == NULL)
+// 12/12 - YES! YES! YES!! We're getting somewhere... 
+// That seems correct this time.
+static t_astn	*psr_rdp_andor(t_cnt *c, t_tok *toks, t_core *core)
+{
+	t_astn	*new;
+	t_astn	*old;
+
+	new = ft_calloc(1, sizeof(t_astn));
+	if (new == NULL)
 		return (c->f++, NULL);
 
-	// and_or ::= pipeline (('&&' | '||') pipeline)*
-	if (toks[c->i].type != TOK_EOL) // ???
-		aon->left = psr_rdp_pipeline(c, toks, core);
-
-
+	// Do I need a guard here?
+	new->left = psr_rdp_pipeline(c, toks, core);
 	if (toks[c->i].type == TOK_AND || toks[c->i].type == TOK_OR)
-		aon->op = toks[c->i++].type;
-
-
-	if (toks[c->i].type != TOK_EOL) // ???
-		aon->right = psr_rdp_pipeline(c, toks, core);
-	return (aon);
+		new->op = toks[c->i++].type;
+	// Do I need a guard here?
+	new->right = psr_rdp_pipeline(c, toks, core);
+	while (toks[c->i].type == TOK_AND || toks[c->i].type == TOK_OR)
+	{
+		old = new;
+		new = ft_calloc(1, sizeof(t_astn));
+		if (new == NULL)
+			return (c->f++, old);
+		new->left = old;
+		new->op = toks[c->i++].type;
+		// Do I need a guard here?
+		new->right = psr_rdp_pipeline(c, toks, core);
+	}
+	return (new);
 }
 
-t_logn	*psr_rdp_line(t_cnt *c, t_tok *toks, t_core *core)
+t_astn	*psr_rdp_line(t_cnt *c, t_tok *toks, t_core *core)
 {
-	t_logn	*ao_node;
+	t_astn	*ao_node;
 
-	if (toks->type == TOK_EOL)
+	if (toks->type == TOK_EOL) // ???
 		return (c->f++, NULL);
 	ao_node = psr_rdp_andor(c, toks, core);
 	return (ao_node);
