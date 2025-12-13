@@ -60,15 +60,15 @@
 	- Tree for `a && (b || c)`:
 		- *letter* represent a command.
 									     
-									   AO(AND)
+									   AO(&&)
 								        /   \
-									  PI(N) PI(N)
+									  PI() PI()
 									  /     /
 								   CMD(a)  SUB
 								            |
-                                           AO(OR)
+                                           AO(||)
                                           /   \
-										PI(N)  PI(N)
+										PI(|)  PI(|)
 									     /      /
 									  CMD(b)  CMD(c)
 
@@ -87,35 +87,24 @@
 
 	- Tree for `a | b | c`: (op repeating itself)
 
-							       AO(N)
+							       AO()
 								   /
-				  [loop(1): | c] PI(Y) 
+				                 PI(|) 
 								/    \
-	         [loop(0): a | b] PI(Y)  CMD(c)
+	                          PI(|)  CMD(c)
 							 /   \  
 						  CMD(a) CMD(b)    
 
 
 	- Tree for `a | b | c | d`: (op repeating itself)
 
-							       AO(N)
-								   /
-                  [loop(2): | d] PI(Y) [last one is associated with the AO node
-				  where looping is happenning. So we're creating a chain of pipe nodes where the last one will be assigned to the AO node]
-								 /   \
-				[loop(1): | c] PI(Y) CMD(d)
-							    /    \
-	         [loop(0): a | b] PI(Y)  CMD(c)
-							 /   \  
-						  CMD(a) CMD(b)    
-
-							         AO(N)
+							         AO()
 								    /
-                                  PI(Y)
+                                  PI(|)
 								 /     \
-				               PI(Y)  CMD(d)
+				               PI(|)  CMD(d)
 							   /    \
-	                         PI(Y)  CMD(c)
+	                         PI(|)  CMD(c)
 							 /   \  
 						  CMD(a) CMD(b)    
 						  

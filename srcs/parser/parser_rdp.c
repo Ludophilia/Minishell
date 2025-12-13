@@ -6,13 +6,13 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/09 17:20:26 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/12 19:35:13 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/13 20:58:26 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static t_cmd	*psr_rdp_scmd(t_cnt *c, t_tok *toks, t_core *core)
+static t_cmd	*psr_rdp_smpcmd(t_cnt *c, t_tok *toks, t_core *core)
 {
 	t_cmd	*cmd;
 
@@ -27,92 +27,115 @@ static t_cmd	*psr_rdp_scmd(t_cnt *c, t_tok *toks, t_core *core)
 	return (cmd);
 }
 
-static t_cmdn	*psr_rdp_cmdnode(t_cnt *c, t_tok *toks, t_core *core)
+static t_cmdn	*psr_rdp_cmd(t_cnt *c, t_tok *toks, t_core *core)
 {
-	t_cmdn	*cmdn;
+	t_cmdn	*new;
 
-	cmdn = ft_calloc(1, sizeof(t_cmdn));
-	if (cmdn == NULL)
+	new = psr_new_cmdn(AST_CMD);
+	if (new == NULL)
 		return (c->f++, NULL);
 	if (toks[c->i].type == TOK_SUBO)
 	{
 		c->i++;
-		cmdn->sub = psr_rdp_line(c, toks, core);
+		new->type = AST_SUB;
+		new->cont = psr_rdp_line(c, toks, core);
 		if (toks[c->i].type == TOK_SUBC)
 			c->i++;
 	}
 	else if (toks[c->i].type == TOK_WORD || psr_isred((toks + c->i)))
-		cmdn->cmd = psr_rdp_scmd(c, toks, core);
-	return (cmdn);
+		new->cont = psr_rdp_smpcmd(c, toks, core);
+	return (new);
 }
 
-static t_pipn	*psr_rdp_pipeline(t_cnt *c, t_tok *toks, t_core *core)
+static t_astn	*psr_rdp_pipe(t_cnt *c, t_tok *toks, t_core *core)
 {
-	t_pipn	*pi_node;
+	t_astn	*new;
+	t_astn	*old;
 
-	pi_node = ft_calloc(1, sizeof(t_pipn));
-	if (pi_node == NULL)
+	new = psr_new_astn(AST_PI);
+	if (new == NULL)
 		return (c->f++, NULL);
-	if (toks[c->i].type != TOK_EOL && psr_isop(toks + c->i) == false)
-		pi_node->left = psr_rdp_cmdnode(c, toks, core);
+	new->left = psr_rdp_cmd(c, toks, core);
 	if (toks[c->i].type == TOK_PIPE)
-		pi_node->op = toks[c->i++].type;
-	if (toks[c->i].type != TOK_EOL && psr_isop(toks + c->i) == false) // && echo b ; && (echo b)
-		pi_node->right = psr_rdp_cmdnode(c, toks, core);
-	return (pi_node);
+		new->op = toks[c->i++].type;
+	new->right = psr_rdp_cmd(c, toks, core);
+
+	while (toks[c->i].type == TOK_PIPE)
+	{
+		old = new;
+		new = psr_new_astn(AST_PI);
+		if (new == NULL)
+			return (c->f++, old);
+
+		new->left = old;
+		new->op = toks[c->i++].type;
+		new->right = psr_rdp_cmd(c, toks, core);
+	}
+	return (new);
 }
 
-// 13/12 = UP UP UP
+/* 13/12 - Correction suggestion... ChatGPT ver.
 
-// 12/12 - YES! YES! YES!! We're getting somewhere... 
-// That seems correct this time.
+t_astn *psr_rdp_andor(...)
+{
+    t_astn *node = psr_rdp_pipe(c, toks, core);
+
+    while (toks[c->i].type == TOK_AND || toks[c->i].type == TOK_OR)
+    {
+        t_astn *new = psr_new_astn(AST_AO);
+        new->left = node;
+        new->op = toks[c->i++].type;
+        new->right = psr_rdp_pipe(c, toks, core);
+        node = new;
+    }
+    return node;
+}
+*/
+
+
 static t_astn	*psr_rdp_andor(t_cnt *c, t_tok *toks, t_core *core)
 {
 	t_astn	*new;
 	t_astn	*old;
 
-	new = ft_calloc(1, sizeof(t_astn));
+	new = psr_new_astn(AST_AO);
 	if (new == NULL)
 		return (c->f++, NULL);
 
-	// Do I need a guard here?
-	new->left = psr_rdp_pipeline(c, toks, core);
+	new->left = psr_rdp_pipe(c, toks, core);
+
+
 	if (toks[c->i].type == TOK_AND || toks[c->i].type == TOK_OR)
 		new->op = toks[c->i++].type;
-	// Do I need a guard here?
-	new->right = psr_rdp_pipeline(c, toks, core);
+	new->right = psr_rdp_pipe(c, toks, core);
 	while (toks[c->i].type == TOK_AND || toks[c->i].type == TOK_OR)
 	{
 		old = new;
-		new = ft_calloc(1, sizeof(t_astn));
+		new = psr_new_astn(AST_AO);
 		if (new == NULL)
 			return (c->f++, old);
 		new->left = old;
 		new->op = toks[c->i++].type;
-		// Do I need a guard here?
-		new->right = psr_rdp_pipeline(c, toks, core);
+		new->right = psr_rdp_pipe(c, toks, core);
 	}
 	return (new);
 }
 
+// 13/12 - Ohohoh... This is not a Syntax tree, it's a PARSE tree.
+// Non terminals are not abstracted away, so it doesn't exactly include
+// the real tokens which makes it more expensive to run. 
 t_astn	*psr_rdp_line(t_cnt *c, t_tok *toks, t_core *core)
 {
 	t_astn	*ao_node;
 
-	if (toks->type == TOK_EOL) // ???
+	if (toks->type == TOK_EOL)
 		return (c->f++, NULL);
 	ao_node = psr_rdp_andor(c, toks, core);
 	return (ao_node);
 }
 
-// ######################################################################
 
-// 9/12 - Do we get the AST from what I wrote?
-// lv-a0: echo a [9/12 - Seems OK.]
-// lv-a1: echo a && echo b [9/12 - Seems OK.]
-// lv-a2: echo a && (echo b || echo c) [10/12 - Seems OK.]
-
-// lv-b0: echo a | tee [10/12 - Seems OK.]
-// lv-b1: echo a | tee | cat
-
-// More tests coming... 10/12.
+	// Do I need a guard here?
+	//	- OK for creating a PIPE node.
+	// 	- [OK] TOK_WORD, TOK_SUBO, TOK_RED, TOK_PIPE,
+	//	- [KO] TOK_EOL, TOK_SUBC, TOK_AND, TOK_OR

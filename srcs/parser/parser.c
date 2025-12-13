@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:16:27 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/09 17:44:10 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/13 18:54:03 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,9 @@ static int	lex_print_tokens(t_tok *tokens)
 
 // 9/12 == Implement destroy AST.
 
+// 13/12 == Lowe
+
+
 int	psr_build_ast(t_tok *toks, t_core *core)
 {
 	t_cnt	c;
@@ -71,6 +74,17 @@ int	psr_parse_line(char *line, t_core *core)
 	// lex_print_tokens(toks);
 	psr_build_ast(toks, core);
 	// 9/12 - Find a way to test the AST.
+	// ######################################################################
+
+	// 9/12 - Do we get the AST from what I wrote?
+	// lv-a0: echo a [9/12 - Seems OK.]
+	// lv-a1: echo a && echo b [9/12 - Seems OK.]
+	// lv-a2: echo a && (echo b || echo c) [10/12 - Seems OK.]
+
+	// lv-b0: echo a | tee [10/12 - Seems OK.]
+	// lv-b1: echo a | tee | cat
+
+	// More tests coming... 10/12.
 	core->flags |= FLG_ALL;
 	return (0);
 }

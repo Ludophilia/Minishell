@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/12 16:56:45 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/13 18:12:48 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,7 @@ typedef struct s_env
 
 typedef enum e_astt
 {
+	AST_NONE = 0,
 	AST_AO = 1,
 	AST_PI,
 	AST_SUB,
@@ -136,9 +137,15 @@ typedef struct s_astn
 {
 	t_astt				type;
 	t_tokt				op;
-	void				*left; // 12/12 - void *?
+	void				*left;
 	void				*right;
 }	t_astn;
+
+typedef struct s_cmdn
+{
+	t_astt				type;
+	void				*cont;
+}	t_cmdn;
 
 typedef struct s_cmd
 {
@@ -151,27 +158,6 @@ typedef struct s_cmd
 	int				ifd;
 	int				ofd;
 }	t_cmd;
-
-
-// typedef struct s_cmdn
-// {
-// 	struct s_logn	*sub;
-// 	t_cmd			*cmd;
-// }	t_cmdn;
-
-// typedef struct s_pipn
-// {
-// 	t_tokt			op;	
-// 	t_cmdn			*left;
-// 	t_cmdn			*right;
-// }	t_pipn;
-
-// typedef struct s_logn
-// {
-// 	t_tokt			op;
-// 	t_pipn			*left;
-// 	t_pipn			*right;
-// }	t_logn;
 
 typedef struct s_core
 {
@@ -204,12 +190,15 @@ int		psr_error_check(t_tok *toks, t_core *core);
 int		psr_is_outq(int c, int *q);
 int		psr_is_envv(char *c, int ct, int q);
 int		psr_is_envv_chr(int c, int pos);
-
 int		psr_envv_value_len(char *start, int *j, t_core *core);
 int		psr_copy_envv_value(char *start, char *word, int *j, t_core *core);
+
 char	*psr_create_word(t_tok *tok, t_tokt context, t_core *core);
 int		psr_fill_cmd(t_cnt *c, t_tok *toks, t_core *core, t_cmd *cmd);
 int		psr_cleanup_cmds(t_cflg flags, t_core *core);
+
+t_cmdn	*psr_new_cmdn(t_astt type);
+t_astn	*psr_new_astn(t_astt type);
 int		psr_parse_line(char *line, t_core *core);
 
 int		fmgr_access(char *path, int type);
