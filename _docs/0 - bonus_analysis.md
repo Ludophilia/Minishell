@@ -57,9 +57,9 @@
 
 ### Some tree examples
 
-	- Tree for `a && (b || c)`:
-		- *letter* represent a command.
+	- Tree for `a && (b || c)`: (*letter* represent a command.)
 									     
+		- Parse tree:
 									   AO(&&)
 								        /   \
 									  PI() PI()
@@ -72,7 +72,27 @@
 									     /      /
 									  CMD(b)  CMD(c)
 
+		- (Abstract) syntax tree: (Different!! no empty node...)
+
+                              AO(&&)
+                              /     \
+                            CMD(a)  SUB
+							         |
+                                   AO(||)
+								   /    \
+								CMD(b) CMD(c)
+
+		Notes:
+			- AO node is created only if AND or OR tokens exist in the line.
+				- if it exists, the node created before while parsing_pipeline,
+				parsing command, and so on... will become the new node AND-OR
+				left child... and extra parsing will continue on the right
+				child, if needed.
+
+
 	- Tree for `(a && b) || c`:
+
+		- Parse tree:
 
 								   AO(OR)
 							       /   \
@@ -84,8 +104,20 @@
 							  /   \
 						  CMD(a) CMD(b)
 
+		- (Abstract) Syntax tree: (different!!)
 
-	- Tree for `a | b | c`: (op repeating itself)
+                           AO(||)
+                           /    \
+                          SUB  CMD(c)
+						   |
+                         AO(&&)
+                         /    \
+					  CMD(a) CMD(b)           
+
+
+	- Tree for `a | b | c`: (op repeated)
+
+		- Parse tree:
 
 							       AO()
 								   /
@@ -93,10 +125,24 @@
 								/    \
 	                          PI(|)  CMD(c)
 							 /   \  
-						  CMD(a) CMD(b)    
+						  CMD(a) CMD(b)
+
+		- (Abstract) syntax tree: (different!!)
+                             
+							  PI(|)
+                             /     \
+						   PI(|)   CMD(c)
+						   /   \
+					   CMD(a) CMD(b)
+
+			- Notes:
+				 - (!) How does the mechanism to build extra nodes work when '|', 
+				 '&&' or '&&' are present? 
 
 
 	- Tree for `a | b | c | d`: (op repeating itself)
+
+		- Parse tree:
 
 							         AO()
 								    /
@@ -108,8 +154,19 @@
 							 /   \  
 						  CMD(a) CMD(b)    
 						  
+		- (Abstract) syntax tree:
+                                
+							   PI(|)
+							   /   \
+							 PI(|) CMD(d)
+							/    \
+                          PI(|)  CMD(c)
+                          /    \
+                       CMD(a) CMD(b)                 
 
 	- Tree for `a && b && c && d`: (op repeating itself)
+
+		- Parse tree:
 
                                        AO(&&)
 									  /     \ 
@@ -122,12 +179,24 @@
 						   /            \
 					    CMD(a)        CMD(b)
 
+		- (Abstract) syntax tree:
+                                 
+							    AO(&&)
+                                /    \
+		                     AO(&&)  CMD(d)
+                            /     \
+                          AO(&&)  CMD(c)
+                         /      \     
+					   CMD(a) CMD(b)
+
 
 	- Tree for `a && b | c | d || e`:
 		- *letter* represent a command,
 		- roughly equivalent to `((((a && b) | c) | d) || e)`. Parentheses are
 		backed into the structure as a node.
 		- Don't hesitate to flatten the structure for pipe execution.
+
+			- Parse tree:
 
                                       AO(||)
 									 /      \
@@ -140,6 +209,17 @@
 					       /        /   \
 				       CMD(a)   CMD(b)  CMD(c)
 
+			- (Abstract) syntax tree:
+
+                         AO(&&)
+                        /      \
+				     CMD(a)    AO(||)
+				               /     \   
+							 PI(|)  CMD(e)
+							 /    \
+						  PI(|)  CMD(d)
+				         /     \
+					   CMD(b) CMD(c)
 
 
 

@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:16:27 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/13 18:54:03 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/16 19:14:58 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,10 @@ int	psr_build_ast(t_tok *toks, t_core *core)
 	c.f = 0;
 	c.i = 0;
 	core->ast = psr_rdp_line(&c, toks, core);
-	if (core->ast == NULL || (c.f > 0 && NOT_IMPL_DESTROY_AST(core)))
+	if (core->ast == NULL)
 		return (-1);
+	// if (core->ast == NULL || (c.f > 0 && NOT_IMPL_DESTROY_AST(core)))
+	// 	return (-1);
 	return (0);
 }
 
@@ -71,8 +73,8 @@ int	psr_parse_line(char *line, t_core *core)
 
 	if (lex_tokenize_line(line, toks) || psr_error_check(toks, core) == -1)
 		return (-2);
-	// lex_print_tokens(toks);
-	psr_build_ast(toks, core);
+	lex_print_tokens(toks);
+	// psr_build_ast(toks, core);
 	// 9/12 - Find a way to test the AST.
 	// ######################################################################
 

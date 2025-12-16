@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/13 18:12:48 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/16 19:18:41 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,11 +141,11 @@ typedef struct s_astn
 	void				*right;
 }	t_astn;
 
-typedef struct s_cmdn
-{
-	t_astt				type;
-	void				*cont;
-}	t_cmdn;
+// typedef struct s_cmdn
+// {
+// 	t_astt				type;
+// 	void				*cont;
+// }	t_cmdn;
 
 typedef struct s_cmd
 {
@@ -197,8 +197,8 @@ char	*psr_create_word(t_tok *tok, t_tokt context, t_core *core);
 int		psr_fill_cmd(t_cnt *c, t_tok *toks, t_core *core, t_cmd *cmd);
 int		psr_cleanup_cmds(t_cflg flags, t_core *core);
 
-t_cmdn	*psr_new_cmdn(t_astt type);
 t_astn	*psr_new_astn(t_astt type);
+t_astn	*psr_rdp_line(t_cnt *c, t_tok *toks, t_core *core);
 int		psr_parse_line(char *line, t_core *core);
 
 int		fmgr_access(char *path, int type);

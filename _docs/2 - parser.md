@@ -335,8 +335,6 @@ How to handle this however?
 
 								       AND
 									/      \
-								  PIPE	   PIPE
-								   |        |
 								  CMD      CMD
 								   |        |
 								echo a	  echo b
@@ -373,7 +371,7 @@ RULES:
 APPLICATION:
 
 // 22/11 - Every top node type at least (and_or, pipeline, commands....) should
-be represented in the Abtrasct parser tree, even if they don't . Why?
+be represented in the Abstract parser tree, even if they don't . Why?
 // ==  AST should match the grammar production rules
 // ==  Being close to production rules make it more efficient to traverse, less branching...
 // == Easier to debug, consistency makes it simpler...
