@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/16 19:18:41 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/17 19:13:11 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,12 +140,6 @@ typedef struct s_astn
 	void				*left;
 	void				*right;
 }	t_astn;
-
-// typedef struct s_cmdn
-// {
-// 	t_astt				type;
-// 	void				*cont;
-// }	t_cmdn;
 
 typedef struct s_cmd
 {

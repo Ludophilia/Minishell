@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:16:27 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/16 19:14:58 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/17 19:17:48 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,11 +48,43 @@ static int	lex_print_tokens(t_tok *tokens)
 	return (0);
 }
 
-// 9/12 == Implement destroy AST.
+int	print_nodes_prefix_rev(int level, int left, int right, t_astn *root)
+{	
+	char	**toks;
+	char	**types;
 
-// 13/12 == Lowe
+	toks = (char *[]){"none", "word", "pipe", "ired", "hdoc",
+		"ored", "ored_apn", "and", "or", "(", ")", 0};
+	types = (char *[]){"none", "ao", "pipe", "sub", "cmd", 0};
+	if (root == NULL)
+		return (printf("Nothing to print\n"));
+	if (root->type != 0)
+	{
+		for (int i = 0; i < level; ++i)
+			printf("\t");
+		if (left && right)
+			printf("[C]");
+		else
+			printf(left? "[L]": "[R]");
+		if (root->type == 1)
+			printf("[%i] type: %s, op: %s\n", level, types[root->type],
+				toks[root->op]);
+		else if (root->type == 2 || root->type == 3)
+			printf("[%i] type: %s\n", level, types[root->type]);
+		if (root->type == 4)
+			printf("[%i] type: %s, start: %s\n",
+				level, types[root->type], *((t_cmd *)(root->left))->argv);
+		if (root->type == AST_CMD)
+			return (0);
+	}
+	if (root->right)
+		print_nodes_prefix_rev(level + 1, 0, 1, root->right);
+	if (root->left)
+		print_nodes_prefix_rev(level + 1, 1, 0, root->left);
+	return (0);
+}
 
-
+// 18/12 == Implement destroy AST. The comment below.
 int	psr_build_ast(t_tok *toks, t_core *core)
 {
 	t_cnt	c;
@@ -73,20 +105,12 @@ int	psr_parse_line(char *line, t_core *core)
 
 	if (lex_tokenize_line(line, toks) || psr_error_check(toks, core) == -1)
 		return (-2);
-	lex_print_tokens(toks);
-	// psr_build_ast(toks, core);
-	// 9/12 - Find a way to test the AST.
-	// ######################################################################
+	(void)lex_print_tokens;
+	if (psr_build_ast(toks, core) == -1 && ft_eprintf("Error\n"))
+		return (-1); // 17/12: -1?
+	
+	print_nodes_prefix_rev(0, 1, 1, core->ast);
 
-	// 9/12 - Do we get the AST from what I wrote?
-	// lv-a0: echo a [9/12 - Seems OK.]
-	// lv-a1: echo a && echo b [9/12 - Seems OK.]
-	// lv-a2: echo a && (echo b || echo c) [10/12 - Seems OK.]
-
-	// lv-b0: echo a | tee [10/12 - Seems OK.]
-	// lv-b1: echo a | tee | cat
-
-	// More tests coming... 10/12.
 	core->flags |= FLG_ALL;
 	return (0);
 }

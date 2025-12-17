@@ -180,7 +180,7 @@
 					    CMD(a)        CMD(b)
 
 		- (Abstract) syntax tree:
-                                 
+
 							    AO(&&)
                                 /    \
 		                     AO(&&)  CMD(d)
@@ -211,16 +211,15 @@
 
 			- (Abstract) syntax tree:
 
-                         AO(&&)
+                            AO(||)
+						   /      \  
+                         AO(&&)   CMD(e)
                         /      \
-				     CMD(a)    AO(||)
-				               /     \   
-							 PI(|)  CMD(e)
-							 /    \
-						  PI(|)  CMD(d)
-				         /     \
-					   CMD(b) CMD(c)
-
+			         CMD(a)    PI(|)
+							   /   \  
+					         PI(|) CMD(d)
+					        /    \
+					     CMD(b) CMD(c)
 
 
 
