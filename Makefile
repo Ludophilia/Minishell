@@ -6,7 +6,7 @@
 #    By: jegerman <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/09 12:08:14 by jegerman          #+#    #+#              #
-#    Updated: 2025/12/13 17:57:53 by jegerman         ###   ########.fr        #
+#    Updated: 2025/12/18 19:37:37 by jegerman         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,15 +43,15 @@ MAN_SRCS += $(LEXR_DR)/lexer.c
 MAN_SRCS += $(LEXR_DR)/lexer_utils.c
 
 MAN_SRCS += $(PRSR_DR)/parser.c
-MAN_SRCS += $(PRSR_DR)/parser_rdp.c
-MAN_SRCS += $(PRSR_DR)/parser_rdp_utils.c
+MAN_SRCS += $(PRSR_DR)/parser_ast.c
+MAN_SRCS += $(PRSR_DR)/parser_ast_rdp.c
 MAN_SRCS += $(PRSR_DR)/parser_cmds.c
+MAN_SRCS += $(PRSR_DR)/parser_cleanup.c
 MAN_SRCS += $(PRSR_DR)/parser_error.c
 MAN_SRCS += $(PRSR_DR)/parser_error_utils.c
 MAN_SRCS += $(PRSR_DR)/parser_word.c
-MAN_SRCS += $(PRSR_DR)/parser_envv.c
-MAN_SRCS += $(PRSR_DR)/parser_utils.c
-MAN_SRCS += $(PRSR_DR)/parser_cleanup.c
+MAN_SRCS += $(PRSR_DR)/parser_word_envv.c
+MAN_SRCS += $(PRSR_DR)/parser_word_utils.c
 
 MAN_SRCS += $(FMGR_DR)/fmgr.c
 MAN_SRCS += $(FMGR_DR)/fmgr_reds.c

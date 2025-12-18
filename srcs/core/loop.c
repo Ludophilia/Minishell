@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:18:13 by jgermany          #+#    #+#             */
-/*   Updated: 2025/12/09 17:16:22 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/18 17:37:04 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ int	loop_prompt(t_core *core)
 		if (line == NULL)
 		{
 			write(1, "\n", 1);
+			utl_cleanup(core->flags | FLG_ENV, core); // remove
 			break ;
 			// bi_exit(core, core->cmds);
 		}

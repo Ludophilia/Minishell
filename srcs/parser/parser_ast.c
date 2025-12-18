@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser_rdp_utils.c                                 :+:      :+:    :+:   */
+/*   parser_ast.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/13 17:53:51 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/16 19:22:01 by jegerman         ###   ########.fr       */
+/*   Created: 2025/12/18 19:32:34 by jegerman          #+#    #+#             */
+/*   Updated: 2025/12/18 19:33:14 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,4 +21,16 @@ t_astn	*psr_new_astn(t_astt type)
 		return (NULL);
 	new->type = type;
 	return (new);
+}
+
+int	psr_build_ast(t_tok *toks, t_core *core)
+{
+	t_cnt	c;
+
+	c.f = 0;
+	c.i = 0;
+	core->ast = psr_rdp_line(&c, toks, core);
+	if (core->ast == NULL || (c.f > 0 && psr_cleanup_ast(core->ast)))
+		return (-1);
+	return (0);
 }

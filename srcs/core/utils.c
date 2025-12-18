@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 19:18:23 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/18 17:43:00 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/18 18:54:08 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,11 @@
 
 int	utl_cleanup(t_cflg flags, t_core *core)
 {
-	if ((flags & FLG_CMDS) || (flags & FLG_REDS))
-		psr_cleanup_cmds(flags, core);
+	// 18/12 - Completely broken
+	// if ((flags & FLG_CMDS) || (flags & FLG_REDS))
+	// 	psr_cleanup_cmds(flags, core);
+	if (flags & FLG_AST)
+		//
 	if (flags & FLG_CORE)
 		init_cleanup_core(core);
 	if (flags & FLG_ENV)

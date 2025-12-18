@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/09 17:20:26 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/17 19:11:59 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/18 16:27:30 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,8 @@ static t_astn	*psr_rdp_cmd(t_cnt *c, t_tok *toks, t_core *core)
 		return (c->f++, NULL);
 	if (toks[c->i].type == TOK_WORD || psr_isred(toks + c->i))
 	{
-		node->left = psr_rdp_smpcmd(c, toks, core);
-		if (node->left == NULL)
+		node->content = psr_rdp_smpcmd(c, toks, core);
+		if (node->content == NULL)
 			return (node);
 	}
 	else if (toks[c->i].type == TOK_SUBO)

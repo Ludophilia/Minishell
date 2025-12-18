@@ -330,26 +330,9 @@ How to handle this however?
 
 ### Examples of AST
 
-- `echo a && echo b`
-- `[WORD WORD] AND [WORD WORD]`
+See (0 - bonus analysis)
 
-	What does structure the AST?
-		- What does it mean?
-			- How does the tree build "itself" programmatically.
-
-			- We start from an array of tokens. How do we build a tree from this,
-			programmatically?
-
-`echo a && echo b`
-	- Create a command via the tokens, create a node (CMD) out of it. That's the 
-	root node?
-	- && operator: Create a new node (&&), associate left part to last CMD token,
-	(right part with already taken)
-
-
-21/11 - Ahahaha... Still struggling on that shi.
-
-RULES:
+### Bash grammar rules:
 
 - line				::= and_or
 - and_or			::= pipeline ( ('&&' | '||') pipeline )*
@@ -360,29 +343,14 @@ RULES:
 - redirection		::= ('<' | '>' | '<<' | '>>') word
 - word				::= TOKEN
 
-APPLICATION:
-
-// 22/11 - Every top node type at least (and_or, pipeline, commands....) should
-be represented in the Abstract parser tree, even if they don't . Why?
-// ==  AST should match the grammar production rules
-// ==  Being close to production rules make it more efficient to traverse, less branching...
-// == Easier to debug, consistency makes it simpler...
-// == That's how bash does it anyway.
-
-SO PLEASE CORRECT WHAT'S BELOW, WE'RE GETTING CLOSE...
-
-
 ### What is the purpose of that AST?
 
-	- Make the expr execution easier.
-		- [But why?]
-		- Binary branches match binary operations and help implement them.
-			- AND: if left branch return 0, we can safely explore the right 
-			one.
-			- OR: if left branch return 0, we don't have to explore the right
-			branch.
-		- Parentheses are backed in the structure. Nodes with parentheses
-		will be grouped. It's better to add a SUBSHELL node to make tree traversal and subshell mode easier to execute.
-
-
-### 
+- Make the expr execution easier.
+	- [But why?]
+	- Binary branches match binary operations and help implement them.
+		- AND: if left branch return 0, we can safely explore the right 
+		one.
+		- OR: if left branch return 0, we don't have to explore the right
+		branch.
+	- Parentheses are backed in the structure. Nodes with parentheses
+	will be grouped. It's better to add a SUBSHELL node to make tree traversal and subshell mode easier to execute.

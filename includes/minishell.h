@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/17 19:13:11 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/18 19:39:04 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,8 @@ typedef enum e_cflg
 	FLG_REDS = (1 << 1),
 	FLG_CORE = (1 << 2),
 	FLG_ENV = (1 << 3),
-	FLG_ALL = (FLG_CMDS | FLG_REDS | FLG_CORE),
+	FLG_AST = (1 << 4),
+	FLG_ALL = (FLG_AST | FLG_CMDS | FLG_REDS | FLG_CORE),
 }	t_cflg;
 
 typedef struct s_tok
@@ -137,6 +138,7 @@ typedef struct s_astn
 {
 	t_astt				type;
 	t_tokt				op;
+	void				*content;
 	void				*left;
 	void				*right;
 }	t_astn;
@@ -189,10 +191,11 @@ int		psr_copy_envv_value(char *start, char *word, int *j, t_core *core);
 
 char	*psr_create_word(t_tok *tok, t_tokt context, t_core *core);
 int		psr_fill_cmd(t_cnt *c, t_tok *toks, t_core *core, t_cmd *cmd);
-int		psr_cleanup_cmds(t_cflg flags, t_core *core);
 
 t_astn	*psr_new_astn(t_astt type);
 t_astn	*psr_rdp_line(t_cnt *c, t_tok *toks, t_core *core);
+int		psr_cleanup_ast(t_astn *root);
+int		psr_build_ast(t_tok *toks, t_core *core);
 int		psr_parse_line(char *line, t_core *core);
 
 int		fmgr_access(char *path, int type);

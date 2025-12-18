@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:16:27 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/17 19:17:48 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/18 19:41:26 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ static int	lex_print_tokens(t_tok *tokens)
 	return (0);
 }
 
-int	print_nodes_prefix_rev(int level, int left, int right, t_astn *root)
+static int	print_nodes_prefix_rev(int level, int left, int right, t_astn *root)
 {	
 	char	**toks;
 	char	**types;
@@ -58,25 +58,20 @@ int	print_nodes_prefix_rev(int level, int left, int right, t_astn *root)
 	types = (char *[]){"none", "ao", "pipe", "sub", "cmd", 0};
 	if (root == NULL)
 		return (printf("Nothing to print\n"));
-	if (root->type != 0)
-	{
-		for (int i = 0; i < level; ++i)
-			printf("\t");
-		if (left && right)
-			printf("[C]");
-		else
-			printf(left? "[L]": "[R]");
-		if (root->type == 1)
-			printf("[%i] type: %s, op: %s\n", level, types[root->type],
-				toks[root->op]);
-		else if (root->type == 2 || root->type == 3)
-			printf("[%i] type: %s\n", level, types[root->type]);
-		if (root->type == 4)
-			printf("[%i] type: %s, start: %s\n",
-				level, types[root->type], *((t_cmd *)(root->left))->argv);
-		if (root->type == AST_CMD)
-			return (0);
-	}
+	for (int i = 0; i < level; ++i)
+		printf("\t");
+	if (left && right)
+		printf("[C]");
+	else
+		printf(left? "[L]": "[R]");
+	if (root->type == 1)
+		printf("[%i] type: %s, op: %s\n", level, types[root->type],
+			toks[root->op]);
+	else if (root->type == 2 || root->type == 3)
+		printf("[%i] type: %s\n", level, types[root->type]);
+	else if (root->type == 4)
+		printf("[%i] type: %s, start: %s\n",
+			level, types[root->type], *((t_cmd *)(root->content))->argv);
 	if (root->right)
 		print_nodes_prefix_rev(level + 1, 0, 1, root->right);
 	if (root->left)
@@ -84,20 +79,6 @@ int	print_nodes_prefix_rev(int level, int left, int right, t_astn *root)
 	return (0);
 }
 
-// 18/12 == Implement destroy AST. The comment below.
-int	psr_build_ast(t_tok *toks, t_core *core)
-{
-	t_cnt	c;
-
-	c.f = 0;
-	c.i = 0;
-	core->ast = psr_rdp_line(&c, toks, core);
-	if (core->ast == NULL)
-		return (-1);
-	// if (core->ast == NULL || (c.f > 0 && NOT_IMPL_DESTROY_AST(core)))
-	// 	return (-1);
-	return (0);
-}
 
 int	psr_parse_line(char *line, t_core *core)
 {
@@ -106,11 +87,16 @@ int	psr_parse_line(char *line, t_core *core)
 	if (lex_tokenize_line(line, toks) || psr_error_check(toks, core) == -1)
 		return (-2);
 	(void)lex_print_tokens;
-	if (psr_build_ast(toks, core) == -1 && ft_eprintf("Error\n"))
-		return (-1); // 17/12: -1?
-	
-	print_nodes_prefix_rev(0, 1, 1, core->ast);
 
-	core->flags |= FLG_ALL;
+	if (psr_build_ast(toks, core) == -1 && ft_eprintf("Error\n")) // Error? Remove that!!
+		return (-1); // 17/12: -1?
+
+	// (void)print_nodes_prefix_rev;
+	print_nodes_prefix_rev(0, 1, 1, core->ast);// Remove!!
+
+	// 18/12 - Still not working...
+	psr_cleanup_ast(core->ast);
+	
+	core->flags |= FLG_ALL; // 18/12 - Really?
 	return (0);
 }
