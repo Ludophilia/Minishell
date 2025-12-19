@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 12:04:49 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/09 16:32:17 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/19 19:16:15 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,8 @@ int	fmgr_set_reds(t_core *core)
 	// t_cmd	*cmd;
 	// int		nbr;
 	// int		i;
+
+	// 19/12 - cmd_pmax is obsolete
 
 	(void)core;
 

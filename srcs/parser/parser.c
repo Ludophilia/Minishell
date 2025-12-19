@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:16:27 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/19 15:34:48 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/19 18:56:32 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,8 +89,6 @@ int	psr_parse_line(char *line, t_core *core)
 		return (-1);
 	(void)lex_print_tokens;
 	print_nodes_prefix_rev(0, 1, 1, core->ast);
-	// 19/12 - Integrate the routine to the central system.
-	psr_cleanup_ast(core->ast); // Remove this 
-	core->flags |= FLG_ALL; // Yeah... It's not FLG_
+	core->flags |= FLG_AST;
 	return (0);
 }

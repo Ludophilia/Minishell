@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/14 13:48:39 by jgermany          #+#    #+#             */
-/*   Updated: 2025/10/19 01:52:21 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/19 18:15:34 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	main(int argc, char **argv, char **envp)
 	}
 	if (init_core(&core, envp) == -1)
 		return (2);
-	if (loop_prompt(&core) == -1 && utl_cleanup(FLG_ENV, &core))
+	if (loop_prompt(&core) == -1 && utl_cleanup(core.flags, 0, &core))
 		return (3);
 	return (core.exit);
 }

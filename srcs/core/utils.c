@@ -6,35 +6,31 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 19:18:23 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/18 18:54:08 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/19 18:43:06 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	utl_cleanup(t_cflg flags, t_core *core)
+int	utl_cleanup(t_cflg base_flags, t_cflg excl_flags, t_core *core)
 {
-	// 18/12 - Completely broken
-	// if ((flags & FLG_CMDS) || (flags & FLG_REDS))
-	// 	psr_cleanup_cmds(flags, core);
+	t_cflg	flags;
+
+	flags = (base_flags & ~excl_flags);
 	if (flags & FLG_AST)
-		//
-	if (flags & FLG_CORE)
-		init_cleanup_core(core);
+		psr_cleanup_ast(core->ast);
 	if (flags & FLG_ENV)
 		env_cleanup(core);
-	if (flags & FLG_CMDS)
-		core->flags &= ~FLG_CMDS;
-	if (flags & FLG_REDS)
-		core->flags &= ~FLG_REDS;
-	if (flags & FLG_CORE)
-		core->flags &= ~FLG_CORE;
+	if (flags & FLG_AST)
+		core->flags &= ~FLG_AST;
+	if (flags & FLG_ENV)
+		core->flags &= ~FLG_ENV;
 	return (1);
 }
 
 int	utl_exit(int status, t_core *core)
 {
-	utl_cleanup(core->flags | FLG_ENV, core);
+	utl_cleanup(core->flags, 0, core);
 	core->exit = status;
 	exit(status);
 	return (1);

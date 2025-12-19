@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/19 15:12:52 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/19 18:51:29 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ typedef enum e_exit
 	EX_SUCC = 0,
 	EX_FAIL = 1,
 	EX_CNFD = 127,
+	// 126 ??
 }	t_exit;
 
 typedef enum e_max
@@ -89,12 +90,11 @@ typedef enum e_tokt
 
 typedef enum e_cflg
 {
-	FLG_CMDS = (1 << 0),
-	FLG_REDS = (1 << 1),
-	FLG_CORE = (1 << 2),
-	FLG_ENV = (1 << 3),
-	FLG_AST = (1 << 4),
-	FLG_ALL = (FLG_AST | FLG_CMDS | FLG_REDS | FLG_CORE),
+	FLG_NONE = 0,
+	FLG_CORE = (1 << 0),
+	FLG_ENV = (1 << 1),
+	FLG_AST = (1 << 2),
+	FLG_REDS = (1 << 3),
 }	t_cflg;
 
 typedef enum e_astt
@@ -137,8 +137,8 @@ typedef struct s_red
 typedef struct s_cmd
 {
 	t_red			reds[RED_MAX];
-	int				red_pmax; // 12/12 - Useful?
-	bool			xready; // 12/12 - Useful?
+	int				red_pmax;
+	bool			xready;
 	pid_t			pid;
 	char			**argv;
 	int				argc;
@@ -158,10 +158,7 @@ typedef struct s_astn
 typedef struct s_core
 {
 	t_astn			*ast;
-	int				cmd_pmax; // 9/12 - Broken
-	
-	int				cmd_xrdy; // Nbrs of xready cmds?
-
+	int				cmd_xrdy;
 	uint32_t		flags;
 	uint8_t			exit;
 	t_env			*env;
@@ -169,8 +166,13 @@ typedef struct s_core
 }	t_core;
 
 int		init_core(t_core *core, char **envp);
-int		init_cleanup_core(t_core *core);
 int		init_isatty(void);
+
+int		utl_free_strs(int from_id, char **strs);
+int		utl_cleanup(t_cflg base_flags, t_cflg excl_flags, t_core *core);
+char	*utl_itoa(unsigned int nbr, char *store);
+int		utl_free(void *ptr);
+int		utl_exit(int status, t_core *core);
 
 int		lex_is_quote(char *c);
 int		lex_is_op(char *c);
@@ -182,16 +184,13 @@ int		psr_isred(t_tok *tok);
 int		psr_isop(t_tok *tok);
 int		psr_synterr(t_tokt type, t_tok *tok);
 int		psr_error_check(t_tok *toks, t_core *core);
-
 int		psr_is_outq(int c, int *q);
 int		psr_is_envv(char *c, int ct, int q);
 int		psr_is_envv_chr(int c, int pos);
 int		psr_envv_value_len(char *start, int *j, t_core *core);
 int		psr_copy_envv_value(char *start, char *word, int *j, t_core *core);
-
 char	*psr_create_word(t_tok *tok, t_tokt context, t_core *core);
 int		psr_fill_cmd(t_cnt *c, t_tok *toks, t_core *core, t_cmd *cmd);
-
 int		psr_cleanup_ast(t_astn *root);
 t_astn	*psr_new_astn(t_astt type);
 int		psr_build_ast(t_tok *toks, t_core *core);
@@ -208,28 +207,9 @@ int		fmgr_set_pipe(int pos, int pmax, t_cmd *cmd);
 int		fmgr_set_red(int *xfd, int openflags, t_red *red, t_core *core);
 int		fmgr_set_reds(t_core *core);
 
-int		utl_free_strs(int from_id, char **strs);
-int		utl_cleanup(t_cflg flags, t_core *core);
-char	*utl_itoa(unsigned int nbr, char *store);
-int		utl_free(void *ptr);
-int		utl_exit(int status, t_core *core);
-
 int		sig_init_prompt(void);
 int		sig_init_child(void);
 int		sig_init_exec(void);
-
-t_env	*env_new_node(const char *key, const char *value);
-int		env_add_start(t_env **env_list, const char *key, const char *value);
-int		env_add_end(t_env **env_list, const char *key, const char *value);
-t_env	*env_dup(char **envp);
-int		env_del_node(t_env *node, t_env *prev, t_env **env_list);
-int		env_free_node(t_env *node);
-int		env_free_all(t_env *node);
-int		env_is_identifier(const char *str);
-char	*env_get(t_env *env_list, const char *key);
-int		env_set(t_env **env_list, const char *key, const char *value);
-char	**env_get_envp(t_env *env_list, t_core *core);
-int		env_cleanup(t_core *core);
 
 int		bi_cd(t_core *core, t_cmd *cmd);
 int		bi_echo(t_cmd *cmd, int fd);
@@ -245,5 +225,18 @@ int		exc_exec_cmds(t_core *core);
 int		exc_if_builtin(t_cmd *cmd, t_core *core);
 
 int		loop_prompt(t_core *core);
+
+t_env	*env_new_node(const char *key, const char *value);
+int		env_add_start(t_env **env_list, const char *key, const char *value);
+int		env_add_end(t_env **env_list, const char *key, const char *value);
+t_env	*env_dup(char **envp);
+int		env_del_node(t_env *node, t_env *prev, t_env **env_list);
+int		env_free_node(t_env *node);
+int		env_free_all(t_env *node);
+int		env_is_identifier(const char *str);
+char	*env_get(t_env *env_list, const char *key);
+int		env_set(t_env **env_list, const char *key, const char *value);
+char	**env_get_envp(t_env *env_list, t_core *core);
+int		env_cleanup(t_core *core);
 
 #endif

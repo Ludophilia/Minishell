@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:18:13 by jgermany          #+#    #+#             */
-/*   Updated: 2025/12/19 14:22:36 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/19 18:57:20 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,26 +17,29 @@ static int	loop_process_line(char *line, t_core *core)
 	int		psr_exv;
 
 	add_history(line);
-	// 10/11 - Time to improve the lexer and parser for the bonus part.
 	psr_exv = psr_parse_line(line, core);
 	if (psr_exv == -2)
 		return (-2);
-	if (psr_exv == -1
-		|| fmgr_set_reds(core) == -1) // set_reds won't work anymore.
+	// 19/12
+	// == Now we have to manage the execution.
+	//		== Opening the pipes / redirections
+	//		== Managing the fds...
+	//		== Finding the right command
+	if (psr_exv == -1 || fmgr_set_reds(core) == -1) // set_reds won't work anymore.
 	{
-		utl_cleanup(core->flags, core);
+		utl_cleanup(core->flags, 0, core);
 		return (-1);
 	}
-	// 11/10 - Execution Part...
+	// 10/11 - Execution Part...
 	// sig_init_exec();
 	// if (exc_exec_cmds(core) == -1)
 	// {
 	// 	sig_init_prompt();
-	// 	utl_cleanup(core->flags, core);
+	// 	utl_cleanup(core->flags, 0, core);
 	// 	return (-1);
 	// }
 	// sig_init_prompt();
-	utl_cleanup(core->flags, core);
+	utl_cleanup(core->flags, FLG_ENV, core);
 	return (0);
 }
 
@@ -55,15 +58,8 @@ int	loop_prompt(t_core *core)
 			core->exit = 130;
 			g_sig = 0;
 		}
-
 		if (line == NULL)
-		{
-			write(1, "\n", 1);
-			utl_cleanup(core->flags | FLG_ENV, core); // remove
-			break ;
-			// bi_exit(core, core->cmds);
-		}
-
+			bi_exit(core, NULL);
 		if (*line == 0 && utl_free(line))
 			continue ;
 		proc_exv = loop_process_line(line, core);
@@ -72,7 +68,6 @@ int	loop_prompt(t_core *core)
 		if (proc_exv == -2 && utl_free(line))
 			continue ;
 		free(line);
-
 	}
 	return (0);
 }

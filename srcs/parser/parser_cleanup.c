@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 22:43:08 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/19 14:13:56 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/19 18:49:39 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static int	psr_cleanup_red(t_cmd *cmd)
 		red->word = NULL;
 		red++;
 	}
-	cmd->red_pmax = 0; // 19/12 - Necessary?
+	cmd->red_pmax = 0;
 	cmd->ifd = (fmgr_close(&cmd->ifd), 0);
 	cmd->ofd = (fmgr_close(&cmd->ofd), 1);
 	return (1);

@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:07:42 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/09 16:34:09 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/19 18:06:13 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,8 @@ int	exc_exec_cmds(t_core *core)
 {
 	// pid_t	pid;
 	// int		i;
+
+	// 19/12 - cmd_pmax is obsolete
 
 	// pid = 0;
 	// i = -1;

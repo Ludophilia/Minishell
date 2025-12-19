@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/09 04:06:14 by ntahri            #+#    #+#             */
-/*   Updated: 2025/10/19 03:46:36 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/19 18:24:59 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,9 @@ int	bi_exit(t_core *core, t_cmd *cmd)
 	long	code;
 
 	ft_putendl_fd("exit", STDOUT_FILENO);
-	if (cmd->argc < 2)
+	if (cmd == NULL || cmd->argc < 2)
 	{
-		utl_cleanup(core->flags | FLG_ENV, core);
+		utl_cleanup(core->flags, 0, core);
 		exit(core->exit);
 	}
 	if (cmd->argc > 2)
@@ -61,6 +61,6 @@ int	bi_exit(t_core *core, t_cmd *cmd)
 		ft_eprintf(ERR_BINV, "exit", cmd->argv[1]);
 		utl_exit(2, core);
 	}
-	utl_cleanup(core->flags | FLG_ENV, core);
+	utl_cleanup(core->flags, 0, core);
 	exit(core->exit = (unsigned char)code);
 }
