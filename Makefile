@@ -6,7 +6,7 @@
 #    By: jegerman <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/09 12:08:14 by jegerman          #+#    #+#              #
-#    Updated: 2025/12/18 19:37:37 by jegerman         ###   ########.fr        #
+#    Updated: 2025/12/19 15:50:53 by jegerman         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,7 +32,7 @@ LEXR_DR := $(SRCS_DR)/lexer
 PRSR_DR := $(SRCS_DR)/parser
 FMGR_DR := $(SRCS_DR)/fmgr
 EXEC_DR := $(SRCS_DR)/exec
-ENVM_DR := $(SRCS_DR)/envmgr
+ENVM_DR := $(SRCS_DR)/env
 
 MAN_SRCS := $(CORE_DR)/main.c
 MAN_SRCS += $(CORE_DR)/loop.c
