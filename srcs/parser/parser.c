@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:16:27 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/18 19:41:26 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/19 15:34:48 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,24 +79,18 @@ static int	print_nodes_prefix_rev(int level, int left, int right, t_astn *root)
 	return (0);
 }
 
-
 int	psr_parse_line(char *line, t_core *core)
 {
 	t_tok	toks[TOK_MAX];
 
 	if (lex_tokenize_line(line, toks) || psr_error_check(toks, core) == -1)
 		return (-2);
+	if (psr_build_ast(toks, core) == -1)
+		return (-1);
 	(void)lex_print_tokens;
-
-	if (psr_build_ast(toks, core) == -1 && ft_eprintf("Error\n")) // Error? Remove that!!
-		return (-1); // 17/12: -1?
-
-	// (void)print_nodes_prefix_rev;
-	print_nodes_prefix_rev(0, 1, 1, core->ast);// Remove!!
-
-	// 18/12 - Still not working...
-	psr_cleanup_ast(core->ast);
-	
-	core->flags |= FLG_ALL; // 18/12 - Really?
+	print_nodes_prefix_rev(0, 1, 1, core->ast);
+	// 19/12 - Integrate the routine to the central system.
+	psr_cleanup_ast(core->ast); // Remove this 
+	core->flags |= FLG_ALL; // Yeah... It's not FLG_
 	return (0);
 }

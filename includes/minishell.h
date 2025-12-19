@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/18 19:39:04 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/19 15:12:52 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,34 +97,6 @@ typedef enum e_cflg
 	FLG_ALL = (FLG_AST | FLG_CMDS | FLG_REDS | FLG_CORE),
 }	t_cflg;
 
-typedef struct s_tok
-{
-	enum e_tokt		type;
-	char			*start;
-	int				len;
-}	t_tok;
-
-typedef struct s_count
-{
-	int		f;
-	int		i;
-	int		j;
-	int		k;
-}	t_cnt;
-
-typedef struct s_red
-{
-	t_tokt			type;
-	char			*word;
-}	t_red;
-
-typedef struct s_env
-{
-	char			*key;
-	char			*value;
-	struct s_env	*next;
-}	t_env;
-
 typedef enum e_astt
 {
 	AST_NONE = 0,
@@ -134,6 +106,46 @@ typedef enum e_astt
 	AST_CMD
 }	t_astt;
 
+typedef struct s_count
+{
+	int		f;
+	int		i;
+	int		j;
+	int		k;
+}	t_cnt;
+
+typedef struct s_env
+{
+	char			*key;
+	char			*value;
+	struct s_env	*next;
+}	t_env;
+
+typedef struct s_tok
+{
+	enum e_tokt		type;
+	char			*start;
+	int				len;
+}	t_tok;
+
+typedef struct s_red
+{
+	t_tokt			type;
+	char			*word;
+}	t_red;
+
+typedef struct s_cmd
+{
+	t_red			reds[RED_MAX];
+	int				red_pmax; // 12/12 - Useful?
+	bool			xready; // 12/12 - Useful?
+	pid_t			pid;
+	char			**argv;
+	int				argc;
+	int				ifd;
+	int				ofd;
+}	t_cmd;
+
 typedef struct s_astn
 {
 	t_astt				type;
@@ -142,18 +154,6 @@ typedef struct s_astn
 	void				*left;
 	void				*right;
 }	t_astn;
-
-typedef struct s_cmd
-{
-	t_red			reds[RED_MAX];
-	int				red_pmax;
-	bool			xready; // 12/12 - Useless?
-	pid_t			pid;
-	char			**argv;
-	int				argc;
-	int				ifd;
-	int				ofd;
-}	t_cmd;
 
 typedef struct s_core
 {
@@ -192,10 +192,10 @@ int		psr_copy_envv_value(char *start, char *word, int *j, t_core *core);
 char	*psr_create_word(t_tok *tok, t_tokt context, t_core *core);
 int		psr_fill_cmd(t_cnt *c, t_tok *toks, t_core *core, t_cmd *cmd);
 
-t_astn	*psr_new_astn(t_astt type);
-t_astn	*psr_rdp_line(t_cnt *c, t_tok *toks, t_core *core);
 int		psr_cleanup_ast(t_astn *root);
+t_astn	*psr_new_astn(t_astt type);
 int		psr_build_ast(t_tok *toks, t_core *core);
+t_astn	*psr_rdp_line(t_cnt *c, t_tok *toks, t_core *core);
 int		psr_parse_line(char *line, t_core *core);
 
 int		fmgr_access(char *path, int type);

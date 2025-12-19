@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:18:13 by jgermany          #+#    #+#             */
-/*   Updated: 2025/12/18 17:37:04 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/19 14:22:36 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ int	loop_prompt(t_core *core)
 
 	while (1)
 	{
-
 		if (sig_init_prompt() == -1)
 			return (-1);
 		line = readline(UI_PROMPT);
