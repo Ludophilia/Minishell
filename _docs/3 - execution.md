@@ -1,5 +1,7 @@
 # Execution
 
+# Mandatory Part
+
 ## Current State
 
 - We have an array of t_cmds.
@@ -272,3 +274,79 @@ suriipu: command not found
 
 - In a pipeline, the builtins DO NOT modify the shell vars but the subshell.
 Here cd / doesn't really do anything.
+
+# Bonus part
+
+## Current State
+
+We have a functional AST... 
+== Now we have to manage the execution.
+
+(That means...)
+
+Let's see what should happen in execution for every node type.
+
+- AO: ANDOR node.
+	- AND:
+		- store left_code_exit_code in exit_code (how?)
+		- decide what to do with it:
+			- exit_code == 0 ?
+				- execute right_node
+				- store left_code_exit_code in AO exit_code
+			- exit_code != 0 ?
+				- skip out right node and childrens entirely
+	- OR:
+		- store left_code_exit_code in exit_code
+		- decide what to do with it:
+			- exit_code == 0 ?
+				- skip out right node and childrens entirely
+			- exit_code != 0 ?
+				- execute right_node
+				- store right_code_exit_code in AO exit_code
+
+- PI: PIPE node
+	- PIPE:
+		- 
+
+		- The minute we pass on a pipe node... What to do? 
+		
+		- Open new pipes?
+			- the left child will get pipe[1] as its ofd
+			- the right child will get pipe[0] as its ifd.
+
+		- But how to manage a pipe node which has a pipe node as a child ?
+
+			- The parent PIPE node
+				- the right child will get pipe_par[0] as its ifd. (normal)
+				- the left child (a PIPE node) will get pipe_par[1] as its ofd.
+					- So, the PIPE child node will get...
+						- the left child will get pipe_chi[1] as its ofd (nothing surprising)
+						- the right child will get pipe_chi[0] as its ifd.
+						- AND			           pipe_par[1] as its ofd. (inheritance mechanism) 
+
+			(20/12) Keep going...
+
+
+			- 
+#################
+
+Pipes in parent process or subprocess after fork?
+
+pipes. IPC channel. 2 fds.
+- each command is executed in their own subprocess (via fork)
+- if i open pipe in the subprocess after fork... it won't work. why? the opened
+fds won't be shared between the subs processes, so no communication will ever
+be possible.
+- 
+
+
+
+################
+
+Commands executed in the right context.
+	- Pipes correctly opened
+	- Redirections correctly opened
+
+	== Opening the pipes / redirections
+	== Managing the fds...
+	== Finding the right command

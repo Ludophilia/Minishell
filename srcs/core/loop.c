@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:18:13 by jgermany          #+#    #+#             */
-/*   Updated: 2025/12/19 18:57:20 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/20 23:23:16 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,9 @@ static int	loop_process_line(char *line, t_core *core)
 	psr_exv = psr_parse_line(line, core);
 	if (psr_exv == -2)
 		return (-2);
-	// 19/12
-	// == Now we have to manage the execution.
-	//		== Opening the pipes / redirections
-	//		== Managing the fds...
-	//		== Finding the right command
+
+	// 20/12 - 
+
 	if (psr_exv == -1 || fmgr_set_reds(core) == -1) // set_reds won't work anymore.
 	{
 		utl_cleanup(core->flags, 0, core);

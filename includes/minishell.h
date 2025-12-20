@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/19 18:51:29 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/19 19:45:45 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,48 +108,49 @@ typedef enum e_astt
 
 typedef struct s_count
 {
-	int		f;
-	int		i;
-	int		j;
-	int		k;
+	int					f;
+	int					i;
+	int					j;
+	int					k;
 }	t_cnt;
 
 typedef struct s_env
 {
-	char			*key;
-	char			*value;
-	struct s_env	*next;
+	char				*key;
+	char				*value;
+	struct s_env		*next;
 }	t_env;
 
 typedef struct s_tok
 {
-	enum e_tokt		type;
-	char			*start;
-	int				len;
+	enum e_tokt			type;
+	char				*start;
+	int					len;
 }	t_tok;
 
 typedef struct s_red
 {
-	t_tokt			type;
-	char			*word;
+	t_tokt				type;
+	char				*word;
 }	t_red;
 
 typedef struct s_cmd
 {
-	t_red			reds[RED_MAX];
-	int				red_pmax;
-	bool			xready;
-	pid_t			pid;
-	char			**argv;
-	int				argc;
-	int				ifd;
-	int				ofd;
+	t_red				reds[RED_MAX];
+	int					red_pmax;
+	bool				xready;
+	pid_t				pid;
+	char				**argv;
+	int					argc;
+	int					ifd;
+	int					ofd;
 }	t_cmd;
 
 typedef struct s_astn
 {
 	t_astt				type;
 	t_tokt				op;
+	unsigned char		code;
 	void				*content;
 	void				*left;
 	void				*right;
@@ -157,12 +158,12 @@ typedef struct s_astn
 
 typedef struct s_core
 {
-	t_astn			*ast;
-	int				cmd_xrdy;
-	uint32_t		flags;
-	uint8_t			exit;
-	t_env			*env;
-	char			**envp;
+	t_astn				*ast;
+	int					cmd_xrdy;
+	uint32_t			flags;
+	uint8_t				exit;
+	t_env				*env;
+	char				**envp;
 }	t_core;
 
 int		init_core(t_core *core, char **envp);
