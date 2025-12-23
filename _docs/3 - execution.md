@@ -279,16 +279,19 @@ Here cd / doesn't really do anything.
 
 ## Current State
 
-We have a functional AST... 
-== Now we have to manage the execution.
-
-(That means...)
+We have a functional AST... Now we have to manage the execution.
 
 Let's see what should happen in execution for every node type.
 
+(Inorder traversal??)
+
 - AO: ANDOR node.
 	- AND:
-		- store left_code_exit_code in exit_code (how?)
+		- store left_code_exit_code in exit_code
+			- How?
+				- return value of the function that execute child?
+				- pointer modified once the function has done executing
+		
 		- decide what to do with it:
 			- exit_code == 0 ?
 				- execute right_node
@@ -305,40 +308,81 @@ Let's see what should happen in execution for every node type.
 				- store right_code_exit_code in AO exit_code
 
 - PI: PIPE node
-	- PIPE:
-		- 
 
-		- The minute we pass on a pipe node... What to do? 
-		
-		- Open new pipes?
-			- the left child will get pipe[1] as its ofd
-			- the right child will get pipe[0] as its ifd.
+	- Open a new pipe, the minute we pass on PIPE node (inorder traversal).
+		- the left child will get pipe[1] as ofd.
+		- the right child will get pipe[0] as ifd.
 
-		- But how to manage a pipe node which has a pipe node as a child ?
+	- But how to manage a pipe node which has a pipe node as a child ?
 
-			- The parent PIPE node
-				- the right child will get pipe_par[0] as its ifd. (normal)
-				- the left child (a PIPE node) will get pipe_par[1] as its ofd.
-					- So, the PIPE child node will get...
-						- the left child will get pipe_chi[1] as its ofd (nothing surprising)
-						- the right child will get pipe_chi[0] as its ifd.
-						- AND			           pipe_par[1] as its ofd. (inheritance mechanism) 
+						  PI(|) 
+                         /     \
+					   PI(|)   CMD(c)
+					   /   \
+				   CMD(a) CMD(b)
 
-			(20/12) Keep going...
+		- The parent PIPE node
+			- left child (PIPE) will get pipeP[1] as ofd.
+			- right child (CMD(c)) will get pipeP[0] as ifd.
+
+		- The child PIPE node... (parent's left)
+			- left child (CMD(a)) will get pipeC[1] as ofd
+			- right child (CMD(c)) will get:
+				- pipeC[0] as ifd.
+				- pipeP[1] as ofd. (inheritance mechanism on right) 
+
+	- But by the way... Should we open the pipe in the parent process or
+	in child process?
+
+		- Each command is executed in their own subprocess (after fork).
+		This isolation allows execve to be processed without erasing the
+		parent shell responsible for command line processing.
+
+		- If pipes are opened in the subprocess... They will be isolated
+		from the the rest of the command line. The opened fds won't be
+		shared between the subs processes, so no interprocess communication
+		will ever be possible.
 
 
-			- 
-#################
+- SUB: Subshell node
+	- (echo a) | nl -> prints a with 1 before it.
+                                 
+								 PI(|)
+								 /    \
+				                SUB  CMD(nl)
+								 |
+						   CMD(echo a)
 
-Pipes in parent process or subprocess after fork?
+	- (echo a && echo b && echo c) | nl -> prints a, b, c, one line at a time
+	with a number every line.
+	- (echo a && echo b > /dev/null && echo c) | nl -> prints a, c, one line
+	at a time with a number every line.
 
-pipes. IPC channel. 2 fds.
-- each command is executed in their own subprocess (via fork)
-- if i open pipe in the subprocess after fork... it won't work. why? the opened
-fds won't be shared between the subs processes, so no communication will ever
-be possible.
-- 
+                               PI(|)
+                             /      \
+							SUB   CMD(nl)
+							 |
+						   AO(&&)
+                          /     \
+                       AO(&&)  CMD(echo c)
+                      /     \
+                CMD(echo a) CMD(echo b)
 
+	- SUB has ofd that points to pipeP[1]... STDOUT in that context has been
+	redirected / dup2'd to pipeP[1].
+
+	That's exclusive to SUB, every command 
+
+24/12 - How do you manage
+
+(echo a && echo b && echo c) > out
+
+BY the way?
+
+- CMD: CMD node
+	- REDS
+		- How do they interact with fds opened
+			- cmd is executed 
 
 
 ################
