@@ -371,11 +371,21 @@ Let's see what should happen in execution for every node type.
 	- SUB has ofd that points to pipeP[1]... STDOUT in that context has been
 	redirected / dup2'd to pipeP[1].
 
-	That's exclusive to SUB, every command 
+	That's exclusive to SUB, every command below SUB will have pipeP[1] as
+	their ofd, instead of 1 / STDOUT. Fortunately for us, SUB is a subprocess,
+	that means the redirection only affect that process and nothing else. 
 
 24/12 - How do you manage
 
 (echo a && echo b && echo c) > out
+
+                             SUB <- Maybe I should add redirs to subshell node
+							  |
+                            AO(&&) 
+						    /      \
+					      AO(&&)  CMD(echo c)
+						/       \     
+			      CMD(echo a) CMD(echo b)
 
 BY the way?
 

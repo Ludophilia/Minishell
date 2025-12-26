@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/14 14:02:46 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/06 20:13:32 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/26 18:22:23 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,11 @@ int	psr_isred(t_tok *tok)
 		|| tok->type == TOK_IRED_HD
 		|| tok->type == TOK_ORED
 		|| tok->type == TOK_ORED_AP);
+}
+
+int	psr_issub(t_tok *tok)
+{
+	return (tok->type == TOK_SUBO || tok->type == TOK_SUBC);
 }
 
 int	psr_istok(t_tokt type, t_tok *tok)

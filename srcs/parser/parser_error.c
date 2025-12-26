@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 13:37:44 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/18 16:53:33 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/26 19:51:30 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,30 +66,6 @@ static int	psr_wtok_check(t_tok *tok, t_tok *next)
 	return (0);
 }
 
-static int	psr_subtok_check(int pos, int *opn, t_tok *tok, t_tok *next)
-{
-	if (tok->type != TOK_SUBO && tok->type != TOK_SUBC)
-		return (0);
-	if (tok->type == TOK_SUBO)
-		(*opn)++;
-	else
-		(*opn)--;
-	if (tok->type == TOK_SUBC && (pos == 0 || *opn < 0))
-	{
-		psr_synterr(tok->type, tok);
-		return (-1);
-	}
-	if ((tok->type == TOK_SUBO
-			&& (next->type == TOK_SUBC || psr_isop(next)))
-		|| (tok->type == TOK_SUBC
-			&& (next->type == TOK_WORD || next->type == TOK_SUBO)))
-	{
-		psr_synterr(next->type, next);
-		return (-1);
-	}
-	return (0);
-}
-
 int	psr_error_check(t_tok *toks, t_core *core)
 {
 	t_tok	*tok;
@@ -104,7 +80,7 @@ int	psr_error_check(t_tok *toks, t_core *core)
 		if (psr_redtok_check(tok, tok + 1) == -1
 			|| psr_binaop_check(i, tok, tok + 1) == -1
 			|| psr_wtok_check(tok, tok + 1) == -1
-			|| psr_subtok_check(i, &opn, tok, tok + 1) == -1)
+			|| psr_subtok_check(&i, &opn, tok, tok + 1) == -1)
 			return (core->exit = 2, -1);
 		tok = toks + ++i;
 	}

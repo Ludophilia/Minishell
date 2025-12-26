@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/19 19:45:45 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/26 19:53:10 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,8 +182,10 @@ int		lex_tokenize_line(char *line, t_tok *toks);
 
 int		psr_istok(t_tokt type, t_tok *tok);
 int		psr_isred(t_tok *tok);
+int		psr_issub(t_tok *tok);
 int		psr_isop(t_tok *tok);
 int		psr_synterr(t_tokt type, t_tok *tok);
+int		psr_subtok_check(int *pos, int *opn, t_tok *tok, t_tok *next);
 int		psr_error_check(t_tok *toks, t_core *core);
 int		psr_is_outq(int c, int *q);
 int		psr_is_envv(char *c, int ct, int q);

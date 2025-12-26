@@ -1,30 +1,50 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser_rdp.c                                       :+:      :+:    :+:   */
+/*   parser_ast_rdp.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/09 17:20:26 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/18 16:27:30 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/26 19:56:32 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static t_cmd	*psr_rdp_smpcmd(t_cnt *c, t_tok *toks, t_core *core)
+int	psr_rdp_scmd(t_cnt *c, t_tok *toks, t_core *core, t_astn *node)
 {
 	t_cmd	*cmd;
 
 	cmd = ft_calloc(1, sizeof(t_cmd));
 	if (cmd == NULL)
-		return (c->f++, NULL);
+		return (c->f++, -1);
 	if (psr_fill_cmd(c, toks, core, cmd) == -1)
 	{
 		free(cmd);
-		return (NULL);
+		return (-1);
 	}
-	return (cmd);
+	node->content = cmd;
+	return (0);
+}
+
+int	psr_rdp_sub(t_cnt *c, t_tok *toks, t_core *core, t_astn *node)
+{
+	c->i++;
+	node->type = AST_SUB;
+	node->left = psr_rdp_line(c, toks, core);
+	if (toks[c->i].type != TOK_SUBC)
+		return (c->f++, -1);
+	c->i++;
+	if (psr_isred(toks + c->i) == false)
+		return (0);
+
+	// 27/12 - WE NEED A LOGIC TO CONSUME THOSE EXTRA TOKENS.
+
+	// (a) > b > c
+		
+	// 26/12 - There may be extra redirections to process.
+	return (0);
 }
 
 static t_astn	*psr_rdp_cmd(t_cnt *c, t_tok *toks, t_core *core)
@@ -37,21 +57,12 @@ static t_astn	*psr_rdp_cmd(t_cnt *c, t_tok *toks, t_core *core)
 	node = psr_new_astn(AST_CMD);
 	if (node == NULL)
 		return (c->f++, NULL);
-	if (toks[c->i].type == TOK_WORD || psr_isred(toks + c->i))
-	{
-		node->content = psr_rdp_smpcmd(c, toks, core);
-		if (node->content == NULL)
-			return (node);
-	}
-	else if (toks[c->i].type == TOK_SUBO)
-	{
-		c->i++;
-		node->type = AST_SUB;
-		node->left = psr_rdp_line(c, toks, core);
-		if (toks[c->i].type != TOK_SUBC)
-			return (c->f++, node);
-		c->i++;
-	}
+	if ((toks[c->i].type == TOK_WORD || psr_isred(toks + c->i))
+		&& psr_rdp_scmd(c, toks, core, node) == -1)
+		return (node);
+	else if (toks[c->i].type == TOK_SUBO
+		&& psr_rdp_sub(c, toks, core, node) == -1)
+		return (node);
 	return (node);
 }
 
