@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 22:43:08 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/19 18:49:39 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/27 17:54:19 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,8 @@ int	psr_cleanup_ast(t_astn *root)
 		psr_cleanup_ast(root->left);
 	if (root->right)
 		psr_cleanup_ast(root->right);
-	if (root->type == AST_CMD && root->content)
+	if ((root->type == AST_CMD || root->type == AST_SUB)
+		&& root->content)
 		psr_cleanup_cmd(root->content);
 	free(root);
 	return (0);

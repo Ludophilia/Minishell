@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:16:27 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/26 19:15:48 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/27 16:06:45 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,8 +93,6 @@ int	psr_parse_line(char *line, t_core *core)
 
 	lex_print_tokens(toks);
 
-
-		
 	if (psr_build_ast(toks, core) == -1)
 		return (-1);
 	print_nodes_prefix_rev(0, 1, 1, core->ast); // 19/12 - Will be removed...

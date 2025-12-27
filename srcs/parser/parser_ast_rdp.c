@@ -6,29 +6,13 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/09 17:20:26 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/26 19:56:32 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/27 19:35:14 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	psr_rdp_scmd(t_cnt *c, t_tok *toks, t_core *core, t_astn *node)
-{
-	t_cmd	*cmd;
-
-	cmd = ft_calloc(1, sizeof(t_cmd));
-	if (cmd == NULL)
-		return (c->f++, -1);
-	if (psr_fill_cmd(c, toks, core, cmd) == -1)
-	{
-		free(cmd);
-		return (-1);
-	}
-	node->content = cmd;
-	return (0);
-}
-
-int	psr_rdp_sub(t_cnt *c, t_tok *toks, t_core *core, t_astn *node)
+static int	psr_rdp_sub(t_cnt *c, t_tok *toks, t_core *core, t_astn *node)
 {
 	c->i++;
 	node->type = AST_SUB;
@@ -38,12 +22,8 @@ int	psr_rdp_sub(t_cnt *c, t_tok *toks, t_core *core, t_astn *node)
 	c->i++;
 	if (psr_isred(toks + c->i) == false)
 		return (0);
-
-	// 27/12 - WE NEED A LOGIC TO CONSUME THOSE EXTRA TOKENS.
-
-	// (a) > b > c
-		
-	// 26/12 - There may be extra redirections to process.
+	if (psr_rdp_scmd(c, toks, core, node) == -1)
+		return (-1);
 	return (0);
 }
 

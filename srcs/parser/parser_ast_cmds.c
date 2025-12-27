@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser_cmds.c                                      :+:      :+:    :+:   */
+/*   parser_ast_cmds.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 18:57:18 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/17 18:54:24 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/27 20:30:23 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ static int	psr_consume_rtok(t_cnt *c, t_tok *tok, t_cmd *cmd, t_core *core)
 	return (0);
 }
 
-int	psr_fill_cmd(t_cnt *c, t_tok *toks, t_core *core, t_cmd *cmd)
+static int	psr_fill_cmd(t_cnt *c, t_tok *toks, t_core *core, t_cmd *cmd)
 {
 	t_tok	*tok;
 	int		len;
@@ -75,5 +75,21 @@ int	psr_fill_cmd(t_cnt *c, t_tok *toks, t_core *core, t_cmd *cmd)
 			return (-1);
 		tok = toks + c->i;
 	}
+	return (0);
+}
+
+int	psr_rdp_scmd(t_cnt *c, t_tok *toks, t_core *core, t_astn *node)
+{
+	t_cmd	*cmd;
+
+	cmd = ft_calloc(1, sizeof(t_cmd));
+	if (cmd == NULL)
+		return (c->f++, -1);
+	if (psr_fill_cmd(c, toks, core, cmd) == -1)
+	{
+		free(cmd);
+		return (-1);
+	}
+	node->content = cmd;
 	return (0);
 }

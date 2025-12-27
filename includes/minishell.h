@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/26 19:53:10 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/27 19:26:32 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,7 +142,7 @@ typedef struct s_cmd
 	pid_t				pid;
 	char				**argv;
 	int					argc;
-	int					ifd;
+	int					ifd; // 27/12 - Keep those two?
 	int					ofd;
 }	t_cmd;
 
@@ -151,6 +151,8 @@ typedef struct s_astn
 	t_astt				type;
 	t_tokt				op;
 	unsigned char		code;
+	int					ifd; // 27/12 - Usure
+	int					ofd;
 	void				*content;
 	void				*left;
 	void				*right;
@@ -184,19 +186,23 @@ int		psr_istok(t_tokt type, t_tok *tok);
 int		psr_isred(t_tok *tok);
 int		psr_issub(t_tok *tok);
 int		psr_isop(t_tok *tok);
-int		psr_synterr(t_tokt type, t_tok *tok);
-int		psr_subtok_check(int *pos, int *opn, t_tok *tok, t_tok *next);
-int		psr_error_check(t_tok *toks, t_core *core);
+
 int		psr_is_outq(int c, int *q);
 int		psr_is_envv(char *c, int ct, int q);
 int		psr_is_envv_chr(int c, int pos);
 int		psr_envv_value_len(char *start, int *j, t_core *core);
 int		psr_copy_envv_value(char *start, char *word, int *j, t_core *core);
+
+int		psr_synterr(t_tokt type, t_tok *tok);
+int		psr_subtok_check(int *pos, int *opn, t_tok *tok, t_tok *next);
+int		psr_error_check(t_tok *toks, t_core *core);
+
 char	*psr_create_word(t_tok *tok, t_tokt context, t_core *core);
-int		psr_fill_cmd(t_cnt *c, t_tok *toks, t_core *core, t_cmd *cmd);
+
 int		psr_cleanup_ast(t_astn *root);
 t_astn	*psr_new_astn(t_astt type);
 int		psr_build_ast(t_tok *toks, t_core *core);
+int		psr_rdp_scmd(t_cnt *c, t_tok *toks, t_core *core, t_astn *node);
 t_astn	*psr_rdp_line(t_cnt *c, t_tok *toks, t_core *core);
 int		psr_parse_line(char *line, t_core *core);
 

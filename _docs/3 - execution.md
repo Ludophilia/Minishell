@@ -286,40 +286,45 @@ Let's see what should happen in execution for every node type.
 (Inorder traversal??)
 
 - AO: ANDOR node.
-	- AND:
-		- store left_code_exit_code in exit_code
-			- How?
-				- return value of the function that execute child?
-				- pointer modified once the function has done executing
-		
-		- decide what to do with it:
-			- exit_code == 0 ?
-				- execute right_node
-				- store left_code_exit_code in AO exit_code
-			- exit_code != 0 ?
-				- skip out right node and childrens entirely
-	- OR:
-		- store left_code_exit_code in exit_code
-		- decide what to do with it:
-			- exit_code == 0 ?
-				- skip out right node and childrens entirely
-			- exit_code != 0 ?
-				- execute right_node
-				- store right_code_exit_code in AO exit_code
+
+	- What to do when executing?
+
+		- AND:
+			- store left_code_exit_code in exit_code
+				- How?
+					- return value of the function that execute child?
+					- pointer modified once the function has done executing
+			
+			- decide what to do with it:
+				- exit_code == 0 ?
+					- execute right_node
+					- store left_code_exit_code in AO exit_code
+				- exit_code != 0 ?
+					- skip out right node and childrens entirely
+		- OR:
+			- store left_code_exit_code in exit_code
+			- decide what to do with it:
+				- exit_code == 0 ?
+					- skip out right node and childrens entirely
+				- exit_code != 0 ?
+					- execute right_node
+					- store right_code_exit_code in AO exit_code
 
 - PI: PIPE node
 
-	- Open a new pipe, the minute we pass on PIPE node (inorder traversal).
-		- the left child will get pipe[1] as ofd.
-		- the right child will get pipe[0] as ifd.
+	- Q0: Execution
+	
+		- Open a new pipe, the minute we pass on PIPE node (inorder traversal).
+			- the left child will get pipe[1] as ofd.
+			- the right child will get pipe[0] as ifd.
 
-	- But how to manage a pipe node which has a pipe node as a child ?
+	- Q1: But how to manage a pipe node which has a pipe node as a child ?
 
-						  PI(|) 
-                         /     \
-					   PI(|)   CMD(c)
-					   /   \
-				   CMD(a) CMD(b)
+								  PI(|) 
+		                         /     \
+							   PI(|)   CMD(c)
+							   /   \
+						   CMD(a) CMD(b)
 
 		- The parent PIPE node
 			- left child (PIPE) will get pipeP[1] as ofd.
@@ -327,11 +332,11 @@ Let's see what should happen in execution for every node type.
 
 		- The child PIPE node... (parent's left)
 			- left child (CMD(a)) will get pipeC[1] as ofd
-			- right child (CMD(c)) will get:
+			- right child (CMD(b)) will get:
 				- pipeC[0] as ifd.
 				- pipeP[1] as ofd. (inheritance mechanism on right) 
 
-	- But by the way... Should we open the pipe in the parent process or
+	- Q2: But by the way... Should we open the pipe in the parent process or
 	in child process?
 
 		- Each command is executed in their own subprocess (after fork).
@@ -345,62 +350,64 @@ Let's see what should happen in execution for every node type.
 
 
 - SUB: Subshell node
-	- (echo a) | nl -> prints a with 1 before it.
-                                 
-								 PI(|)
-								 /    \
-				                SUB  CMD(nl)
+
+	- Q0: Execution
+
+		- A new subshell is created upon the execution of a SUB node.
+		- Redirections are opened or inherited from a pipe, STDIN and/or
+		STDOUT, redirected accordingly.
+		- Moving onto the next node... which is the left one.
+
+	- Q1: About redirection behavior on SUB
+
+		- (echo a) | nl -> prints a with 1 before it.
+	                                 
+									 PI(|)
+									 /    \
+					                SUB  CMD(nl)
+									 |
+							   CMD(echo a)
+
+		- (echo a && echo b && echo c) | nl -> prints a, b, c, one line at a time
+		with a number every line.
+		- (echo a && echo b > /dev/null && echo c) | nl -> prints a, c, one line
+		at a time with a number every line.
+
+	                               PI(|)
+	                             /      \
+								SUB   CMD(nl)
 								 |
-						   CMD(echo a)
+							   AO(&&)
+	                          /     \
+	                       AO(&&)  CMD(echo c)
+	                      /     \
+	                CMD(echo a) CMD(echo b)
 
-	- (echo a && echo b && echo c) | nl -> prints a, b, c, one line at a time
-	with a number every line.
-	- (echo a && echo b > /dev/null && echo c) | nl -> prints a, c, one line
-	at a time with a number every line.
+		- SUB has ofd that points to pipeP[1]... STDOUT in that context has been
+		redirected / dup2'd to pipeP[1].
 
-                               PI(|)
-                             /      \
-							SUB   CMD(nl)
-							 |
-						   AO(&&)
-                          /     \
-                       AO(&&)  CMD(echo c)
-                      /     \
-                CMD(echo a) CMD(echo b)
+		That's exclusive to SUB, every command below SUB will have pipeP[1] as
+		their ofd, instead of 1 / STDOUT. Fortunately for us, SUB is a subprocess,
+		that means the redirection only affect that process and nothing else. 
 
-	- SUB has ofd that points to pipeP[1]... STDOUT in that context has been
-	redirected / dup2'd to pipeP[1].
+		- How do you manage... this case in code?
 
-	That's exclusive to SUB, every command below SUB will have pipeP[1] as
-	their ofd, instead of 1 / STDOUT. Fortunately for us, SUB is a subprocess,
-	that means the redirection only affect that process and nothing else. 
+			(echo a && echo b && echo c) > out
 
-24/12 - How do you manage
+		                             SUB <-- Add redirections here..e.
+									  |
+		                            AO(&&) 
+								    /      \
+							      AO(&&)  CMD(echo c)
+								/       \     
+					      CMD(echo a) CMD(echo b)
 
-(echo a && echo b && echo c) > out
-
-                             SUB <- Maybe I should add redirs to subshell node
-							  |
-                            AO(&&) 
-						    /      \
-					      AO(&&)  CMD(echo c)
-						/       \     
-			      CMD(echo a) CMD(echo b)
-
-BY the way?
 
 - CMD: CMD node
-	- REDS
-		- How do they interact with fds opened
-			- cmd is executed 
 
-
-################
-
-Commands executed in the right context.
-	- Pipes correctly opened
-	- Redirections correctly opened
-
-	== Opening the pipes / redirections
-	== Managing the fds...
-	== Finding the right command
+	- Q0: Execution
+		- Redirection inheritance from parent nodes and context.
+		- Redirections replacement as more redirection operators are processed
+		- New subshell from current subshell and then execution of the command
+		via execve after maybe program search via PATH
+		- or direct execution via builtins in current shell or subshell (affect environment variables) 
