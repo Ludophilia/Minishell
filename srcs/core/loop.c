@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 18:18:13 by jgermany          #+#    #+#             */
-/*   Updated: 2025/12/20 23:23:16 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/29 17:52:37 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,15 +20,16 @@ static int	loop_process_line(char *line, t_core *core)
 	psr_exv = psr_parse_line(line, core);
 	if (psr_exv == -2)
 		return (-2);
-
-	// 20/12 - 
-
-	if (psr_exv == -1 || fmgr_set_reds(core) == -1) // set_reds won't work anymore.
-	{
-		utl_cleanup(core->flags, 0, core);
+	if (psr_exv == -1 && utl_cleanup(core->flags, 0, core))
 		return (-1);
-	}
-	// 10/11 - Execution Part...
+
+	// 20/12 - Execution. So what's next?
+
+	// You take your AST and execute it, no?
+
+	//
+		
+	// 10/11, 29/12 - Old execution Part...
 	// sig_init_exec();
 	// if (exc_exec_cmds(core) == -1)
 	// {

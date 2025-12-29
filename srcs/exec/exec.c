@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:07:42 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/19 18:06:13 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/29 21:58:14 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,62 @@
 // 		return (-1);
 // 	return (0);
 // }
+
+static int	exc_init_subsh(t_core *core)
+{
+	pid_t	pid;
+
+	pid = fork();
+	if (pid == -1 && ft_eprintf(ERR_GNR, strerror(errno)))
+		return (-1);
+	if (pid > 0)
+	{
+		// You're a parent now. WHAT?	
+		return (0);
+	}
+	
+	// (sig_init_child() == -1 && utl_exit(EX_FAIL, core))
+		// || exc_exec_cmd(cmd, core) == -1)
+		// return (-1);
+	return (0);
+}
+
+
+
+// 29/12 - That's a draft.
+int	exc_exec_ast(int ifd, int ofd, t_astn *root, t_core *core)
+{
+	if (root->type == AST_AO)
+	{
+		root->status = exc_exec_ast(ifd, ofd, root->left, core);
+		if ((root->op == TOK_AND && root->status == 0)
+			|| (root->op == TOK_OR && root->status > 0))
+			root->status = exc_exec_ast(ifd, ofd, root->right, core);
+	}
+	else if (root->type == AST_PI)
+	{
+		int	*pipe;
+		
+		if (fmgr_pipe(pipe) == -1)
+			return (-1); // 29/12: Unsufficient??
+		root->status = exc_exec_ast(pipe[1], ofd, root->left, core);
+		if (root->status != -1)
+			root->status = exc_exec_ast(ifd, pipe[0], root->right, core);
+		if (close(pipe[0]) == -1 || close(pipe[1]) == -1)
+			return (-1);
+	}
+	else if (root->type == AST_SUB)
+	{
+		// Create sub environment
+		// Use ifd and/or ofd to dup2 stdin and stdout
+		// 
+	}
+	else if (root->type == AST_CMD)
+	{
+		// 
+	}
+	return (root->status); // ???
+}
 
 int	exc_exec_cmds(t_core *core)
 {

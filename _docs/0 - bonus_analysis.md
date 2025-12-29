@@ -101,8 +101,8 @@
 							   SUB   CMD(c)
 								|
 							  AO(AND)
-							  /   \
-						  CMD(a)  CMD(b)
+							 /      \
+						  CMD(a)   CMD(b)
 
 		- (Abstract) Syntax tree: (different!!)
 

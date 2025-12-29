@@ -411,3 +411,16 @@ Let's see what should happen in execution for every node type.
 		- New subshell from current subshell and then execution of the command
 		via execve after maybe program search via PATH
 		- or direct execution via builtins in current shell or subshell (affect environment variables) 
+
+- And what about those redirections?
+
+	- `(echo a) > b > c && < d cat`
+
+		- b is created, c as well, a is written to c... 
+		- That means execution starts before opening ALL redirections.
+
+	- `(echo a) < b > c && < d << END cat`
+
+		- However, here docs are opened before everything else. And I won't respect that rule.
+
+		- That means that I will open redirections just before each node's execution, including here docs...
