@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/29 18:35:59 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/30 18:57:23 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,7 +150,7 @@ typedef struct s_astn
 {
 	t_astt				type;
 	t_tokt				op;
-	unsigned char		status;
+	int					status;
 	int					ifd; // 27/12 - Unsure
 	int					ofd;
 	void				*content;

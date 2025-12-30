@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:07:42 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/29 21:58:14 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/30 20:45:06 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,83 +61,121 @@
 // 	return (0);
 // }
 
-static int	exc_init_subsh(t_core *core)
+// int	exc_exec_cmds(t_core *core)
+// {
+// 	// pid_t	pid;
+// 	// int		i;
+
+// 	// 19/12 - cmd_pmax is obsolete
+
+// 	// pid = 0;
+// 	// i = -1;
+// 	// while (++i < (core->cmd_pmax + 1))
+// 	// {
+// 	// 	if (core->cmds[i].xready == false
+// 	// 		|| (core->cmd_pmax == 0
+// 	// 			&& exc_if_builtin(core->cmds + i, core)))
+// 	// 		continue ;
+// 	// 	if (exc_init_subsh(i, &pid, core) == -1
+// 	// 		&& exc_wait_cmds(core))
+// 	// 		return (-1);
+// 	// }
+// 	// if (pid > 0 && exc_wait_cmds(core) == -1)
+// 	// 	return (-1);
+// 	(void)core;
+// 	return (0);
+// }
+
+
+
+
+int	exc_exec_ao(int ifd, int ofd, t_astn *root, t_core *core)
+{
+	int	status;
+	int	op;
+
+	op = root->op;
+	status = exc_exec_ast(ifd, ofd, root->left, core);
+	if ((op == TOK_AND && status == 0) || (op == TOK_OR && status > 0))
+		status = exc_exec_ast(ifd, ofd, root->right, core);
+	return (status);
+}
+
+int	exc_exec_pipe(int ifd, int ofd, t_astn *root, t_core *core)
+{
+	int	pipe[2];
+	int	status;
+
+	if (fmgr_pipe(pipe) == -1)
+		return (-1);
+	status = exc_exec_ast(pipe[1], ofd, root->left, core);
+	if (status != -1)
+		status = exc_exec_ast(ifd, pipe[0], root->right, core);
+	if (close(pipe[0]) == -1 || close(pipe[1]) == -1)
+		return (-1);
+	return (status);
+}
+
+int	exc_process_reds(int *ifd, int *ofd, t_astn *root, t_core *core)
+{
+	t_cmd	*cmd;
+	// 30/12 - What should be done? 
+	// Process every redirection 
+
+	cmd = root->content;
+	
+}
+
+int	exc_exec_sub(int ifd, int ofd, t_astn *root, t_core *core)
 {
 	pid_t	pid;
+	int		wstatus;
+	int		status;
 
 	pid = fork();
 	if (pid == -1 && ft_eprintf(ERR_GNR, strerror(errno)))
 		return (-1);
-	if (pid > 0)
+	if (pid == 0) // (sig_init_child() == -1 && utl_exit(EX_FAIL, core)) // return (-1);
 	{
-		// You're a parent now. WHAT?	
-		return (0);
+		// 30/12 - First, you have to process redirections in root->content.
+		if (root->content)
+			exc_process_reds(&ifd, &ofd, root, core);
+		// 30/12 - And if  exc_process_reds == -1
+
+		// 30/12 - 
+		if ((ifd > 2 && dup2(ifd, STDIN_FILENO) == -1)
+			|| (ofd > 2 && dup2(ofd, STDOUT_FILENO) == -1))
+			return (-1);
+		status = exc_exec_ast(-1, -1, root->left, core);
 	}
-	
-	// (sig_init_child() == -1 && utl_exit(EX_FAIL, core))
-		// || exc_exec_cmd(cmd, core) == -1)
-		// return (-1);
-	return (0);
+	if (pid > 0 && (waitpid(pid, &wstatus, 0) == -1 || wstatus == 1))
+		return (-1);
+	return (status);
 }
 
+int	exc_exec_cmd(int ifd, int ofd, t_astn *root, t_core *core)
+{
+	// 30/12: what should be done here?
+	
+	// 30/12 - First, you have to process redirections in root->content.
 
+	// Then process as you did before in the mandatory part.
+}
 
-// 29/12 - That's a draft.
+// 29/12 - That's a draft. ifd and ofd may not be the right call here.
 int	exc_exec_ast(int ifd, int ofd, t_astn *root, t_core *core)
 {
+	int	status;
+
+	// 30/12 - How is -1 returned to the caller?
 	if (root->type == AST_AO)
-	{
-		root->status = exc_exec_ast(ifd, ofd, root->left, core);
-		if ((root->op == TOK_AND && root->status == 0)
-			|| (root->op == TOK_OR && root->status > 0))
-			root->status = exc_exec_ast(ifd, ofd, root->right, core);
-	}
-	else if (root->type == AST_PI)
-	{
-		int	*pipe;
-		
-		if (fmgr_pipe(pipe) == -1)
-			return (-1); // 29/12: Unsufficient??
-		root->status = exc_exec_ast(pipe[1], ofd, root->left, core);
-		if (root->status != -1)
-			root->status = exc_exec_ast(ifd, pipe[0], root->right, core);
-		if (close(pipe[0]) == -1 || close(pipe[1]) == -1)
-			return (-1);
-	}
-	else if (root->type == AST_SUB)
-	{
-		// Create sub environment
-		// Use ifd and/or ofd to dup2 stdin and stdout
-		// 
-	}
-	else if (root->type == AST_CMD)
-	{
-		// 
-	}
-	return (root->status); // ???
+		status = exc_exec_ao(ifd, ofd, root, core);
+	if (root->type == AST_PI)
+		status = exc_exec_pipe(ifd, ofd, root, core);
+	if (root->type == AST_SUB) 
+		status = exc_exec_sub(ifd, ofd, root, core);
+	if (root->type == AST_CMD)
+		status = exc_exec_cmd(ifd, ofd, root, core);
+	return (status);
 }
 
-int	exc_exec_cmds(t_core *core)
-{
-	// pid_t	pid;
-	// int		i;
-
-	// 19/12 - cmd_pmax is obsolete
-
-	// pid = 0;
-	// i = -1;
-	// while (++i < (core->cmd_pmax + 1))
-	// {
-	// 	if (core->cmds[i].xready == false
-	// 		|| (core->cmd_pmax == 0
-	// 			&& exc_if_builtin(core->cmds + i, core)))
-	// 		continue ;
-	// 	if (exc_init_subsh(i, &pid, core) == -1
-	// 		&& exc_wait_cmds(core))
-	// 		return (-1);
-	// }
-	// if (pid > 0 && exc_wait_cmds(core) == -1)
-	// 	return (-1);
-	(void)core;
-	return (0);
-}
