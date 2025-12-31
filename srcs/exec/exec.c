@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:07:42 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/30 20:45:06 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/31 20:57:32 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,9 +86,6 @@
 // 	return (0);
 // }
 
-
-
-
 int	exc_exec_ao(int ifd, int ofd, t_astn *root, t_core *core)
 {
 	int	status;
@@ -120,10 +117,16 @@ int	exc_process_reds(int *ifd, int *ofd, t_astn *root, t_core *core)
 {
 	t_cmd	*cmd;
 	// 30/12 - What should be done? 
-	// Process every redirection 
+	// Process every redirection that leaves in 
 
 	cmd = root->content;
-	
+	cmd->ifd = *ifd;
+	cmd->ofd = *ofd;
+	if (fmgr_set_xfds(cmd, core) == -1)
+		return (-1);
+	*ifd = cmd->ifd;
+	*ofd = cmd->ofd;
+	return (0);
 }
 
 int	exc_exec_sub(int ifd, int ofd, t_astn *root, t_core *core)
@@ -135,21 +138,24 @@ int	exc_exec_sub(int ifd, int ofd, t_astn *root, t_core *core)
 	pid = fork();
 	if (pid == -1 && ft_eprintf(ERR_GNR, strerror(errno)))
 		return (-1);
-	if (pid == 0) // (sig_init_child() == -1 && utl_exit(EX_FAIL, core)) // return (-1);
+	if (pid == 0)
 	{
-		// 30/12 - First, you have to process redirections in root->content.
-		if (root->content)
-			exc_process_reds(&ifd, &ofd, root, core);
-		// 30/12 - And if  exc_process_reds == -1
-
-		// 30/12 - 
+		if (root->content && exc_process_reds(&ifd, &ofd, root, core) == -1)
+			return (-1);
 		if ((ifd > 2 && dup2(ifd, STDIN_FILENO) == -1)
 			|| (ofd > 2 && dup2(ofd, STDOUT_FILENO) == -1))
 			return (-1);
-		status = exc_exec_ast(-1, -1, root->left, core);
+		// (sig_init_child() == -1 && utl_exit(EX_FAIL, core))
+		// return (-1);
+		status = exc_exec_ast(-1, -1, root->left, core); // 31/12: not the same core...
+		if (status == -1 && utl_cleanup(core->flags, 0, core))
+			exit(1); // 31/12 - Faulty. Please improve this.
+		utl_cleanup(core->flags, 0, core);
+		exit(0); // 31/12 - And this as well.
 	}
+	// 31/12 - command status should be transferred.
 	if (pid > 0 && (waitpid(pid, &wstatus, 0) == -1 || wstatus == 1))
-		return (-1);
+		return (-1); // core->exit = ???
 	return (status);
 }
 
@@ -157,12 +163,20 @@ int	exc_exec_cmd(int ifd, int ofd, t_astn *root, t_core *core)
 {
 	// 30/12: what should be done here?
 	
-	// 30/12 - First, you have to process redirections in root->content.
-
+	if (exc_process_reds(&ifd, &ofd, root, core) == -1)
+		return (-1);
 	// Then process as you did before in the mandatory part.
+
+	// 31/12 - Past a point, you will need something like this.
+	// if (cmd->argv != NULL && *cmd->argv != NULL)
+	// {
+	// 	cmd->xready = true;
+	// 	core->cmd_xrdy++;
+	// }
 }
 
-// 29/12 - That's a draft. ifd and ofd may not be the right call here.
+// 29/12 - That's a draft. ifd and ofd may not be the right call here. 
+// 31/12 - Which status? core->exit for the exit status from commands line?
 int	exc_exec_ast(int ifd, int ofd, t_astn *root, t_core *core)
 {
 	int	status;

@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/30 18:57:23 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/31 18:46:11 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -211,10 +211,7 @@ int		fmgr_open(char *path, int openflags, mode_t openmode);
 int		fmgr_pipe(int fds[2]);
 int		fmgr_close(int *xfd);
 int		fmgr_dup2(int old_fd, int new_fd);
-int		fmgr_set_hdocs(int *ifds, t_red *red, t_core *core);
-int		fmgr_set_pipe(int pos, int pmax, t_cmd *cmd);
-int		fmgr_set_red(int *xfd, int openflags, t_red *red, t_core *core);
-int		fmgr_set_reds(t_core *core);
+int		fmgr_set_xfds(t_cmd *cmd, t_core *core);
 
 int		sig_init_prompt(void);
 int		sig_init_child(void);
