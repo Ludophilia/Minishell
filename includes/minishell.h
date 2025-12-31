@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/31 18:46:11 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/31 22:50:44 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,7 +161,7 @@ typedef struct s_astn
 typedef struct s_core
 {
 	t_astn				*ast;
-	int					cmd_xrdy;
+	int					cmds;
 	uint32_t			flags;
 	uint8_t				exit;
 	t_env				*env;

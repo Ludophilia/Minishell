@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 19:18:23 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/19 18:43:06 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/31 22:52:42 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,11 @@ int	utl_cleanup(t_cflg base_flags, t_cflg excl_flags, t_core *core)
 
 	flags = (base_flags & ~excl_flags);
 	if (flags & FLG_AST)
+	{
 		psr_cleanup_ast(core->ast);
+		core->ast = NULL;
+		core->cmds = 0;
+	}
 	if (flags & FLG_ENV)
 		env_cleanup(core);
 	if (flags & FLG_AST)

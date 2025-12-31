@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 18:57:18 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/27 20:30:23 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/31 22:50:44 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ int	psr_rdp_scmd(t_cnt *c, t_tok *toks, t_core *core, t_astn *node)
 		free(cmd);
 		return (-1);
 	}
+	core->cmds++;
 	node->content = cmd;
 	return (0);
 }

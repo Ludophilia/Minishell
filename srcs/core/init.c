@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/17 20:07:06 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/19 18:45:13 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/31 22:50:44 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ int	init_core(t_core *core, char **envp)
 		return (-1);
 	core->envp = NULL;
 	core->exit = 0;
+	core->cmds = 0;
 	core->flags |= FLG_ENV;
 	return (0);
 }

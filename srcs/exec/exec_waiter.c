@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 15:55:22 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/09 16:34:40 by jegerman         ###   ########.fr       */
+/*   Updated: 2025/12/31 22:50:44 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int	exc_wait_cmds(t_core *core)
 
 	// utl_cleanup(FLG_REDS, core);
 	// i = -1;
-	// while (++i < (core->cmd_pmax + 1))
+	// while (++i < (core->cmds + 1))
 	// {
 	// 	cmd = core->cmds + i;
 	// 	if (cmd->xready == false)
