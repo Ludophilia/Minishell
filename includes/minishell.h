@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/31 22:50:44 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/04 00:52:25 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,10 +57,10 @@ typedef enum e_flo
 
 typedef enum e_exit
 {
-	EX_SUCC = 0,
-	EX_FAIL = 1,
-	EX_CNFD = 127,
-	// 126 ??
+	EXIT_S = EXIT_SUCCESS,
+	EXIT_F = EXIT_FAILURE,
+	EXIT_CNF = 127,
+	EXIT_CNE = 126,
 }	t_exit;
 
 typedef enum e_max
@@ -150,7 +150,7 @@ typedef struct s_astn
 {
 	t_astt				type;
 	t_tokt				op;
-	int					status;
+	// int					status;
 	int					ifd; // 27/12 - Unsure
 	int					ofd;
 	void				*content;
@@ -225,10 +225,12 @@ int		bi_export(t_cmd *cmd, t_env **env);
 int		bi_pwd(int fd);
 int		bi_unset(t_cmd *cmd, t_env **env);
 
+int		exc_exec_ast(int ifd, int ofd, t_astn *root, t_core *core);
 int		exc_check_path(char **argv, char **envp);
-int		exc_wait_cmds(t_core *core);
-int		exc_exec_cmds(t_core *core);
+int		exc_wait_cmds(pid_t	pid, t_core *core); // 4/01: Provisory
 int		exc_if_builtin(t_cmd *cmd, t_core *core);
+// int		exc_wait_cmds(t_core *core);
+// int		exc_exec_cmds(t_core *core);
 
 int		loop_prompt(t_core *core);
 

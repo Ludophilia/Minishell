@@ -6,84 +6,91 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:07:42 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/02 21:04:45 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/04 01:21:50 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	exc_process_reds(int *ifd, int *ofd, t_astn *root, t_core *core)
-{
-	t_cmd	*cmd;
+// int	exc_process_reds(int *ifd, int *ofd, t_astn *root, t_core *core)
+// {
+// 	t_cmd	*cmd;
 
-	cmd = root->content;
-	cmd->ifd = *ifd;
-	cmd->ofd = *ofd;
-	if (fmgr_set_xfds(cmd, core) == -1)
-		return (-1);
-	*ifd = cmd->ifd;
-	*ofd = cmd->ofd;
-	return (0);
-}
+// 	cmd = root->content;
+// 	cmd->ifd = *ifd;
+// 	cmd->ofd = *ofd;
+// 	if (fmgr_set_xfds(cmd, core) == -1)
+// 		return (-1);
+// 	*ifd = cmd->ifd;
+// 	*ofd = cmd->ofd;
+// 	return (0);
+// }
 
 // #########################################################################
 
-int	exc_exec_ao(int ifd, int ofd, t_astn *root, t_core *core)
-{
-	int	status;
-	int	op;
+// int	exc_exec_ao(int ifd, int ofd, t_astn *root, t_core *core)
+// {
+// 	int	op;
 
-	op = root->op;
-	status = exc_exec_ast(ifd, ofd, root->left, core);
-	if ((op == TOK_AND && status == 0) || (op == TOK_OR && status > 0))
-		status = exc_exec_ast(ifd, ofd, root->right, core);
-	return (status);
-}
+// 	op = root->op;
+// 	if (exc_exec_ast(ifd, ofd, root->left, core) == -1)
+// 		return (-1);
+// 	if ((op == TOK_AND && core->exit != 0)
+// 		|| (op == TOK_OR && core->exit == 0))
+// 		return (0);
+// 	if (exc_exec_ast(ifd, ofd, root->right, core) == -1)
+// 		return (-1);
+// 	return (0);
+// }
 
-int	exc_exec_pipe(int ifd, int ofd, t_astn *root, t_core *core)
-{
-	int	pipe[2];
-	int	status;
+// int	exc_exec_pipe(int ifd, int ofd, t_astn *root, t_core *core)
+// {
+// 	int	pipe[2];
 
-	if (fmgr_pipe(pipe) == -1)
-		return (-1);
-	status = exc_exec_ast(pipe[1], ofd, root->left, core);
-	if (status != -1)
-		status = exc_exec_ast(ifd, pipe[0], root->right, core);
-	if (close(pipe[0]) == -1 || close(pipe[1]) == -1)
-		return (-1);
-	return (status);
-}
+// 	if (fmgr_pipe(pipe) == -1)
+// 		return (-1);
+// 	if (exc_exec_ast(pipe[1], ofd, root->left, core) == -1
+// 		|| exc_exec_ast(ifd, pipe[0], root->right, core) == -1)
+// 		return (-1);
+// 	 // 3/01/25: Are you sure? It will be closed after no?
+// 	if (close(pipe[0]) == -1 || close(pipe[1]) == -1)
+// 		return (-1);
+// 	return (0);
+// }
 
-int	exc_exec_sub(int ifd, int ofd, t_astn *root, t_core *core)
-{
-	pid_t	pid;
-	int		wstatus;
-	int		status;
+// int	exc_exec_sub(int ifd, int ofd, t_astn *root, t_core *core)
+// {
+// 	pid_t	pid;
+// 	int		wstatus;
 
-	pid = fork();
-	if (pid == -1 && ft_eprintf(ERR_GNR, strerror(errno)))
-		return (-1);
-	if (pid == 0)
-	{
-		if (root->content && exc_process_reds(&ifd, &ofd, root, core) == -1)
-			return (-1);
-		if ((ifd > 2 && dup2(ifd, STDIN_FILENO) == -1)
-			|| (ofd > 2 && dup2(ofd, STDOUT_FILENO) == -1))
-			return (-1);
-		// (sig_init_child() == -1 && utl_exit(EX_FAIL, core))
-		// return (-1);
-		status = exc_exec_ast(-1, -1, root->left, core); // 31/12: not the same core...
-		if (status == -1 && utl_cleanup(core->flags, 0, core))
-			utl_exit(EX_FAIL, core); // 2/01 - Faulty?
-		utl_cleanup(core->flags, 0, core);
-		utl_exit(EX_SUCC, core); // 31/12 - And this as well.
-	}
-	// 31/12 - command status should be transferred.
-	if (pid > 0 && (waitpid(pid, &wstatus, 0) == -1 || wstatus == 1))
-		return (-1); // core->exit = ???
-	return (status);
-}
+// 	pid = fork();
+// 	if (pid == -1 && ft_eprintf(ERR_GNR, strerror(errno)))
+// 		return (-1);
+
+
+// 	if (pid == 0)
+// 	{
+// 		if (root->content && exc_process_reds(&ifd, &ofd, root, core) == -1)
+// 			return (-1);
+
+
+// 		if (fmgr_dup2(ifd, 0) == -1
+// 			|| fmgr_dup2(ofd, 1) == -1
+// 			|| env_get_envp(core->env, core) == NULL // 3/01, New env?
+// 			|| (sig_init_child() == -1 && utl_exit(EXIT_F, core)))
+// 			return (-1);
+
+// 		if (exc_exec_ast(-1, -1, root->left, core) == -1)
+// 			utl_exit(EXIT_F, core); // 2/01 - What should be the exit code?
+// 		utl_exit(EXIT_S, core); // 31/12 - And this as well.
+// 	}
+
+
+// 	// 31/12 - exit code should be transferred from child to parent.
+// 	if (pid > 0 && (waitpid(pid, &wstatus, 0) == -1 || wstatus == 1))
+// 		return (-1); // core->exit = ???
+// 	return (0);
+// }
 
 // ###################################################################
 
@@ -91,78 +98,111 @@ static int	exc_exec_prg(t_cmd *cmd, t_core *core)
 {
 	int	chk_val;
 
-	if (fmgr_dup2(cmd->ifd, 0) == -1 || fmgr_dup2(cmd->ofd, 1) == -1
-		|| utl_cleanup(FLG_REDS, core) != 1
+	// 3/01 - Which redirections should be closed here? What is even opened here?
+	// || utl_cleanup(FLG_REDS, core) != 1
+
+
+	if (fmgr_dup2(cmd->ifd, 0) == -1
+		|| fmgr_dup2(cmd->ofd, 1) == -1
 		|| env_get_envp(core->env, core) == NULL)
 		return (-1);
+
+
 	chk_val = exc_check_path(cmd->argv, core->envp);
-	if (chk_val == -2 && utl_exit(126, core))
-		return (0);
 	if (chk_val == -1)
 		return (-1);
-	if (chk_val == 0 && utl_exit(EX_CNFD, core))
-		return (0);
-	if (chk_val && execve(*cmd->argv, cmd->argv, core->envp) == -1)
+	// if (chk_val == -2 && utl_exit(EXIT_CNE, core))
+	// 	return (0);
+	// if (chk_val == 0 && utl_exit(EXIT_CNF, core))
+	// 	return (0);
+
+
+	if (chk_val > 0 && execve(*cmd->argv, cmd->argv, core->envp) == -1)
 		return (-1);
 	return (0);
 }
-
-// ###################################################################
 
 int	exc_exec_cmd(int ifd, int ofd, t_astn *root, t_core *core)
 {
 	t_cmd	*cmd;
 	pid_t	pid;
 
-	if (exc_process_reds(&ifd, &ofd, root, core) == -1)
-		return (-1);
+
 	cmd = root->content;
 
-	if ((cmd->argv == NULL) 
-		|| (*cmd->argv == NULL)
-		|| (**cmd->argv == 0 && ft_eprintf(ERR_ECMD, **cmd->argv))
-		|| (core->cmds == 1 && exc_if_builtin(cmd, core)))
-		return (0); // 31/12 - 0? Is that correct?
+	// 3/01: What are those exceptions? Are they in the right place?
+	// if ((cmd->argv == NULL) 
+	// 	|| (*cmd->argv == NULL)
+	// 	|| (**cmd->argv == 0 && ft_eprintf(ERR_ECMD, **cmd->argv)) // 3/01: Faulty. Where is 127 exit?
+	// 	|| (core->cmds == 1 && exc_if_builtin(cmd, core)))
+	// 	return (0); // 31/12 - 0? Is that correct?
+
+	(void)ifd;
+	(void)ofd;
+
 
 	pid = fork();
 	if (pid == -1 && ft_eprintf(ERR_GNR, strerror(errno)))
 		return (-1);
 	if (pid > 0)
 	{
-		cmd->pid = pid;
-		if (exc_wait_cmds(core) == -1)
+		// 3/01: close ifd and ofd...?
+		// cmd->pid = pid;
+		if (exc_wait_cmds(pid, core) == -1)
 			return (-1);
 		return (0);
 	}
 
+
 	if (pid == 0)
 	{
+		// if (exc_process_reds(&ifd, &ofd, root, core) == -1)
+		// 	return (-1);
 		// 2/01 - Builtin
-		if (exc_if_builtin(cmd, core))
-			utl_exit(core->exit, core);
+		// if (exc_if_builtin(cmd, core))
+		// 	utl_exit(core->exit, core);
 		// 2/01 - Or program in the filesystem
-		if (sig_init_child() == -1
-			|| exc_exec_prg(cmd, core) == -1)
-			utl_exit(EX_FAIL, core);
+		if (sig_init_child() == -1 || exc_exec_prg(cmd, core) == -1)
+			utl_exit(EXIT_F, core);
+		utl_exit(EXIT_S, core);
 	}
 	return (0);
 }
 
-// 29/12 - That's a draft. So there's shit in it. ifd and ofd may not be the right call here. 
-// 31/12 - Which status? core->exit for the exit status from commands line?
+// 3/01 - What is the goal, already?
+//	- Write the logic to execute the AST
+//	- 
+
+
+// 29/12 - Problems:
+//			- ifd and ofd may not be the right call here.
+
+
+// 4/01 - From simple to complex. Let's start with a simpler system to see
+// if we're on the right path or not.
 int	exc_exec_ast(int ifd, int ofd, t_astn *root, t_core *core)
 {
-	int	status; // 31/12: status? What's for?
+	// 4/01 - Next up. Add redirections...
+	if ((root->type == AST_CMD
+			&& exc_exec_cmd(ifd, ofd, root, core) == -1))
+		return (-1);
 
-	// 30/12 - How is -1 returned to the caller?
-	if (root->type == AST_AO)
-		status = exc_exec_ao(ifd, ofd, root, core);
-	if (root->type == AST_PI)
-		status = exc_exec_pipe(ifd, ofd, root, core);
-	if (root->type == AST_SUB) 
-		status = exc_exec_sub(ifd, ofd, root, core);
-	if (root->type == AST_CMD)
-		status = exc_exec_cmd(ifd, ofd, root, core);
-	return (status);
+	// if ((root->type == AST_AO
+	// 		&& exc_exec_ao(ifd, ofd, root, core) == -1)
+	// 	|| (root->type == AST_CMD
+	// 		&& exc_exec_cmd(ifd, ofd, root, core) == -1))
+	// 	return (-1);
+
+	// if ((root->type == AST_AO
+	// 		&& exc_exec_ao(ifd, ofd, root, core) == -1)
+	// 	|| (root->type == AST_PI
+	// 		&& exc_exec_pipe(ifd, ofd, root, core) == -1)
+	// 	|| (root->type == AST_SUB
+	// 		&& exc_exec_sub(ifd, ofd, root, core) == -1)
+	// 	|| (root->type == AST_CMD
+	// 		&& exc_exec_cmd(ifd, ofd, root, core) == -1))
+	// 	return (-1);
+
+	return (0);
 }
 
