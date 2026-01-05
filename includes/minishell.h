@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/04 00:52:25 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/05 01:55:35 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,8 @@ typedef enum e_exit
 {
 	EXIT_S = EXIT_SUCCESS,
 	EXIT_F = EXIT_FAILURE,
-	EXIT_CNF = 127,
 	EXIT_CNE = 126,
+	EXIT_CNF = 127,
 }	t_exit;
 
 typedef enum e_max
@@ -138,8 +138,8 @@ typedef struct s_cmd
 {
 	t_red				reds[RED_MAX];
 	int					red_pmax;
-	bool				xready;
-	pid_t				pid;
+	// bool				xready; // 4/01 - Uh
+	// pid_t				pid;
 	char				**argv;
 	int					argc;
 	int					ifd; // 27/12 - Keep those two?
@@ -151,8 +151,8 @@ typedef struct s_astn
 	t_astt				type;
 	t_tokt				op;
 	// int					status;
-	int					ifd; // 27/12 - Unsure
-	int					ofd;
+	// int					ifd;
+	// int					ofd;
 	void				*content;
 	void				*left;
 	void				*right;
@@ -227,7 +227,7 @@ int		bi_unset(t_cmd *cmd, t_env **env);
 
 int		exc_exec_ast(int ifd, int ofd, t_astn *root, t_core *core);
 int		exc_check_path(char **argv, char **envp);
-int		exc_wait_cmds(pid_t	pid, t_core *core); // 4/01: Provisory
+int		exc_wait_cmds(pid_t	pid, t_core *core);
 int		exc_if_builtin(t_cmd *cmd, t_core *core);
 // int		exc_wait_cmds(t_core *core);
 // int		exc_exec_cmds(t_core *core);

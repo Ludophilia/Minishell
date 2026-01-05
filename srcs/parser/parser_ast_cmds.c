@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 18:57:18 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/31 22:50:44 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/05 01:41:25 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,11 @@ static int	psr_consume_wtok(t_cnt *c, t_tok *tok, t_cmd *cmd, t_core *core)
 	word = psr_create_word(tok, TOK_WORD, core);
 	if (word == NULL)
 		return (c->f++, -1);
-	if (*word != 0)
-		cmd->argv[cmd->argc++] = word;
-	else
-		free(word);
+	// 5/01: Why this??? Why is "" filtered?
+	// if (*word != 0)
+	cmd->argv[cmd->argc++] = word;
+	// else
+	// 	free(word);
 	c->i++;
 	return (0);
 }

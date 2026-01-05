@@ -6,25 +6,11 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:07:42 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/04 01:21:50 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/05 02:11:35 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-// int	exc_process_reds(int *ifd, int *ofd, t_astn *root, t_core *core)
-// {
-// 	t_cmd	*cmd;
-
-// 	cmd = root->content;
-// 	cmd->ifd = *ifd;
-// 	cmd->ofd = *ofd;
-// 	if (fmgr_set_xfds(cmd, core) == -1)
-// 		return (-1);
-// 	*ifd = cmd->ifd;
-// 	*ofd = cmd->ofd;
-// 	return (0);
-// }
 
 // #########################################################################
 
@@ -94,30 +80,34 @@
 
 // ###################################################################
 
+int	exc_process_reds(int *ifd, int *ofd, t_astn *root, t_core *core)
+{
+	t_cmd	*cmd;
+
+	cmd = root->content;
+	cmd->ifd = *ifd;
+	cmd->ofd = *ofd;
+	if (fmgr_set_xfds(cmd, core) == -1)
+		return (-1);
+	*ifd = cmd->ifd;
+	*ofd = cmd->ofd;
+	return (0);
+}
+
 static int	exc_exec_prg(t_cmd *cmd, t_core *core)
 {
-	int	chk_val;
+	int	status;
 
-	// 3/01 - Which redirections should be closed here? What is even opened here?
-	// || utl_cleanup(FLG_REDS, core) != 1
-
-
-	if (fmgr_dup2(cmd->ifd, 0) == -1
-		|| fmgr_dup2(cmd->ofd, 1) == -1
+	if (fmgr_dup2(cmd->ifd, 0) == -1 || fmgr_dup2(cmd->ofd, 1) == -1
 		|| env_get_envp(core->env, core) == NULL)
 		return (-1);
-
-
-	chk_val = exc_check_path(cmd->argv, core->envp);
-	if (chk_val == -1)
+	status = exc_check_path(cmd->argv, core->envp);
+	if (status == -1)
 		return (-1);
-	// if (chk_val == -2 && utl_exit(EXIT_CNE, core))
-	// 	return (0);
-	// if (chk_val == 0 && utl_exit(EXIT_CNF, core))
-	// 	return (0);
-
-
-	if (chk_val > 0 && execve(*cmd->argv, cmd->argv, core->envp) == -1)
+	if ((status == -2 && utl_exit(EXIT_CNE, core))
+		|| (status == 0 && utl_exit(EXIT_CNF, core)))
+		return (0);
+	if (status == 1 && execve(*cmd->argv, cmd->argv, core->envp) == -1)
 		return (-1);
 	return (0);
 }
@@ -127,68 +117,62 @@ int	exc_exec_cmd(int ifd, int ofd, t_astn *root, t_core *core)
 	t_cmd	*cmd;
 	pid_t	pid;
 
-
 	cmd = root->content;
-
-	// 3/01: What are those exceptions? Are they in the right place?
-	// if ((cmd->argv == NULL) 
-	// 	|| (*cmd->argv == NULL)
-	// 	|| (**cmd->argv == 0 && ft_eprintf(ERR_ECMD, **cmd->argv)) // 3/01: Faulty. Where is 127 exit?
-	// 	|| (core->cmds == 1 && exc_if_builtin(cmd, core)))
-	// 	return (0); // 31/12 - 0? Is that correct?
-
-	(void)ifd;
-	(void)ofd;
+	
+	// if (core->cmds == 1 && exc_if_builtin(cmd, core))
+	// 	return (0);
 
 
 	pid = fork();
 	if (pid == -1 && ft_eprintf(ERR_GNR, strerror(errno)))
 		return (-1);
-	if (pid > 0)
-	{
-		// 3/01: close ifd and ofd...?
-		// cmd->pid = pid;
-		if (exc_wait_cmds(pid, core) == -1)
-			return (-1);
-		return (0);
-	}
+	if (pid > 0 && exc_wait_cmds(pid, core) == -1)
+		return (-1);
+
 
 
 	if (pid == 0)
 	{
-		// if (exc_process_reds(&ifd, &ofd, root, core) == -1)
-		// 	return (-1);
-		// 2/01 - Builtin
+
+		if (exc_process_reds(&ifd, &ofd, root, core) == -1)
+			utl_exit(core->exit, core);
+	
+		if (*cmd->argv == NULL)
+			utl_exit(EXIT_S, core);
+
 		// if (exc_if_builtin(cmd, core))
 		// 	utl_exit(core->exit, core);
-		// 2/01 - Or program in the filesystem
-		if (sig_init_child() == -1 || exc_exec_prg(cmd, core) == -1)
+
+		if (sig_init_child() == -1
+			|| exc_exec_prg(cmd, core) == -1)
 			utl_exit(EXIT_F, core);
 		utl_exit(EXIT_S, core);
 	}
 	return (0);
 }
 
-// 3/01 - What is the goal, already?
-//	- Write the logic to execute the AST
-//	- 
-
-
-// 29/12 - Problems:
-//			- ifd and ofd may not be the right call here.
-
-
 // 4/01 - From simple to complex. Let's start with a simpler system to see
-// if we're on the right path or not.
+// if we're on the right path or not and THEN build from there...
 int	exc_exec_ast(int ifd, int ofd, t_astn *root, t_core *core)
 {
-	// 4/01 - Next up. Add redirections...
+	// t_astt	type;
+
+	// 29/12 - ifd and ofd may not be good enough here...
+	// 4/01 - Next up. Add redirections... (ongoing)
 	if ((root->type == AST_CMD
 			&& exc_exec_cmd(ifd, ofd, root, core) == -1))
 		return (-1);
 
 	// if ((root->type == AST_AO
 	// 		&& exc_exec_ao(ifd, ofd, root, core) == -1)
+	// 	|| (root->type == AST_CMD
+	// 		&& exc_exec_cmd(ifd, ofd, root, core) == -1))
+	// 	return (-1);
+
+	// if ((root->type == AST_AO
+	// 		&& exc_exec_ao(ifd, ofd, root, core) == -1)
+	// 	|| (root->type == AST_PI
+	// 		&& exc_exec_pipe(ifd, ofd, root, core) == -1)
 	// 	|| (root->type == AST_CMD
 	// 		&& exc_exec_cmd(ifd, ofd, root, core) == -1))
 	// 	return (-1);
