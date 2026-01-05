@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/09 17:20:26 by jegerman          #+#    #+#             */
-/*   Updated: 2025/12/27 19:35:14 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/05 02:22:37 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ static int	psr_rdp_sub(t_cnt *c, t_tok *toks, t_core *core, t_astn *node)
 	if (toks[c->i].type != TOK_SUBC)
 		return (c->f++, -1);
 	c->i++;
-	if (psr_isred(toks + c->i) == false)
+	if (lex_isred(toks + c->i) == false)
 		return (0);
 	if (psr_rdp_scmd(c, toks, core, node) == -1)
 		return (-1);
@@ -32,12 +32,12 @@ static t_astn	*psr_rdp_cmd(t_cnt *c, t_tok *toks, t_core *core)
 	t_astn	*node;
 
 	if (toks[c->i].type != TOK_SUBO && toks[c->i].type != TOK_WORD
-		&& psr_isred(toks + c->i) == false)
+		&& lex_isred(toks + c->i) == false)
 		return (NULL);
 	node = psr_new_astn(AST_CMD);
 	if (node == NULL)
 		return (c->f++, NULL);
-	if ((toks[c->i].type == TOK_WORD || psr_isred(toks + c->i))
+	if ((toks[c->i].type == TOK_WORD || lex_isred(toks + c->i))
 		&& psr_rdp_scmd(c, toks, core, node) == -1)
 		return (node);
 	else if (toks[c->i].type == TOK_SUBO

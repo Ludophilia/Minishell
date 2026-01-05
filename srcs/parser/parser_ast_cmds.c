@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/13 18:57:18 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/05 01:41:25 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/05 02:22:37 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static int	psr_count_args(t_tok *tok)
 	int	size;
 
 	size = 0;
-	while (tok->type == TOK_WORD || psr_isred(tok))
+	while (tok->type == TOK_WORD || lex_isred(tok))
 	{
 		if (tok->type != TOK_WORD)
 			tok += 2;
@@ -68,7 +68,7 @@ static int	psr_fill_cmd(t_cnt *c, t_tok *toks, t_core *core, t_cmd *cmd)
 	if (cmd->argv == NULL)
 		return (c->f++, -1);
 	tok = toks + c->i;
-	while (tok->type == TOK_WORD || psr_isred(tok))
+	while (tok->type == TOK_WORD || lex_isred(tok))
 	{
 		is_word = (tok->type == TOK_WORD);
 		if ((is_word && psr_consume_wtok(c, tok, cmd, core) == -1)
