@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/05 02:25:33 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/06 23:42:41 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,8 @@ typedef enum e_max
 	RED_MAX = 64,
 	ID_LMAX = 256,
 	EXW_MAX = 16,
-	PTH_MAX = 4096
+	PTH_MAX = 4096,
+	NOD_MAX = 64,
 }	t_max;
 
 typedef enum e_tokt
@@ -138,11 +139,11 @@ typedef struct s_cmd
 {
 	t_red				reds[RED_MAX];
 	int					red_pmax;
-	// bool				xready; // 4/01 - Uh
+	// bool				xready;
 	// pid_t				pid;
 	char				**argv;
 	int					argc;
-	int					ifd; // 27/12 - Keep those two?
+	int					ifd;
 	int					ofd;
 }	t_cmd;
 
@@ -150,9 +151,6 @@ typedef struct s_astn
 {
 	t_astt				type;
 	t_tokt				op;
-	// int					status;
-	// int					ifd;
-	// int					ofd;
 	void				*content;
 	void				*left;
 	void				*right;
@@ -162,6 +160,7 @@ typedef struct s_core
 {
 	t_astn				*ast;
 	int					cmds;
+	t_astn				*stash[NOD_MAX];
 	uint32_t			flags;
 	uint8_t				exit;
 	t_env				*env;
@@ -227,12 +226,10 @@ int		bi_export(t_cmd *cmd, t_env **env);
 int		bi_pwd(int fd);
 int		bi_unset(t_cmd *cmd, t_env **env);
 
-int		exc_exec_ast(int ifd, int ofd, t_astn *root, t_core *core);
 int		exc_check_path(char **argv, char **envp);
 int		exc_wait_cmds(pid_t	pid, t_core *core);
 int		exc_if_builtin(t_cmd *cmd, t_core *core);
-// int		exc_wait_cmds(t_core *core);
-// int		exc_exec_cmds(t_core *core);
+int		exc_exec_ast(int ifd, int ofd, t_astn *root, t_core *core);
 
 int		loop_prompt(t_core *core);
 

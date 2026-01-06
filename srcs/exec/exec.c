@@ -6,15 +6,13 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:07:42 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/05 17:44:49 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/06 23:43:17 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 // #########################################################################
-
-
 
 // int	exc_exec_sub(int ifd, int ofd, t_astn *root, t_core *core)
 // {
@@ -25,12 +23,10 @@
 // 	if (pid == -1 && ft_eprintf(ERR_GNR, strerror(errno)))
 // 		return (-1);
 
-
 // 	if (pid == 0)
 // 	{
 // 		if (root->content && exc_process_reds(&ifd, &ofd, root, core) == -1)
 // 			return (-1);
-
 
 // 		if (fmgr_dup2(ifd, 0) == -1
 // 			|| fmgr_dup2(ofd, 1) == -1
@@ -49,6 +45,48 @@
 // 		return (-1); // core->exit = ???
 // 	return (0);
 // }
+
+// ###################################################################
+
+// int	exc_exec_ao(int ifd, int ofd, t_astn *root, t_core *core)
+// {
+// 	int	op;
+	
+// 	op = root->op;
+// 	if (exc_exec_ast(ifd, ofd, root->left, core) == -1)
+// 		return (-1);
+// 	if ((op == TOK_AND && core->exit > 0)
+// 		|| (op == TOK_OR && core->exit == 0))
+// 		return (0);
+// 	if (exc_exec_ast(ifd, ofd, root->right, core) == -1)
+// 		return (-1);
+// 	return (0);
+// }
+
+
+static int	exc_exec_pipe(int ifd, int ofd, t_astn *root, t_core *core)
+{
+	int		pipe[2];
+	int		i;
+
+	if (fmgr_pipe(pipe) == -1)
+		return (-1);
+	root->content = pipe;
+	i = 0;
+	while (core->stash[i])
+		i++;
+	core->stash[i] = root;
+	if (exc_exec_ast(ifd, pipe[1], root->left, core) == -1
+		|| fmgr_close(pipe + 1) == -1
+		|| exc_exec_ast(pipe[0], ofd, root->right, core) == -1
+		|| fmgr_close(pipe) == -1)
+	{
+		core->stash[i] = 0;
+		return (close(pipe[0]), close(pipe[1]), -1);
+	}
+	core->stash[i] = 0;
+	return (0);
+}
 
 // ###################################################################
 
@@ -84,7 +122,7 @@ static int	exc_exec_prg(t_cmd *cmd, t_core *core)
 	return (0);
 }
 
-int	exc_exec_cmd(int ifd, int ofd, t_astn *root, t_core *core)
+static int	exc_exec_cmd(int ifd, int ofd, t_astn *root, t_core *core)
 {
 	t_cmd	*cmd;
 	pid_t	pid;
@@ -99,6 +137,31 @@ int	exc_exec_cmd(int ifd, int ofd, t_astn *root, t_core *core)
 		return (-1);
 	if (pid == 0)
 	{
+
+		// 7/01 - Move that to a new function
+		// Close all open pipes, except ifd and ofd.
+		int		i;
+		int		*pipe;
+		int		fails;
+
+		fails = 0;
+		i = -1;
+		while (core->stash[++i])
+		{
+			pipe = (core->stash[i])->content;
+			if ((pipe[0] != ifd
+					&& pipe[0] != ofd
+					&& fmgr_close(pipe) == -1)
+				|| (pipe[1] != ifd
+					&& pipe[1] != ofd
+					&& fmgr_close(pipe + 1) == -1))
+				fails++;
+		}
+		if (fails)
+			utl_exit(EXIT_F, core);
+		// return (0);
+
+
 		if (exc_process_reds(&ifd, &ofd, root, core) == -1)
 			utl_exit(core->exit, core);
 		if (*cmd->argv == NULL)
@@ -114,35 +177,7 @@ int	exc_exec_cmd(int ifd, int ofd, t_astn *root, t_core *core)
 
 // ######################################################################
 
-int	exc_exec_ao(int ifd, int ofd, t_astn *root, t_core *core)
-{
-	int	op;
-	
-	op = root->op;
-	if (exc_exec_ast(ifd, ofd, root->left, core) == -1)
-		return (-1);
-	if ((op == TOK_AND && core->exit > 0)
-		|| (op == TOK_OR && core->exit == 0))
-		return (0);
-	if (exc_exec_ast(ifd, ofd, root->right, core) == -1)
-		return (-1);
-	return (0);
-}
 
-// int	exc_exec_pipe(int ifd, int ofd, t_astn *root, t_core *core)
-// {
-// 	int	pipe[2];
-
-// 	if (fmgr_pipe(pipe) == -1)
-// 		return (-1);
-//	5/01 - No need to remove ifd and ofd
-// 	if (exc_exec_ast(pipe[1], ofd, root->left, core) == -1
-// 		|| exc_exec_ast(ifd, pipe[0], root->right, core) == -1)
-// 		return (-1);
-// 	if (close(pipe[0]) == -1 || close(pipe[1]) == -1)
-// 		return (-1);
-// 	return (0);
-// }
 
 // ######################################################################
 
@@ -151,38 +186,18 @@ int	exc_exec_ao(int ifd, int ofd, t_astn *root, t_core *core)
 int	exc_exec_ast(int ifd, int ofd, t_astn *root, t_core *core)
 {
 	// t_astt	type;
-
-	// 29/12 - ifd and ofd may not be good enough here...
-	// if ((root->type == AST_CMD
-	// 		&& exc_exec_cmd(ifd, ofd, root, core) == -1))
-	// 	return (-1);
-
-	// 5/01 - Next up. Builtins and AO.
-
-	// char	**strs;
+	// char		**strs;
 
 	// strs = (char *[]){"AST_NONE", "AST_AO", "AST_PI", "AST_SUB", "AST_CMD", 0};
+
 	// printf("(exc_exec_ast with type: %s)\n", strs[root->type]);
+
 	
-	if ((root->type == AST_AO
-			&& exc_exec_ao(ifd, ofd, root, core) == -1)
+	if ((root->type == AST_PI
+			&& exc_exec_pipe(ifd, ofd, root, core) == -1)
 		|| (root->type == AST_CMD
 			&& exc_exec_cmd(ifd, ofd, root, core) == -1))
 		return (-1);
-
-	// if ((root->type == AST_PI
-	// 		&& exc_exec_ao(ifd, ofd, root, core) == -1)
-	// 	|| (root->type == AST_CMD
-	// 		&& exc_exec_cmd(ifd, ofd, root, core) == -1))
-	// 	return (-1);
-
-	// if ((root->type == AST_AO
-	// 		&& exc_exec_ao(ifd, ofd, root, core) == -1)
-	// 	|| (root->type == AST_PI
-	// 		&& exc_exec_pipe(ifd, ofd, root, core) == -1)
-	// 	|| (root->type == AST_CMD
-	// 		&& exc_exec_cmd(ifd, ofd, root, core) == -1))
-	// 	return (-1);
 
 	// 5/01 - 
 
