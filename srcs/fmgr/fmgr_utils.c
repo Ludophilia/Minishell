@@ -3,29 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   fmgr_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:05:19 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/19 14:19:20 by ntahri           ###   ########.fr       */
+/*   Updated: 2026/01/07 23:14:34 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-int	fmgr_access(char *path, int type)
-{
-	if (access(path, type) == -1)
-	{
-		if (errno == EACCES || errno == EISDIR)
-		{
-			ft_eprintf(ERR_PTH, path, strerror(errno));
-			return (-2);
-		}
-		ft_eprintf(ERR_PTH, path, strerror(errno));
-		return (-1);
-	}
-	return (0);
-}
 
 int	fmgr_open(char *path, int openflags, mode_t openmode)
 {

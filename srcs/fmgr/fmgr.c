@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/26 12:04:49 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/03 17:28:18 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/07 23:39:04 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,13 +41,13 @@ static int	fmgr_subsh_hdocs(int *pid, int *fds, t_red *red, t_core *core)
 		|| dup2(fds[1], 2) == -1 || close(fds[1]) == -1)
 	{
 		(close(fds[0]), close(fds[1]));
-		return (utl_exit(EXIT_F, core));
+		return (utl_exit(EX_F, core));
 	}
 	signal(SIGQUIT, SIG_IGN);
 	opn = true;
 	while (opn)
 		if (fmgr_get_user_input(&opn, red) == -1)
-			return (utl_exit(EXIT_F, core));
+			return (utl_exit(EX_F, core));
 	return (utl_exit(0, core), 0);
 }
 

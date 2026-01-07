@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:07:42 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/06 23:43:17 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/07 23:39:04 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 // #########################################################################
 
-// int	exc_exec_sub(int ifd, int ofd, t_astn *root, t_core *core)
+// int	exc_exec_subn(int ifd, int ofd, t_astn *root, t_core *core)
 // {
 // 	pid_t	pid;
 // 	int		wstatus;
@@ -31,12 +31,12 @@
 // 		if (fmgr_dup2(ifd, 0) == -1
 // 			|| fmgr_dup2(ofd, 1) == -1
 // 			|| env_get_envp(core->env, core) == NULL // 3/01, New env?
-// 			|| (sig_init_child() == -1 && utl_exit(EXIT_F, core)))
+// 			|| (sig_init_child() == -1 && utl_exit(EX_F, core)))
 // 			return (-1);
 
 // 		if (exc_exec_ast(0, 1, root->left, core) == -1)
-// 			utl_exit(EXIT_F, core); // 2/01 - What should be the exit code?
-// 		utl_exit(EXIT_S, core); // 31/12 - And this as well.
+// 			utl_exit(EX_F, core); // 2/01 - What should be the exit code?
+// 		utl_exit(EX_S, core); // 31/12 - And this as well.
 // 	}
 
 
@@ -48,7 +48,7 @@
 
 // ###################################################################
 
-// int	exc_exec_ao(int ifd, int ofd, t_astn *root, t_core *core)
+// int	exc_exec_aon(int ifd, int ofd, t_astn *root, t_core *core)
 // {
 // 	int	op;
 	
@@ -64,7 +64,7 @@
 // }
 
 
-static int	exc_exec_pipe(int ifd, int ofd, t_astn *root, t_core *core)
+static int	exc_exec_pipn(int ifd, int ofd, t_astn *root, t_core *core)
 {
 	int		pipe[2];
 	int		i;
@@ -88,44 +88,11 @@ static int	exc_exec_pipe(int ifd, int ofd, t_astn *root, t_core *core)
 	return (0);
 }
 
-// ###################################################################
-
-int	exc_process_reds(int *ifd, int *ofd, t_astn *root, t_core *core)
-{
-	t_cmd	*cmd;
-
-	cmd = root->content;
-	cmd->ifd = *ifd;
-	cmd->ofd = *ofd;
-	if (fmgr_set_xfds(cmd, core) == -1)
-		return (-1);
-	*ifd = cmd->ifd;
-	*ofd = cmd->ofd;
-	return (0);
-}
-
-static int	exc_exec_prg(t_cmd *cmd, t_core *core)
-{
-	int	status;
-
-	if (fmgr_dup2(cmd->ifd, 0) == -1 || fmgr_dup2(cmd->ofd, 1) == -1
-		|| env_get_envp(core->env, core) == NULL)
-		return (-1);
-	status = exc_check_path(cmd->argv, core->envp);
-	if (status == -1)
-		return (-1);
-	if ((status == -2 && utl_exit(EXIT_CNE, core))
-		|| (status == 0 && utl_exit(EXIT_CNF, core)))
-		return (0);
-	if (status == 1 && execve(*cmd->argv, cmd->argv, core->envp) == -1)
-		return (-1);
-	return (0);
-}
-
-static int	exc_exec_cmd(int ifd, int ofd, t_astn *root, t_core *core)
+static int	exc_exec_cmdn(int ifd, int ofd, t_astn *root, t_core *core)
 {
 	t_cmd	*cmd;
 	pid_t	pid;
+	int		status;
 
 	cmd = root->content;
 	if (core->cmds == 1 && exc_if_builtin(cmd, core))
@@ -136,53 +103,18 @@ static int	exc_exec_cmd(int ifd, int ofd, t_astn *root, t_core *core)
 	if (pid > 0 && exc_wait_cmds(pid, core) == -1)
 		return (-1);
 	if (pid == 0)
-	{
-
-		// 7/01 - Move that to a new function
-		// Close all open pipes, except ifd and ofd.
-		int		i;
-		int		*pipe;
-		int		fails;
-
-		fails = 0;
-		i = -1;
-		while (core->stash[++i])
-		{
-			pipe = (core->stash[i])->content;
-			if ((pipe[0] != ifd
-					&& pipe[0] != ofd
-					&& fmgr_close(pipe) == -1)
-				|| (pipe[1] != ifd
-					&& pipe[1] != ofd
-					&& fmgr_close(pipe + 1) == -1))
-				fails++;
-		}
-		if (fails)
-			utl_exit(EXIT_F, core);
-		// return (0);
-
-
-		if (exc_process_reds(&ifd, &ofd, root, core) == -1)
-			utl_exit(core->exit, core);
-		if (*cmd->argv == NULL)
-			utl_exit(EXIT_S, core);
-		if (exc_if_builtin(cmd, core))
-			utl_exit(core->exit, core);
-		else if (sig_init_child() == -1 || exc_exec_prg(cmd, core) == -1)
-			utl_exit(EXIT_F, core);
-		utl_exit(EXIT_S, core);
+	{	
+		status = exc_exec_scmd(ifd, ofd, root, core);
+		utl_exit(status, core);
 	}
 	return (0);
 }
 
 // ######################################################################
 
-
-
-// ######################################################################
-
 // 4/01 - From simple to complex. Let's start with a simpler system to see
 // if we're on the right path or not and THEN build from there...
+// 7/01 - DONT FORGET NORMINETTE
 int	exc_exec_ast(int ifd, int ofd, t_astn *root, t_core *core)
 {
 	// t_astt	type;
@@ -191,24 +123,23 @@ int	exc_exec_ast(int ifd, int ofd, t_astn *root, t_core *core)
 	// strs = (char *[]){"AST_NONE", "AST_AO", "AST_PI", "AST_SUB", "AST_CMD", 0};
 
 	// printf("(exc_exec_ast with type: %s)\n", strs[root->type]);
-
 	
 	if ((root->type == AST_PI
-			&& exc_exec_pipe(ifd, ofd, root, core) == -1)
+			&& exc_exec_pipn(ifd, ofd, root, core) == -1)
 		|| (root->type == AST_CMD
-			&& exc_exec_cmd(ifd, ofd, root, core) == -1))
+			&& exc_exec_cmdn(ifd, ofd, root, core) == -1))
 		return (-1);
 
 	// 5/01 - 
 
 	// if ((root->type == AST_AO
-	// 		&& exc_exec_ao(ifd, ofd, root, core) == -1)
+	// 		&& exc_exec_aon(ifd, ofd, root, core) == -1)
 	// 	|| (root->type == AST_PI
-	// 		&& exc_exec_pipe(ifd, ofd, root, core) == -1)
+	// 		&& exc_exec_pipn(ifd, ofd, root, core) == -1)
 	// 	|| (root->type == AST_SUB
-	// 		&& exc_exec_sub(ifd, ofd, root, core) == -1)
+	// 		&& exc_exec_subn(ifd, ofd, root, core) == -1)
 	// 	|| (root->type == AST_CMD
-	// 		&& exc_exec_cmd(ifd, ofd, root, core) == -1))
+	// 		&& exc_exec_cmdn(ifd, ofd, root, core) == -1))
 	// 	return (-1);
 
 	return (0);

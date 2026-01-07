@@ -6,72 +6,33 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:18:44 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/05 01:20:08 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/07 23:35:04 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static char	**exc_load_paths(char **envp)
-{
-	char	**paths;
-	int		is_dflt;
-	int		i;
-
-	is_dflt = true;
-	i = -1;
-	while (envp[++i])
-		if (ft_strnstr(envp[i], "PATH", 4) && is_dflt--)
-			break ;
-	if (is_dflt)
-		paths = NULL;
-	else
-		paths = ft_split(envp[i] + 5, ':');
-	return (paths);
-}
-
-static char	*exc_build_path(char **strs)
-{
-	char	*path;
-	size_t	path_len;
-	int		i;
-
-	i = 0;
-	path_len = 0;
-	while (strs[i])
-		path_len += ft_strlen(strs[i++]);
-	path = ft_calloc(path_len + 1, sizeof(char));
-	if (path == NULL)
-		return (NULL);
-	i = -1;
-	while (strs[++i])
-	{
-		path_len = ft_strlen(path) + ft_strlen(strs[i]);
-		if (ft_strlcat(path, strs[i], path_len + 1) != path_len)
-			return (free(path), NULL);
-	}
-	return (path);
-}
-
-static int	exc_check_access(char *path)
+static int	exc_check_full_path_access(int verbose, char *path, t_core *core)
 {
 	struct stat		statb;
-	int				status;
+	int				acc_sta;
+	int				sta_sta;
 
-	status = fmgr_access(path, X_OK);
-	if (status == -1)
-		return (0);
-	if (stat(path, &statb) == -1 && ft_eprintf(ERR_PTH, path, strerror(errno)))
-		return (0);
-	if (status == 0 && S_ISREG(statb.st_mode))
-		return (1);
-	if (status == -2)
-		return (-2);
-	ft_eprintf(ERR_PTH, path, "Is not a file");
-	return (0);
+	acc_sta = access(path, X_OK);
+	if (verbose && acc_sta == -1 && exc_err_path(true, path, core))
+		return (false);
+	sta_sta = stat(path, &statb);
+	if (verbose && sta_sta == -1 && exc_err_path(false, path, core))
+		return (false);
+	if (acc_sta == 0 && S_ISREG(statb.st_mode))
+		return (true);
+	if (verbose)
+		exc_err_pathg(path, "Is not a file", core);
+	return (false);
 }
 
-static int	exc_check_access_for_path(int i, char **paths, char **argv)
+static int	exc_build_path_and_check_access(int i, char **paths, char **argv,
+	t_core *core)
 {
 	int		status;
 	char	*path;
@@ -79,37 +40,56 @@ static int	exc_check_access_for_path(int i, char **paths, char **argv)
 	path = exc_build_path((char *[]){paths[i], "/", argv[0], 0});
 	if (path == NULL)
 		return (-1);
-	status = access(path, X_OK);
-	if (status == 0)
+	status = exc_check_full_path_access(false, path, core);
+	if (status == true)
 	{
 		*argv = (free(*argv), path);
-		return (1);
+		return (true);
 	}
-	return (free(path), 0);
+	free(path);
+	return (false);
 }
 
-int	exc_check_path(char **argv, char **envp)
+static int	exc_search_dir_and_check_access(char **argv, char **envp,
+	t_core *core)
 {
 	char	**paths;
-	int		status;
 	int		i;
+	int		status;
 
-	if (**argv == 0 && ft_eprintf(ERR_ECMD, **argv))
-		return (0);
-	if (ft_strchr(*argv, '/'))
-		return (exc_check_access(*argv));
-	paths = exc_load_paths(envp);
-	if (paths == NULL && ft_eprintf(ERR_CMD, *argv))
-		return (0);
+	if (exc_load_path(envp, &paths) == -1)
+		return (-1);
+	if (paths == NULL && exc_err_cmd(*argv, core))
+		return (false);
 	i = -1;
 	while (paths[++i])
 	{
-		status = exc_check_access_for_path(i, paths, argv);
+		status = exc_build_path_and_check_access(i, paths, argv, core);
 		if (status == -1 && utl_free_strs(0, paths))
 			return (-1);
-		if (status == 1 && utl_free_strs(0, paths))
-			return (1);
+		if (status == true && utl_free_strs(0, paths))
+			return (true);
 	}
-	ft_eprintf(ERR_CMD, *argv);
-	return (utl_free_strs(0, paths), 0);
+	return (utl_free_strs(0, paths), exc_err_cmd(*argv, core), false);
+}
+
+int	exc_check_path(char **argv, char **envp, t_core *core)
+{
+	int		status;
+
+	if (**argv == 0 && exc_err_ecmd(**argv, core))
+		return (false);
+	if (ft_strchr(*argv, '/'))
+	{
+		if (exc_check_full_path_access(true, *argv, core))
+			return (true);
+		else
+			return (false);
+	}
+	status = exc_search_dir_and_check_access(argv, envp, core);
+	if (status == -1)
+		return (-1);
+	if (status == true)
+		return (true);
+	return (false);
 }

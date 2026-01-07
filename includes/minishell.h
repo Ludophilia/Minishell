@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/06 23:42:41 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/07 23:46:24 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 # include <errno.h>
 # include <signal.h>
 # include <stdint.h>
+# include <string.h>
 
 # define UI_PROMPT "\033[1;35mMinishell> \033[0m"
 
@@ -57,10 +58,10 @@ typedef enum e_flo
 
 typedef enum e_exit
 {
-	EXIT_S = EXIT_SUCCESS,
-	EXIT_F = EXIT_FAILURE,
-	EXIT_CNE = 126,
-	EXIT_CNF = 127,
+	EX_S = EXIT_SUCCESS,
+	EX_F = EXIT_FAILURE,
+	EX_CNEX = 126,
+	EX_CNFD = 127,
 }	t_exit;
 
 typedef enum e_max
@@ -159,8 +160,8 @@ typedef struct s_astn
 typedef struct s_core
 {
 	t_astn				*ast;
-	int					cmds;
 	t_astn				*stash[NOD_MAX];
+	int					cmds;
 	uint32_t			flags;
 	uint8_t				exit;
 	t_env				*env;
@@ -190,7 +191,6 @@ int		lex_synterr(t_tokt type, t_tok *tok);
 int		lex_subtok_check(int *pos, int *opn, t_tok *tok, t_tok *next);
 int		lex_error_check(t_tok *toks, t_core *core);
 
-
 int		psr_is_outq(int c, int *q);
 int		psr_is_envv(char *c, int ct, int q);
 int		psr_is_envv_chr(int c, int pos);
@@ -207,7 +207,6 @@ t_astn	*psr_rdp_line(t_cnt *c, t_tok *toks, t_core *core);
 
 int		psr_parse_line(char *line, t_core *core);
 
-int		fmgr_access(char *path, int type);
 int		fmgr_open(char *path, int openflags, mode_t openmode);
 int		fmgr_pipe(int fds[2]);
 int		fmgr_close(int *xfd);
@@ -226,8 +225,17 @@ int		bi_export(t_cmd *cmd, t_env **env);
 int		bi_pwd(int fd);
 int		bi_unset(t_cmd *cmd, t_env **env);
 
-int		exc_check_path(char **argv, char **envp);
 int		exc_wait_cmds(pid_t	pid, t_core *core);
+
+int		exc_err_ecmd(char c, t_core *core);
+int		exc_err_cmd(char *path, t_core *core);
+int		exc_err_path(int access_test, char *path, t_core *core);
+int		exc_err_pathg(char *path, char *strerr, t_core *core);
+char	*exc_build_path(char **strs);
+int		exc_load_path(char **envp, char ***paths);
+int		exc_check_path(char **argv, char **envp, t_core *core);
+int		exc_process_reds(int *ifd, int *ofd, t_astn *root, t_core *core);
+int		exc_exec_scmd(int ifd, int ofd, t_astn *root, t_core *core);
 int		exc_if_builtin(t_cmd *cmd, t_core *core);
 int		exc_exec_ast(int ifd, int ofd, t_astn *root, t_core *core);
 
