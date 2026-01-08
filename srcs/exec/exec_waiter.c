@@ -6,13 +6,13 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 15:55:22 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/05 01:45:57 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/08 16:03:10 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	exc_wait_cmds(pid_t	pid, t_core *core)
+int	exc_wait_pid(pid_t	pid, t_core *core)
 {
 	int	wstat;
 	int	sig;

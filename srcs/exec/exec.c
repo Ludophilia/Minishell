@@ -6,47 +6,11 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:07:42 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/08 15:37:48 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/08 16:22:46 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-// #########################################################################
-
-// int	exc_exec_subn(int ifd, int ofd, t_astn *root, t_core *core)
-// {
-// 	pid_t	pid;
-// 	int		wstatus;
-
-// 	pid = fork();
-// 	if (pid == -1 && ft_eprintf(ERR_GNR, strerror(errno)))
-// 		return (-1);
-
-// 	if (pid == 0)
-// 	{
-// 		if (root->content && exc_process_reds(&ifd, &ofd, root, core) == -1)
-// 			return (-1);
-
-// 		if (fmgr_dup2(ifd, 0) == -1
-// 			|| fmgr_dup2(ofd, 1) == -1
-// 			|| env_get_envp(core->env, core) == NULL // 3/01, New env?
-// 			|| (sig_init_child() == -1 && utl_exit(EX_F, core)))
-// 			return (-1);
-
-// 		if (exc_exec_ast(0, 1, root->left, core) == -1)
-// 			utl_exit(EX_F, core); // 2/01 - What should be the exit code?
-// 		utl_exit(EX_S, core); // 31/12 - And this as well.
-// 	}
-
-
-// 	// 31/12 - exit code should be transferred from child to parent.
-// 	if (pid > 0 && (waitpid(pid, &wstatus, 0) == -1 || wstatus == 1))
-// 		return (-1); // core->exit = ???
-// 	return (0);
-// }
-
-// ###################################################################
 
 int	exc_exec_aon(int ifd, int ofd, t_astn *root, t_core *core)
 {
@@ -99,7 +63,7 @@ static int	exc_exec_cmdn(int ifd, int ofd, t_astn *root, t_core *core)
 	pid = fork();
 	if (pid == -1 && ft_eprintf(ERR_GNR, strerror(errno)))
 		return (-1);
-	if (pid > 0 && exc_wait_cmds(pid, core) == -1)
+	if (pid > 0 && exc_wait_pid(pid, core) == -1)
 		return (-1);
 	if (pid == 0)
 	{	
@@ -109,34 +73,76 @@ static int	exc_exec_cmdn(int ifd, int ofd, t_astn *root, t_core *core)
 	return (0);
 }
 
+// 8/01 - PROBLEMS.
+
+// = (echo a && echo b && echo c) > test | nl 
+//		-> bad file descriptor (why)
+
+
+int	exc_exec_subn(int ifd, int ofd, t_astn *root, t_core *core)
+{
+	pid_t	pid;
+
+	pid = fork();
+	if (pid == -1 && ft_eprintf(ERR_GNR, strerror(errno)))
+		return (-1);
+	if (pid > 0 && exc_wait_pid(pid, core) == -1)
+		return (-1);
+	if (pid == 0)
+	{
+
+
+		if (exc_close_pipes(ifd, ofd, core) == -1)
+			return (EX_F);
+		if (root->content && exc_process_reds(&ifd, &ofd, root, core) == -1)
+			return (EX_F);
+		if (sig_init_child() == -1 // && utl_exit(EX_F, core)))
+			|| fmgr_dup2(ifd, 0) == -1
+			|| fmgr_dup2(ofd, 1) == -1
+			|| env_get_envp(core->env, core) == NULL)
+			return (EX_F);
+
+
+		dprintf(2, "ifd -> %i; ofd -> %i\n", ifd, ofd);
+
+
+		if (exc_exec_ast(0, 1, root->left, core) == -1)
+			utl_exit(EX_F, core);
+
+
+		utl_exit(EX_S, core);
+	}
+	return (0);
+}
+
 // ######################################################################
 
 // 7/01 - DONT FORGET NORMINETTE
 int	exc_exec_ast(int ifd, int ofd, t_astn *root, t_core *core)
 {	
-	if ((root->type == AST_AO
-			&& exc_exec_aon(ifd, ofd, root, core) == -1)
-		|| (root->type == AST_PI
-			&& exc_exec_pipn(ifd, ofd, root, core) == -1)
-		|| (root->type == AST_CMD
-			&& exc_exec_cmdn(ifd, ofd, root, core) == -1))
-		return (-1);
-
-	// if ((root->type == AST_SUB
-	// 		&& exc_exec_subn(ifd, ofd, root, core) == -1)
-		// || (root->type == AST_CMD
-	// 		&& exc_exec_cmdn(ifd, ofd, root, core) == -1))
-	// 	return (-1);
-
 	// if ((root->type == AST_AO
 	// 		&& exc_exec_aon(ifd, ofd, root, core) == -1)
 	// 	|| (root->type == AST_PI
 	// 		&& exc_exec_pipn(ifd, ofd, root, core) == -1)
-	// 	|| (root->type == AST_SUB
+	// 	|| (root->type == AST_CMD
+	// 		&& exc_exec_cmdn(ifd, ofd, root, core) == -1))
+	// 	return (-1);
+
+	// if ((root->type == AST_SUB
 	// 		&& exc_exec_subn(ifd, ofd, root, core) == -1)
 	// 	|| (root->type == AST_CMD
 	// 		&& exc_exec_cmdn(ifd, ofd, root, core) == -1))
 	// 	return (-1);
+
+	if ((root->type == AST_AO
+			&& exc_exec_aon(ifd, ofd, root, core) == -1)
+		|| (root->type == AST_PI
+			&& exc_exec_pipn(ifd, ofd, root, core) == -1)
+		|| (root->type == AST_SUB
+			&& exc_exec_subn(ifd, ofd, root, core) == -1)
+		|| (root->type == AST_CMD
+			&& exc_exec_cmdn(ifd, ofd, root, core) == -1))
+		return (-1);
 
 	return (0);
 }

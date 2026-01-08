@@ -6,13 +6,13 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 14:54:02 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/08 15:19:06 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/08 15:57:38 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	exc_close_pipes(int ifd, int ofd, t_core *core)
+int	exc_close_pipes(int ifd, int ofd, t_core *core)
 {
 	int		i;
 	int		*pipe;
