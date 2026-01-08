@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:07:42 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/07 23:39:04 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/08 15:37:48 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,21 +48,20 @@
 
 // ###################################################################
 
-// int	exc_exec_aon(int ifd, int ofd, t_astn *root, t_core *core)
-// {
-// 	int	op;
-	
-// 	op = root->op;
-// 	if (exc_exec_ast(ifd, ofd, root->left, core) == -1)
-// 		return (-1);
-// 	if ((op == TOK_AND && core->exit > 0)
-// 		|| (op == TOK_OR && core->exit == 0))
-// 		return (0);
-// 	if (exc_exec_ast(ifd, ofd, root->right, core) == -1)
-// 		return (-1);
-// 	return (0);
-// }
+int	exc_exec_aon(int ifd, int ofd, t_astn *root, t_core *core)
+{
+	int	op;
 
+	op = root->op;
+	if (exc_exec_ast(ifd, ofd, root->left, core) == -1)
+		return (-1);
+	if ((op == TOK_AND && core->exit > 0)
+		|| (op == TOK_OR && core->exit == 0))
+		return (0);
+	if (exc_exec_ast(ifd, ofd, root->right, core) == -1)
+		return (-1);
+	return (0);
+}
 
 static int	exc_exec_pipn(int ifd, int ofd, t_astn *root, t_core *core)
 {
@@ -112,25 +111,22 @@ static int	exc_exec_cmdn(int ifd, int ofd, t_astn *root, t_core *core)
 
 // ######################################################################
 
-// 4/01 - From simple to complex. Let's start with a simpler system to see
-// if we're on the right path or not and THEN build from there...
 // 7/01 - DONT FORGET NORMINETTE
 int	exc_exec_ast(int ifd, int ofd, t_astn *root, t_core *core)
-{
-	// t_astt	type;
-	// char		**strs;
-
-	// strs = (char *[]){"AST_NONE", "AST_AO", "AST_PI", "AST_SUB", "AST_CMD", 0};
-
-	// printf("(exc_exec_ast with type: %s)\n", strs[root->type]);
-	
-	if ((root->type == AST_PI
+{	
+	if ((root->type == AST_AO
+			&& exc_exec_aon(ifd, ofd, root, core) == -1)
+		|| (root->type == AST_PI
 			&& exc_exec_pipn(ifd, ofd, root, core) == -1)
 		|| (root->type == AST_CMD
 			&& exc_exec_cmdn(ifd, ofd, root, core) == -1))
 		return (-1);
 
-	// 5/01 - 
+	// if ((root->type == AST_SUB
+	// 		&& exc_exec_subn(ifd, ofd, root, core) == -1)
+		// || (root->type == AST_CMD
+	// 		&& exc_exec_cmdn(ifd, ofd, root, core) == -1))
+	// 	return (-1);
 
 	// if ((root->type == AST_AO
 	// 		&& exc_exec_aon(ifd, ofd, root, core) == -1)

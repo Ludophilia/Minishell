@@ -6,13 +6,13 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 23:04:50 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/07 23:31:03 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/08 15:03:41 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	exc_load_path(char **envp, char ***paths)
+int	exc_load_envpath(char **envp, char ***paths)
 {
 	int		matched;
 	int		i;
@@ -32,7 +32,7 @@ int	exc_load_path(char **envp, char ***paths)
 	return (0);
 }
 
-char	*exc_build_path(char **strs)
+char	*exc_build_abspath(char **strs)
 {
 	char	*path;
 	size_t	path_len;

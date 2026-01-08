@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 14:54:02 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/07 23:45:53 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/08 15:19:06 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +48,11 @@ static int	exc_exec_prg(t_cmd *cmd, t_core *core)
 	status = exc_check_path(cmd->argv, core->envp, core);
 	if (status == -1)
 		return (-1);
-	if (status == false && utl_exit(core->exit, core))
+	if (status == false
+		&& utl_exit(core->exit, core))
 		return (0);
-	if (status == true && execve(*cmd->argv, cmd->argv, core->envp) == -1)
+	if (status == true
+		&& execve(*cmd->argv, cmd->argv, core->envp) == -1)
 		return (-1);
 	return (0);
 }

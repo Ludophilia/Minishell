@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:18:44 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/07 23:35:04 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/08 15:03:41 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ static int	exc_build_path_and_check_access(int i, char **paths, char **argv,
 	int		status;
 	char	*path;
 
-	path = exc_build_path((char *[]){paths[i], "/", argv[0], 0});
+	path = exc_build_abspath((char *[]){paths[i], "/", argv[0], 0});
 	if (path == NULL)
 		return (-1);
 	status = exc_check_full_path_access(false, path, core);
@@ -57,7 +57,7 @@ static int	exc_search_dir_and_check_access(char **argv, char **envp,
 	int		i;
 	int		status;
 
-	if (exc_load_path(envp, &paths) == -1)
+	if (exc_load_envpath(envp, &paths) == -1)
 		return (-1);
 	if (paths == NULL && exc_err_cmd(*argv, core))
 		return (false);

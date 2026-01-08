@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/07 23:46:24 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/08 15:03:41 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,8 +231,8 @@ int		exc_err_ecmd(char c, t_core *core);
 int		exc_err_cmd(char *path, t_core *core);
 int		exc_err_path(int access_test, char *path, t_core *core);
 int		exc_err_pathg(char *path, char *strerr, t_core *core);
-char	*exc_build_path(char **strs);
-int		exc_load_path(char **envp, char ***paths);
+char	*exc_build_abspath(char **strs);
+int		exc_load_envpath(char **envp, char ***paths);
 int		exc_check_path(char **argv, char **envp, t_core *core);
 int		exc_process_reds(int *ifd, int *ofd, t_astn *root, t_core *core);
 int		exc_exec_scmd(int ifd, int ofd, t_astn *root, t_core *core);
