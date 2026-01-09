@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 15:55:22 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/08 16:03:10 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/08 22:33:42 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,14 @@ int	exc_wait_pid(pid_t	pid, t_core *core)
 	int	wstat;
 	int	sig;
 
-	// 4/01 - What was that?
-	// if (cmd->xready == false) // Why did I need that here?
-	// 	continue ;
 	if (waitpid(pid, &wstat, 0) == -1)
 		return (-1);
 	sig = 0;
 	if (WIFEXITED(wstat))
+	{
 		core->exit = WEXITSTATUS(wstat);
+		// printf("(exc_wait_pid) core->exit -> %i\n", core->exit);
+	}
 	else if (WIFSIGNALED(wstat))
 	{
 		sig = WTERMSIG(wstat);

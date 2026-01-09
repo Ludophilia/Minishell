@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser_envv.c                                      :+:      :+:    :+:   */
+/*   expander_envv.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 18:09:10 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/16 19:32:56 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/09 20:45:22 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	psr_get_envv_id(char *start, int *envv_len, char *envv_id)
+static int	exp_get_envv_id(char *start, int *envv_len, char *envv_id)
 {
 	int	id_len;
 
@@ -20,21 +20,21 @@ static int	psr_get_envv_id(char *start, int *envv_len, char *envv_id)
 	if (*start == '?' && id_len++)
 		envv_id[id_len++] = *start;
 	else
-		while (++id_len, psr_is_envv_chr(start[id_len], id_len))
+		while (++id_len, exp_is_envv_chr(start[id_len], id_len))
 			envv_id[id_len] = start[id_len];
 	envv_id[id_len] = '\0';
 	if (envv_len)
-		*envv_len = id_len + 1;
+		*envv_len = (id_len + 1);
 	return (0);
 }
 
-static char	*psr_get_envv_value(char *start, int *envv_len, t_core *core)
+static char	*exp_get_envv_value(char *start, int *envv_len, t_core *core)
 {
 	char		envv_id[ID_LMAX];
 	static char	exitw[EXW_MAX];
 	char		*envv_val;
 
-	psr_get_envv_id(start, envv_len, envv_id);
+	exp_get_envv_id(start, envv_len, envv_id);
 	if (!ft_strncmp(envv_id, "?", 2))
 	{
 		utl_itoa(core->exit, exitw);
@@ -49,13 +49,13 @@ static char	*psr_get_envv_value(char *start, int *envv_len, t_core *core)
 	return (envv_val);
 }
 
-int	psr_envv_value_len(char *start, int *j, t_core *core)
+int	exp_envv_value_len(char *start, int *j, t_core *core)
 {
 	char	*envv_val;
 	int		envv_len;
 	int		len;
 
-	envv_val = psr_get_envv_value(start + 1, &envv_len, core);
+	envv_val = exp_get_envv_value(start + 1, &envv_len, core);
 	if (envv_val == NULL)
 		len = 0;
 	else
@@ -66,14 +66,15 @@ int	psr_envv_value_len(char *start, int *j, t_core *core)
 	return (len);
 }
 
-int	psr_copy_envv_value(char *start, char *word, int *j, t_core *core)
+int	exp_copy_envv_value(char *start, char *word, int *j, t_core *core)
 {
 	char	*envv_val;
 	int		envv_len;
 	int		pos;
 	int		i;
 
-	envv_val = psr_get_envv_value(start + 1, &envv_len, core);
+	// 9/01 = Something won't work here... with subshells.
+	envv_val = exp_get_envv_value(start + 1, &envv_len, core);
 	if (envv_val == NULL)
 		return (envv_len);
 	pos = *j;

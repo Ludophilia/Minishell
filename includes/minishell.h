@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/08 16:03:10 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/09 20:21:10 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ typedef enum e_exit
 
 typedef enum e_max
 {
-	TOK_MAX = 2048,
+	TOK_MAX = 1024,
 	CMD_MAX = 128,
 	RED_MAX = 64,
 	ID_LMAX = 256,
@@ -133,6 +133,7 @@ typedef struct s_tok
 typedef struct s_red
 {
 	t_tokt				type;
+	t_tok				*word_tk; // t_tok or t_tok *
 	char				*word;
 }	t_red;
 
@@ -141,7 +142,7 @@ typedef struct s_cmd
 	t_red				reds[RED_MAX];
 	int					red_pmax;
 	// bool				xready;
-	// pid_t				pid;
+	t_tok				**argv_tk; // t_tok * or t_tok **
 	char				**argv;
 	int					argc;
 	int					ifd;
@@ -161,6 +162,7 @@ typedef struct s_core
 {
 	t_astn				*ast;
 	t_astn				*stash[NOD_MAX];
+	t_tok				toks[TOK_MAX];
 	int					cmds;
 	uint32_t			flags;
 	uint8_t				exit;
@@ -191,12 +193,12 @@ int		lex_synterr(t_tokt type, t_tok *tok);
 int		lex_subtok_check(int *pos, int *opn, t_tok *tok, t_tok *next);
 int		lex_error_check(t_tok *toks, t_core *core);
 
-int		psr_is_outq(int c, int *q);
-int		psr_is_envv(char *c, int ct, int q);
-int		psr_is_envv_chr(int c, int pos);
-int		psr_envv_value_len(char *start, int *j, t_core *core);
-int		psr_copy_envv_value(char *start, char *word, int *j, t_core *core);
-char	*psr_create_word(t_tok *tok, t_tokt context, t_core *core);
+int		exp_is_outq(int c, int *q);
+int		exp_is_envv(char *c, int token, int q);
+int		exp_is_envv_chr(int c, int pos);
+int		exp_envv_value_len(char *start, int *j, t_core *core);
+int		exp_copy_envv_value(char *start, char *word, int *j, t_core *core);
+char	*exp_create_word(t_tok *tok, t_tokt context, t_core *core);
 
 int		psr_cleanup_ast(t_astn *root);
 t_astn	*psr_new_astn(t_astt type);

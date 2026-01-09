@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 19:18:23 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/06 23:38:53 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/09 17:21:49 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,10 @@ int	utl_cleanup(t_cflg base_flags, t_cflg excl_flags, t_core *core)
 	if (flags & FLG_AST)
 	{
 		psr_cleanup_ast(core->ast);
-		ft_bzero(core->stash, NOD_MAX * sizeof(t_astn *));
 		core->ast = NULL;
 		core->cmds = 0;
+		ft_bzero(core->stash, NOD_MAX * sizeof(t_astn *));
+		ft_bzero(core->toks, TOK_MAX * sizeof(t_tok));
 	}
 	if (flags & FLG_ENV)
 		env_cleanup(core);

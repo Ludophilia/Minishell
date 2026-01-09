@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/17 20:07:06 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/06 23:29:50 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/09 17:00:25 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ int	init_core(t_core *core, char **envp)
 	core->exit = 0;
 	core->cmds = 0;
 	ft_bzero(core->stash, NOD_MAX * sizeof(t_astn *));
+	ft_bzero(core->toks, TOK_MAX * sizeof(t_tok));
 	core->flags |= FLG_ENV;
 	return (0);
 }

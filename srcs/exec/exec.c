@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:07:42 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/08 16:22:46 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/09 16:00:03 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,13 @@ int	exc_exec_aon(int ifd, int ofd, t_astn *root, t_core *core)
 	op = root->op;
 	if (exc_exec_ast(ifd, ofd, root->left, core) == -1)
 		return (-1);
+
 	if ((op == TOK_AND && core->exit > 0)
 		|| (op == TOK_OR && core->exit == 0))
 		return (0);
+
+	// printf("(exc_exec_aon) core->exit: %i\n", core->exit);
+
 	if (exc_exec_ast(ifd, ofd, root->right, core) == -1)
 		return (-1);
 	return (0);
@@ -75,9 +79,14 @@ static int	exc_exec_cmdn(int ifd, int ofd, t_astn *root, t_core *core)
 
 // 8/01 - PROBLEMS.
 
-// = (echo a && echo b && echo c) > test | nl 
+// (echo a && echo b && echo c) > test | nl 
 //		-> bad file descriptor (why)
 
+// (exit 42) || echo exit code: $?
+//		-> substitution happens at the wrong level
+
+// export ECOLE=42 && (echo $ECOLE)
+//		 -> There's a problem with ENV inheritance.
 
 int	exc_exec_subn(int ifd, int ofd, t_astn *root, t_core *core)
 {
@@ -91,31 +100,25 @@ int	exc_exec_subn(int ifd, int ofd, t_astn *root, t_core *core)
 	if (pid == 0)
 	{
 
-
 		if (exc_close_pipes(ifd, ofd, core) == -1)
 			return (EX_F);
 		if (root->content && exc_process_reds(&ifd, &ofd, root, core) == -1)
 			return (EX_F);
-		if (sig_init_child() == -1 // && utl_exit(EX_F, core)))
+		if (sig_init_child() == -1
 			|| fmgr_dup2(ifd, 0) == -1
-			|| fmgr_dup2(ofd, 1) == -1
-			|| env_get_envp(core->env, core) == NULL)
+			|| fmgr_dup2(ofd, 1) == -1) // || env_get_envp(core->env, core) == NULL
 			return (EX_F);
 
-
-		dprintf(2, "ifd -> %i; ofd -> %i\n", ifd, ofd);
-
+		// dprintf(2, "(exc_exec_subn) ifd -> %i; ofd -> %i\n", ifd, ofd);
 
 		if (exc_exec_ast(0, 1, root->left, core) == -1)
 			utl_exit(EX_F, core);
+		utl_exit(core->exit, core);
 
-
-		utl_exit(EX_S, core);
 	}
+	// printf("(end exc_exec_subn) core->exit -> %i\n", core->exit);
 	return (0);
 }
-
-// ######################################################################
 
 // 7/01 - DONT FORGET NORMINETTE
 int	exc_exec_ast(int ifd, int ofd, t_astn *root, t_core *core)

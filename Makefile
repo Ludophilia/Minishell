@@ -6,7 +6,7 @@
 #    By: jegerman <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/09 12:08:14 by jegerman          #+#    #+#              #
-#    Updated: 2026/01/07 23:27:10 by jegerman         ###   ########.fr        #
+#    Updated: 2026/01/09 20:46:58 by jegerman         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,6 +33,7 @@ PRSR_DR := $(SRCS_DR)/parser
 FMGR_DR := $(SRCS_DR)/fmgr
 EXEC_DR := $(SRCS_DR)/exec
 ENVM_DR := $(SRCS_DR)/env
+EXPD_DR := $(SRCS_DR)/expander
 
 MAN_SRCS := $(CORE_DR)/main.c
 MAN_SRCS += $(CORE_DR)/loop.c
@@ -50,9 +51,10 @@ MAN_SRCS += $(PRSR_DR)/parser_cleanup.c
 MAN_SRCS += $(PRSR_DR)/parser_ast.c
 MAN_SRCS += $(PRSR_DR)/parser_ast_rdp.c
 MAN_SRCS += $(PRSR_DR)/parser_ast_cmds.c
-MAN_SRCS += $(PRSR_DR)/parser_word.c
-MAN_SRCS += $(PRSR_DR)/parser_word_envv.c
-MAN_SRCS += $(PRSR_DR)/parser_word_utils.c
+
+MAN_SRCS += $(EXPD_DR)/expander.c
+MAN_SRCS += $(EXPD_DR)/expander_envv.c
+MAN_SRCS += $(EXPD_DR)/expander_utils.c
 
 MAN_SRCS += $(FMGR_DR)/fmgr.c
 MAN_SRCS += $(FMGR_DR)/fmgr_utils.c
