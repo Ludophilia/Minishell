@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/09 20:21:10 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/10 15:06:38 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,16 +133,16 @@ typedef struct s_tok
 typedef struct s_red
 {
 	t_tokt				type;
-	t_tok				*word_tk; // t_tok or t_tok *
+	t_tok				*word_tk;
 	char				*word;
 }	t_red;
 
 typedef struct s_cmd
 {
 	t_red				reds[RED_MAX];
-	int					red_pmax;
+	// int					red_pmax;
 	// bool				xready;
-	t_tok				**argv_tk; // t_tok * or t_tok **
+	t_tok				**argv_tk;
 	char				**argv;
 	int					argc;
 	int					ifd;
@@ -198,7 +198,9 @@ int		exp_is_envv(char *c, int token, int q);
 int		exp_is_envv_chr(int c, int pos);
 int		exp_envv_value_len(char *start, int *j, t_core *core);
 int		exp_copy_envv_value(char *start, char *word, int *j, t_core *core);
-char	*exp_create_word(t_tok *tok, t_tokt context, t_core *core);
+// char	*exp_create_word(t_tok *tok, t_tokt context, t_core *core);
+int		exp_consume_wtoks(t_cmd	*cmd, t_core *core);
+int		exp_consume_redtoks(t_cmd *cmd, t_core *core);
 
 int		psr_cleanup_ast(t_astn *root);
 t_astn	*psr_new_astn(t_astt type);

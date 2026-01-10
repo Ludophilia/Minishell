@@ -57,7 +57,7 @@ A sub program that take a line from the `interface` module and
 
 - `/path/to/hell`
 	- bash: /path/to/hell: No such file or directory
-	- exit status: 126
+	- exit status: 127
 
 - `/path/to/heaven`
 	- bash: /path/to/heaven: Permission denied

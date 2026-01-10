@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:07:42 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/09 16:00:03 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/10 15:50:54 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,9 @@ static int	exc_exec_cmdn(int ifd, int ofd, t_astn *root, t_core *core)
 	int		status;
 
 	cmd = root->content;
+	if (exp_consume_redtoks(cmd, core) == -1
+		|| exp_consume_wtoks(cmd, core) == -1)
+		return (-1);
 	if (core->cmds == 1 && exc_if_builtin(cmd, core))
 		return (0);
 	pid = fork();
@@ -79,14 +82,20 @@ static int	exc_exec_cmdn(int ifd, int ofd, t_astn *root, t_core *core)
 
 // 8/01 - PROBLEMS.
 
-// (echo a && echo b && echo c) > test | nl 
-//		-> bad file descriptor (why)
+// [ ] (echo a && echo b && echo c) > test | nl 
+//		-> bad file descriptor (why?)
 
-// (exit 42) || echo exit code: $?
+// [x] (exit 42) || echo exit code: $?
 //		-> substitution happens at the wrong level
 
-// export ECOLE=42 && (echo $ECOLE)
+// [ ] export ECOLE=42 && (echo $ECOLE)
 //		 -> There's a problem with ENV inheritance.
+
+// [ ] echo 123456789 > a > b > c > d
+//		-> Redirections do not work.
+
+// [ ]- Tudieu, ca LEAKE la!!
+//		-> Ou?
 
 int	exc_exec_subn(int ifd, int ofd, t_astn *root, t_core *core)
 {
@@ -122,21 +131,7 @@ int	exc_exec_subn(int ifd, int ofd, t_astn *root, t_core *core)
 
 // 7/01 - DONT FORGET NORMINETTE
 int	exc_exec_ast(int ifd, int ofd, t_astn *root, t_core *core)
-{	
-	// if ((root->type == AST_AO
-	// 		&& exc_exec_aon(ifd, ofd, root, core) == -1)
-	// 	|| (root->type == AST_PI
-	// 		&& exc_exec_pipn(ifd, ofd, root, core) == -1)
-	// 	|| (root->type == AST_CMD
-	// 		&& exc_exec_cmdn(ifd, ofd, root, core) == -1))
-	// 	return (-1);
-
-	// if ((root->type == AST_SUB
-	// 		&& exc_exec_subn(ifd, ofd, root, core) == -1)
-	// 	|| (root->type == AST_CMD
-	// 		&& exc_exec_cmdn(ifd, ofd, root, core) == -1))
-	// 	return (-1);
-
+{
 	if ((root->type == AST_AO
 			&& exc_exec_aon(ifd, ofd, root, core) == -1)
 		|| (root->type == AST_PI
@@ -146,7 +141,6 @@ int	exc_exec_ast(int ifd, int ofd, t_astn *root, t_core *core)
 		|| (root->type == AST_CMD
 			&& exc_exec_cmdn(ifd, ofd, root, core) == -1))
 		return (-1);
-
 	return (0);
 }
 
