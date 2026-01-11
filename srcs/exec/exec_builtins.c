@@ -3,20 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   exec_builtins.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ntahri <ntahri@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 22:26:53 by jegerman          #+#    #+#             */
-/*   Updated: 2025/10/18 18:19:19 by ntahri           ###   ########.fr       */
+/*   Updated: 2026/01/11 14:59:44 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	exc_exec_builtin(int id, t_cmd *cmd, t_core *core)
+int	exc_exec_builtin(int id, t_cmd *cmd, t_core *core)
 {
 	int	status;
 
-	if (!cmd->argv || !cmd->argv[0])
+	if (!cmd->argv[0])
 		return (1);
 	status = 1;
 	if (id == 0)
@@ -36,7 +36,7 @@ static int	exc_exec_builtin(int id, t_cmd *cmd, t_core *core)
 	return (status);
 }
 
-int	exc_if_builtin(t_cmd *cmd, t_core *core)
+int	exc_is_builtin(t_cmd *cmd, int *pos)
 {
 	char	**bltns;
 	int		i;
@@ -49,10 +49,7 @@ int	exc_if_builtin(t_cmd *cmd, t_core *core)
 	while (bltns[i])
 	{
 		if (!ft_strncmp(*cmd->argv, bltns[i], ft_strlen(bltns[i]) + 1))
-		{
-			core->exit = exc_exec_builtin(i, cmd, core);
-			return (1);
-		}
+			return (pos && (*pos = i), 1);
 		i++;
 	}
 	return (0);

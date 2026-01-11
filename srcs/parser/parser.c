@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:16:27 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/10 15:40:22 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/11 14:49:56 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,12 +52,16 @@ static int	print_nodes_prefix_rev(int level, int left, int right, t_astn *root)
 {
 	char	**toks;
 	char	**types;
+	t_cmd	*cmd;
+	t_tok	*tok;
+	t_red	*reds;
 
 	toks = (char *[]){"none", "word", "pipe", "ired", "hdoc",
 		"ored", "ored_apn", "and", "or", "(", ")", 0};
 	types = (char *[]){"none", "ao", "pipe", "sub", "cmd", 0};
-	if (root == NULL)
-		return (printf("Nothing to print\n"));
+	if (root == NULL && printf("Nothing to print\n"))
+		return (0);
+	fflush(NULL);
 	for (int i = 0; i < level; ++i)
 		printf("\t");
 	if (left && right)
@@ -65,31 +69,30 @@ static int	print_nodes_prefix_rev(int level, int left, int right, t_astn *root)
 	else
 		printf(left? "[L]": "[R]");
 	if (root->type == 1)
-		printf("[%i] type: %s, op: %s\n", level, types[root->type],
-			toks[root->op]);
-	else if (root->type == 2)
-		printf("[%i] type: %s\n", level, types[root->type]);
-	else if (root->type == 3 && root->content == NULL)
+		printf("[%i] type: %s, op: %s\n", level, types[root->type], toks[root->op]);
+	else if (root->type == 2 || (root->type == 3 && !root->content))
 		printf("[%i] type: %s\n", level, types[root->type]);
 	else if (root->type == 3 && root->content)
 	{
+		cmd = root->content;
 		printf("[%i] type: %s, red: ", level, types[root->type]);
 		fflush(NULL);
-		if (root->content)
-		{
-			write(1, ((t_cmd *)(root->content))->reds->word_tk->start,
-			((t_cmd *)(root->content))->reds->word_tk->len);
-			write(1, "\n", 1);
-		}
+		reds = cmd->reds;
+		tok = reds->word_tk;
+		write(1, tok->start, tok->len);
+		write(1, "\n", 1);
 	}
 	else if (root->type == 4)
 	{
 		printf("[%i] type: %s, start: ", level, types[root->type]);
-		fflush(NULL);
-		if (root->content && ((t_cmd *)(root->content))->argv_tk)
+		cmd = root->content;
+		tok = *cmd->argv_tk;
+		if (tok == NULL)
+			printf("%p\n", tok);
+		else
 		{
-			write(1, (*((t_cmd *)(root->content))->argv_tk)->start,
-				(*((t_cmd *)(root->content))->argv_tk)->len);
+			fflush(NULL);
+			write(1, tok->start, tok->len);
 			write(1, "\n", 1);
 		}
 	}
@@ -102,14 +105,6 @@ static int	print_nodes_prefix_rev(int level, int left, int right, t_astn *root)
 
 int	psr_parse_line(char *line, t_core *core)
 {
-	// 8/01 - We have to build the AST differently.
-	// - Toks in core so that their reference is always there throughout 
-	// command execution. Don't forget to cleanup after execution.
-	// (unless you copy them)
-	// - psr_build_ast should not consume tokens, but associate them to the
-	// right element, command or red. 
-	// - Once in the command node, the tokens will be consumed
-	// as before. 
 	t_tok	*toks;
 
 	toks = core->toks;

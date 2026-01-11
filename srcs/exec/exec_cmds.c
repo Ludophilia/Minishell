@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 14:54:02 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/10 15:19:59 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/11 14:29:59 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,11 +57,8 @@ static int	exc_exec_prg(t_cmd *cmd, t_core *core)
 	return (0);
 }
 
-int	exc_process_reds(int *ifd, int *ofd, t_astn *root, t_core *core)
+int	exc_process_reds(int *ifd, int *ofd, t_cmd *cmd, t_core *core)
 {
-	t_cmd	*cmd;
-
-	cmd = root->content;
 	cmd->ifd = *ifd;
 	cmd->ofd = *ofd;
 	if (fmgr_set_xfds(cmd, core) == -1)
@@ -79,12 +76,12 @@ int	exc_exec_scmd(int ifd, int ofd, t_astn *root, t_core *core)
 	cmd = root->content;
 	if (exc_close_pipes(ifd, ofd, core) == -1)
 		return (EX_F);
-	if (exc_process_reds(&ifd, &ofd, root, core) == -1)
+	if (exc_process_reds(&ifd, &ofd, cmd, core) == -1)
 		return (core->exit);
 	if (*cmd->argv == NULL)
 		return (EX_S);
-	if (exc_if_builtin(cmd, core))
-		return (core->exit);
+	if (exc_is_builtin(cmd, &status))
+		return (core->exit = exc_exec_builtin(status, cmd, core));
 	status = exc_exec_prg(cmd, core);
 	if (status == -1)
 		return (EX_F);

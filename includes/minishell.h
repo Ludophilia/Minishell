@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/06 13:50:47 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/10 15:06:38 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/11 15:00:58 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,7 +140,6 @@ typedef struct s_red
 typedef struct s_cmd
 {
 	t_red				reds[RED_MAX];
-	// int					red_pmax;
 	// bool				xready;
 	t_tok				**argv_tk;
 	char				**argv;
@@ -199,8 +198,8 @@ int		exp_is_envv_chr(int c, int pos);
 int		exp_envv_value_len(char *start, int *j, t_core *core);
 int		exp_copy_envv_value(char *start, char *word, int *j, t_core *core);
 // char	*exp_create_word(t_tok *tok, t_tokt context, t_core *core);
-int		exp_consume_wtoks(t_cmd	*cmd, t_core *core);
-int		exp_consume_redtoks(t_cmd *cmd, t_core *core);
+int		exp_cnsm_wtoks(t_cmd *cmd, t_core *core);
+int		exp_cnsm_rtoks(t_cmd *cmd, t_core *core);
 
 int		psr_cleanup_ast(t_astn *root);
 t_astn	*psr_new_astn(t_astt type);
@@ -239,9 +238,10 @@ char	*exc_build_abspath(char **strs);
 int		exc_load_envpath(char **envp, char ***paths);
 int		exc_check_path(char **argv, char **envp, t_core *core);
 int		exc_close_pipes(int ifd, int ofd, t_core *core);
-int		exc_process_reds(int *ifd, int *ofd, t_astn *root, t_core *core);
+int		exc_process_reds(int *ifd, int *ofd, t_cmd *cmd, t_core *core);
 int		exc_exec_scmd(int ifd, int ofd, t_astn *root, t_core *core);
-int		exc_if_builtin(t_cmd *cmd, t_core *core);
+int		exc_exec_builtin(int id, t_cmd *cmd, t_core *core);
+int		exc_is_builtin(t_cmd *cmd, int *pos);
 int		exc_exec_ast(int ifd, int ofd, t_astn *root, t_core *core);
 
 int		loop_prompt(t_core *core);

@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 19:13:16 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/10 15:11:22 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/11 15:02:59 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,9 +58,7 @@ static char	*exp_create_word(t_tok *tok, t_tokt context, t_core *core)
 	return (word);
 }
 
-// 		- each t_red in cmd->reds upto red_pmax contain words in word_tk that 
-// 		should be copied and expanded in word.
-int	exp_consume_redtoks(t_cmd *cmd, t_core *core)
+int	exp_cnsm_rtoks(t_cmd *cmd, t_core *core)
 {
 	t_red	*red;
 	int		i;
@@ -77,9 +75,7 @@ int	exp_consume_redtoks(t_cmd *cmd, t_core *core)
 	return (0);
 }
 
-//		- cmd->argv_tk should be copied and expanded in cmd->argv
-// 10/01 - Leak Free?
-int	exp_consume_wtoks(t_cmd	*cmd, t_core *core)
+int	exp_cnsm_wtoks(t_cmd	*cmd, t_core *core)
 {
 	t_tok	*tok;
 	int		i;
@@ -89,7 +85,7 @@ int	exp_consume_wtoks(t_cmd	*cmd, t_core *core)
 		return (-1);
 	i = 0;
 	tok = cmd->argv_tk[i];
-	while (tok && tok->type)
+	while (tok)
 	{
 		// 5/01: Why this??? Why is "" filtered?
 		// if (*word != 0)
@@ -97,10 +93,10 @@ int	exp_consume_wtoks(t_cmd	*cmd, t_core *core)
 		cmd->argv[i] = exp_create_word(tok, TOK_WORD, core);
 		if (cmd->argv[i] == NULL)
 			return (-1);
+		// printf("argv[%i] -> %s\n", i, cmd->argv[i]);
 		// else
 		// 	free(word);
 		tok = cmd->argv_tk[++i];
 	}
 	return (0);
 }
-

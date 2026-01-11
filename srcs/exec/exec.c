@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:07:42 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/10 15:50:54 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/11 14:58:32 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,9 @@ int	exc_exec_aon(int ifd, int ofd, t_astn *root, t_core *core)
 	op = root->op;
 	if (exc_exec_ast(ifd, ofd, root->left, core) == -1)
 		return (-1);
-
 	if ((op == TOK_AND && core->exit > 0)
 		|| (op == TOK_OR && core->exit == 0))
 		return (0);
-
-	// printf("(exc_exec_aon) core->exit: %i\n", core->exit);
-
 	if (exc_exec_ast(ifd, ofd, root->right, core) == -1)
 		return (-1);
 	return (0);
@@ -62,11 +58,15 @@ static int	exc_exec_cmdn(int ifd, int ofd, t_astn *root, t_core *core)
 	int		status;
 
 	cmd = root->content;
-	if (exp_consume_redtoks(cmd, core) == -1
-		|| exp_consume_wtoks(cmd, core) == -1)
+	if (exp_cnsm_rtoks(cmd, core) == -1 || exp_cnsm_wtoks(cmd, core) == -1)
 		return (-1);
-	if (core->cmds == 1 && exc_if_builtin(cmd, core))
+	if (core->cmds == 1 && exc_is_builtin(cmd, &status))
+	{
+		if (exc_process_reds(&ifd, &ofd, cmd, core) == -1)
+			return (-1);
+		core->exit = exc_exec_builtin(status, cmd, core);
 		return (0);
+	}
 	pid = fork();
 	if (pid == -1 && ft_eprintf(ERR_GNR, strerror(errno)))
 		return (-1);
@@ -85,17 +85,14 @@ static int	exc_exec_cmdn(int ifd, int ofd, t_astn *root, t_core *core)
 // [ ] (echo a && echo b && echo c) > test | nl 
 //		-> bad file descriptor (why?)
 
-// [x] (exit 42) || echo exit code: $?
-//		-> substitution happens at the wrong level
-
 // [ ] export ECOLE=42 && (echo $ECOLE)
 //		 -> There's a problem with ENV inheritance.
 
-// [ ] echo 123456789 > a > b > c > d
+// [x] echo 123456789 > a > b > c
 //		-> Redirections do not work.
 
-// [ ]- Tudieu, ca LEAKE la!!
-//		-> Ou?
+// [x] (exit 42) || echo exit code: $?
+//		-> substitution happens at the wrong level
 
 int	exc_exec_subn(int ifd, int ofd, t_astn *root, t_core *core)
 {
@@ -108,10 +105,13 @@ int	exc_exec_subn(int ifd, int ofd, t_astn *root, t_core *core)
 		return (-1);
 	if (pid == 0)
 	{
+		t_cmd	*cmd;
+
+		cmd = root->content;
 
 		if (exc_close_pipes(ifd, ofd, core) == -1)
 			return (EX_F);
-		if (root->content && exc_process_reds(&ifd, &ofd, root, core) == -1)
+		if (root->content && exc_process_reds(&ifd, &ofd, cmd, core) == -1)
 			return (EX_F);
 		if (sig_init_child() == -1
 			|| fmgr_dup2(ifd, 0) == -1
