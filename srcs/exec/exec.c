@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:07:42 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/11 14:58:32 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/11 17:07:03 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,8 +82,13 @@ static int	exc_exec_cmdn(int ifd, int ofd, t_astn *root, t_core *core)
 
 // 8/01 - PROBLEMS.
 
+// [x] (echo a && echo b && echo c) > test
+
 // [ ] (echo a && echo b && echo c) > test | nl 
-//		-> bad file descriptor (why?)
+//		-> bad file descriptor (why?, still not working)
+
+//		-> (echo a && echo b && echo c) (works)
+//		-> (echo a && echo b && echo c) | nl (still works)
 
 // [ ] export ECOLE=42 && (echo $ECOLE)
 //		 -> There's a problem with ENV inheritance.
@@ -94,9 +99,40 @@ static int	exc_exec_cmdn(int ifd, int ofd, t_astn *root, t_core *core)
 // [x] (exit 42) || echo exit code: $?
 //		-> substitution happens at the wrong level
 
+int	exc_exec_subshell(int ifd, int ofd, t_astn *root, t_core *core)
+{
+	t_cmd	*cmd;
+
+	cmd = root->content;
+
+	if (exc_close_pipes(ifd, ofd, core) == -1)
+		return (EX_F);
+
+	// printf("(exc_exec_subn1) ifd: %i ; ofd: %i\n", ifd, ofd);
+
+	if (root->content
+		&& (exp_cnsm_rtoks(cmd, core) == -1
+			|| exc_process_reds(&ifd, &ofd, cmd, core) == -1))
+		return (EX_F);
+
+	// printf("(exc_exec_subn2) ifd: %i ; ofd: %i\n", ifd, ofd);
+
+	if (sig_init_child() == -1
+		|| fmgr_dup2(ifd, 0) == -1
+		|| fmgr_dup2(ofd, 1) == -1) // || env_get_envp(core->env, core) == NULL
+		return (EX_F);
+
+	// dprintf(2, "(exc_exec_subn) ifd -> %i; ofd -> %i\n", ifd, ofd);
+	if (exc_exec_ast(0, 1, root->left, core) == -1)
+		return (EX_F);
+
+	return (core->exit);
+}
+
 int	exc_exec_subn(int ifd, int ofd, t_astn *root, t_core *core)
 {
 	pid_t	pid;
+	int		status;
 
 	pid = fork();
 	if (pid == -1 && ft_eprintf(ERR_GNR, strerror(errno)))
@@ -105,25 +141,8 @@ int	exc_exec_subn(int ifd, int ofd, t_astn *root, t_core *core)
 		return (-1);
 	if (pid == 0)
 	{
-		t_cmd	*cmd;
-
-		cmd = root->content;
-
-		if (exc_close_pipes(ifd, ofd, core) == -1)
-			return (EX_F);
-		if (root->content && exc_process_reds(&ifd, &ofd, cmd, core) == -1)
-			return (EX_F);
-		if (sig_init_child() == -1
-			|| fmgr_dup2(ifd, 0) == -1
-			|| fmgr_dup2(ofd, 1) == -1) // || env_get_envp(core->env, core) == NULL
-			return (EX_F);
-
-		// dprintf(2, "(exc_exec_subn) ifd -> %i; ofd -> %i\n", ifd, ofd);
-
-		if (exc_exec_ast(0, 1, root->left, core) == -1)
-			utl_exit(EX_F, core);
-		utl_exit(core->exit, core);
-
+		status = exc_exec_subshell(ifd, ofd, root, core);
+		utl_exit(status, core);
 	}
 	// printf("(end exc_exec_subn) core->exit -> %i\n", core->exit);
 	return (0);
