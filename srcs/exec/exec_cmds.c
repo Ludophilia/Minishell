@@ -6,13 +6,13 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 14:54:02 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/11 14:29:59 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/12 17:52:04 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	exc_close_pipes(int ifd, int ofd, t_core *core)
+int	exc_close_extra_pipes(int ifd, int ofd, t_core *core)
 {
 	int		i;
 	int		*pipe;
@@ -20,9 +20,13 @@ int	exc_close_pipes(int ifd, int ofd, t_core *core)
 
 	fails = 0;
 	i = -1;
+	ft_eprintf("[%i] About to close extra pipes except (%i, %i)\n",
+				getpid(), ifd, ofd);
 	while (core->stash[++i])
 	{
 		pipe = (core->stash[i])->content;
+		ft_eprintf("[%i] processing (%i, %i) against (%i, %i)\n",
+			getpid(), pipe[0], pipe[1], ifd, ofd);
 		if ((pipe[0] != ifd
 				&& pipe[0] != ofd
 				&& fmgr_close(pipe) == -1)
@@ -30,6 +34,7 @@ int	exc_close_pipes(int ifd, int ofd, t_core *core)
 				&& pipe[1] != ofd
 				&& fmgr_close(pipe + 1) == -1))
 			fails++;
+		// core->stash[i] = NULL; 
 	}
 	if (fails)
 		return (-1);
@@ -74,7 +79,7 @@ int	exc_exec_scmd(int ifd, int ofd, t_astn *root, t_core *core)
 	int		status;
 
 	cmd = root->content;
-	if (exc_close_pipes(ifd, ofd, core) == -1)
+	if (exc_close_extra_pipes(ifd, ofd, core) == -1)
 		return (EX_F);
 	if (exc_process_reds(&ifd, &ofd, cmd, core) == -1)
 		return (core->exit);

@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:07:42 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/11 17:07:03 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/12 17:56:44 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,8 @@ static int	exc_exec_cmdn(int ifd, int ofd, t_astn *root, t_core *core)
 		return (-1);
 	if (pid == 0)
 	{	
+		ft_eprintf("[%i] IN CMD with ifd: %i, ofd: %i\n",
+			getpid(), ifd, ofd); //
 		status = exc_exec_scmd(ifd, ofd, root, core);
 		utl_exit(status, core);
 	}
@@ -82,16 +84,19 @@ static int	exc_exec_cmdn(int ifd, int ofd, t_astn *root, t_core *core)
 
 // 8/01 - PROBLEMS.
 
-// [x] (echo a && echo b && echo c) > test
+// [o] (echo a) | nl
+// [o] (echo a && echo b && echo c) | nl
+//		-> (still works, but opened pipe is found in the shell when exited)
 
-// [ ] (echo a && echo b && echo c) > test | nl 
+// [o] (echo a) > test
+// [o] (echo a && echo b && echo c) > test
+
+// [ ] (echo a) > test | nl
+// [ ] (echo a && echo b && echo c) > test | nl
 //		-> bad file descriptor (why?, still not working)
 
-//		-> (echo a && echo b && echo c) (works)
-//		-> (echo a && echo b && echo c) | nl (still works)
 
-// [ ] export ECOLE=42 && (echo $ECOLE)
-//		 -> There's a problem with ENV inheritance.
+// [x] (echo a && echo b && echo c) (works)
 
 // [x] echo 123456789 > a > b > c
 //		-> Redirections do not work.
@@ -99,32 +104,71 @@ static int	exc_exec_cmdn(int ifd, int ofd, t_astn *root, t_core *core)
 // [x] (exit 42) || echo exit code: $?
 //		-> substitution happens at the wrong level
 
+// For Nizar
+// [ ] export ECOLE=42 && (echo $ECOLE)
+//		 -> There's a problem with ENV inheritance.
+
 int	exc_exec_subshell(int ifd, int ofd, t_astn *root, t_core *core)
 {
 	t_cmd	*cmd;
 
 	cmd = root->content;
 
-	if (exc_close_pipes(ifd, ofd, core) == -1)
-		return (EX_F);
+	ft_eprintf("[%i] IN SUBSHELL... ifd: %i, ofd: %i\n",
+		getpid(), ifd, ofd);
 
-	// printf("(exc_exec_subn1) ifd: %i ; ofd: %i\n", ifd, ofd);
+	// 12/01: Not in the right spot... ? Later?
+
+	// if (exc_close_extra_pipes(ifd, ofd, core) == -1)
+	// 	return (EX_F);
+
 
 	if (root->content
 		&& (exp_cnsm_rtoks(cmd, core) == -1
-			|| exc_process_reds(&ifd, &ofd, cmd, core) == -1))
+			|| exc_process_reds(&ifd, &ofd, cmd, core) == -1)) // 12/01 - Will change
 		return (EX_F);
 
-	// printf("(exc_exec_subn2) ifd: %i ; ofd: %i\n", ifd, ofd);
 
-	if (sig_init_child() == -1
-		|| fmgr_dup2(ifd, 0) == -1
-		|| fmgr_dup2(ofd, 1) == -1) // || env_get_envp(core->env, core) == NULL
+
+	// 12/01.
+	// - It's those "close_extra_pipes" functions that create dysfuctions
+	// In the beginning: ifd: 0, ofd: 4. 
+	// - exc_process_reds closed ofd: 4 to replace it with ofd: 5.
+	// - when exc_close_extra_pipes tries to close 4 that is already closed
+
+	// NOW...
+	// What would be your solution
+	if (exc_close_extra_pipes(ifd, ofd, core) == -1)
 		return (EX_F);
 
-	// dprintf(2, "(exc_exec_subn) ifd -> %i; ofd -> %i\n", ifd, ofd);
+
+	if (root->content)
+	{
+		if (sig_init_child() == -1
+			|| fmgr_dup2(cmd->ifd, 0) == -1
+			|| fmgr_dup2(cmd->ofd, 1) == -1) // || env_get_envp(core->env, core) == NULL
+			return (EX_F);
+	}
+	else
+	{
+		if (sig_init_child() == -1
+			|| fmgr_dup2(ifd, 0) == -1
+			|| fmgr_dup2(ofd, 1) == -1) // || env_get_envp(core->env, core) == NULL
+			return (EX_F);
+	}
+
+	// 12/01: We don't really use ifd and ofd after that.
+	// AT LEAST up to now.
 	if (exc_exec_ast(0, 1, root->left, core) == -1)
 		return (EX_F);
+
+	// ft_eprintf("[%i] ifd: %i ; ofd: %i\n", getpid(), ifd, ofd);
+	
+	// 12/01: It's because we don't use ifd and ofd in exc_exec_ast above...
+	if (root->content == NULL && (fmgr_close(&ifd) == -1 || fmgr_close(&ofd) == -1)) // || env_get_envp(core->env, core) == NULL
+		return (EX_F);
+
+
 
 	return (core->exit);
 }
