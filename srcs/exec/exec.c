@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:07:42 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/12 17:56:44 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/13 20:42:08 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ static int	exc_exec_cmdn(int ifd, int ofd, t_astn *root, t_core *core)
 		return (-1);
 	if (core->cmds == 1 && exc_is_builtin(cmd, &status))
 	{
-		if (exc_process_reds(&ifd, &ofd, cmd, core) == -1)
+		if (fmgr_process_reds(&ifd, &ofd, cmd, core) == -1)
 			return (-1);
 		core->exit = exc_exec_builtin(status, cmd, core);
 		return (0);
@@ -84,12 +84,12 @@ static int	exc_exec_cmdn(int ifd, int ofd, t_astn *root, t_core *core)
 
 // 8/01 - PROBLEMS.
 
-// [o] (echo a) | nl
-// [o] (echo a && echo b && echo c) | nl
+// [ ] (echo a) | nl
+// [ ] (echo a && echo b && echo c) | nl
 //		-> (still works, but opened pipe is found in the shell when exited)
 
-// [o] (echo a) > test
-// [o] (echo a && echo b && echo c) > test
+// [ ] (echo a) > test
+// [ ] (echo a && echo b && echo c) > test
 
 // [ ] (echo a) > test | nl
 // [ ] (echo a && echo b && echo c) > test | nl
@@ -117,43 +117,27 @@ int	exc_exec_subshell(int ifd, int ofd, t_astn *root, t_core *core)
 	ft_eprintf("[%i] IN SUBSHELL... ifd: %i, ofd: %i\n",
 		getpid(), ifd, ofd);
 
-	// 12/01: Not in the right spot... ? Later?
-
-	// if (exc_close_extra_pipes(ifd, ofd, core) == -1)
-	// 	return (EX_F);
-
-
-	if (root->content
-		&& (exp_cnsm_rtoks(cmd, core) == -1
-			|| exc_process_reds(&ifd, &ofd, cmd, core) == -1)) // 12/01 - Will change
+	if (root->content && exp_cnsm_rtoks(cmd, core) == -1)
 		return (EX_F);
-
-
-
-	// 12/01.
-	// - It's those "close_extra_pipes" functions that create dysfuctions
-	// In the beginning: ifd: 0, ofd: 4. 
-	// - exc_process_reds closed ofd: 4 to replace it with ofd: 5.
-	// - when exc_close_extra_pipes tries to close 4 that is already closed
-
-	// NOW...
-	// What would be your solution
-	if (exc_close_extra_pipes(ifd, ofd, core) == -1)
-		return (EX_F);
-
+	if (root->content && fmgr_process_reds(&ifd, &ofd, cmd, core) == -1)
+		return (core->exit);
 
 	if (root->content)
 	{
 		if (sig_init_child() == -1
 			|| fmgr_dup2(cmd->ifd, 0) == -1
-			|| fmgr_dup2(cmd->ofd, 1) == -1) // || env_get_envp(core->env, core) == NULL
+			|| fmgr_dup2(cmd->ofd, 1) == -1 // || env_get_envp(core->env, core) == NULL
+			|| fmgr_close(&cmd->ifd) == -1
+			|| fmgr_close(&cmd->ofd) == -1)
 			return (EX_F);
 	}
 	else
 	{
 		if (sig_init_child() == -1
 			|| fmgr_dup2(ifd, 0) == -1
-			|| fmgr_dup2(ofd, 1) == -1) // || env_get_envp(core->env, core) == NULL
+			|| fmgr_dup2(ofd, 1) == -1 // || env_get_envp(core->env, core) == NULL
+			|| fmgr_close(&ifd) == -1
+			|| fmgr_close(&ofd) == -1)
 			return (EX_F);
 	}
 
@@ -165,8 +149,8 @@ int	exc_exec_subshell(int ifd, int ofd, t_astn *root, t_core *core)
 	// ft_eprintf("[%i] ifd: %i ; ofd: %i\n", getpid(), ifd, ofd);
 	
 	// 12/01: It's because we don't use ifd and ofd in exc_exec_ast above...
-	if (root->content == NULL && (fmgr_close(&ifd) == -1 || fmgr_close(&ofd) == -1)) // || env_get_envp(core->env, core) == NULL
-		return (EX_F);
+	// if (root->content == NULL && (fmgr_close(&ifd) == -1 || fmgr_close(&ofd) == -1)) // || env_get_envp(core->env, core) == NULL
+	// 	return (EX_F);
 
 
 

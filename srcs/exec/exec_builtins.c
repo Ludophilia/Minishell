@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 22:26:53 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/11 14:59:44 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/13 17:37:36 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,11 @@ int	exc_is_builtin(t_cmd *cmd, int *pos)
 	while (bltns[i])
 	{
 		if (!ft_strncmp(*cmd->argv, bltns[i], ft_strlen(bltns[i]) + 1))
-			return (pos && (*pos = i), 1);
+		{
+			if (pos)
+				*pos = i;
+			return (1);
+		}
 		i++;
 	}
 	return (0);

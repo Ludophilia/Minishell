@@ -6,7 +6,7 @@
 #    By: jegerman <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/09 12:08:14 by jegerman          #+#    #+#              #
-#    Updated: 2026/01/09 20:46:58 by jegerman         ###   ########.fr        #
+#    Updated: 2026/01/13 18:18:18 by jegerman         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -58,6 +58,8 @@ MAN_SRCS += $(EXPD_DR)/expander_utils.c
 
 MAN_SRCS += $(FMGR_DR)/fmgr.c
 MAN_SRCS += $(FMGR_DR)/fmgr_utils.c
+MAN_SRCS += $(FMGR_DR)/fmgr_here.c
+MAN_SRCS += $(FMGR_DR)/fmgr_pipes.c
 
 MAN_SRCS += $(EXEC_DR)/exec.c
 MAN_SRCS += $(EXEC_DR)/exec_cmds.c
