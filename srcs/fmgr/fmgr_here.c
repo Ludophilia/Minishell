@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/13 18:18:25 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/13 18:18:50 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/14 11:36:37 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,23 +53,24 @@ static int	fmgr_subsh_hdocs(int *pid, int *fds, t_red *red, t_core *core)
 
 int	fmgr_set_hdocs(int *ifd, t_red *red, t_core *core)
 {
-	int		fds[2];
+	int		pipes[2];
 	int		pid;
 	int		wstat;
 
 	if (ifd == NULL)
 		return (0);
-	if (fmgr_pipe(fds) == -1)
+	if (fmgr_pipe(pipes) == -1)
 		return (-1);
-	if (fmgr_subsh_hdocs(&pid, fds, red, core) == -1
+	if (fmgr_subsh_hdocs(&pid, pipes, red, core) == -1
 		|| waitpid(pid, &wstat, 0) == -1)
-		return (close(fds[0]), close(fds[1]), -1);
+		return (close(pipes[0]), close(pipes[1]), -1);
 	if (WIFEXITED(wstat))
 		core->exit = WEXITSTATUS(wstat);
 	else if (WIFSIGNALED(wstat))
 		core->exit = 128 + WTERMSIG(wstat);
-	if (fmgr_close(fds + 1) == -1 || fmgr_close(ifd) == -1)
-		return (close(fds[0]), -1);
-	*ifd = fds[0];
+	if (fmgr_close(pipes + 1) == -1
+		|| fmgr_close(ifd) == -1) // 14/01: And if you forget to remove a potential pipe?
+		return (close(pipes[0]), -1);
+	*ifd = pipes[0];
 	return (0);
 }

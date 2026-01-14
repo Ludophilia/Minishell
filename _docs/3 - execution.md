@@ -424,3 +424,29 @@ Let's see what should happen in execution for every node type.
 		- However, here docs are opened before everything else. And I won't respect that rule.
 
 		- That means that I will open redirections just before each node's execution, including here docs...
+
+## Some problems
+
+[ ] (echo a) | nl
+[ ] (echo a && echo b && echo c) | nl
+		-> (still works, but opened pipe is found in the shell when exited)
+
+[ ] (echo a) > test
+[ ] (echo a && echo b && echo c) > test
+
+[ ] (echo a) > test | nl
+[ ] (echo a && echo b && echo c) > test | nl
+		-> bad file descriptor (why?, still not working)
+
+
+[x] (echo a && echo b && echo c) (works)
+
+[x] echo 123456789 > a > b > c
+		-> Redirections do not work.
+
+[x] (exit 42) || echo exit code: $?
+		-> substitution happens at the wrong level
+
+For Nizar
+[ ] export ECOLE=42 && (echo $ECOLE)
+		 -> There's a problem with ENV inheritance.

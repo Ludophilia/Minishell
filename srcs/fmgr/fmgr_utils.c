@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 16:05:19 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/12 16:47:18 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/14 12:41:24 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int	fmgr_close(int *xfd)
 		return (0);
 	// 12/01 - Please come back later and clean that shi
 	if (close(*xfd) == -1
-		&& ft_eprintf("[%i] fmgr_close: %i: ", getpid(), *xfd)
+		&& ft_eprintf("\t\t\t[%i] fmgr_close: %i: ", getpid(), *xfd)
 		&& ft_eprintf(ERR_GNR, strerror(errno)))
 		return (-1);
 	*xfd = 0;

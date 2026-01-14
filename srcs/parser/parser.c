@@ -6,7 +6,7 @@
 /*   By: jegerman <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:16:27 by jegerman          #+#    #+#             */
-/*   Updated: 2026/01/11 14:49:56 by jegerman         ###   ########.fr       */
+/*   Updated: 2026/01/14 12:43:16 by jegerman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,9 +111,12 @@ int	psr_parse_line(char *line, t_core *core)
 	if (lex_tokenize_line(line, toks)
 		|| lex_error_check(toks, core) == -1)
 		return (-2);
+	printf("\n"); //
 	if (psr_build_ast(toks, core) == -1)
 		return (-1);
 	print_nodes_prefix_rev(0, 1, 1, core->ast); // 19/12 - Will be removed...
+	fflush(NULL);
+	printf("\n\n"); //
 	core->flags |= FLG_AST;
 	return (0);
 }
